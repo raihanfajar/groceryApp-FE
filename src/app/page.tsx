@@ -11,7 +11,7 @@ import PromoCarousel from "@/components/HomePage/promoCarousel/PromoCarousel";
 
 export default function HomePage() {
   return (
-    <div className="mx-auto">
+    <div className="mx-auto min-h-screen">
       <PromoCarousel items={carouselItems} />
       <CustomBorder />
       <CategoryCarousel items={categories} />
@@ -23,7 +23,6 @@ export default function HomePage() {
       <ProductList items={dummyRecommendedProducts} name="Latest Product" />
       <CustomBorder />
       <BenefitBanner />
-      <CustomBorder />
     </div>
   );
 }

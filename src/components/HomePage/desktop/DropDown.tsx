@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 export const CustomerServiceDropDown = () => {
   return (
@@ -18,7 +19,9 @@ export const CustomerServiceDropDown = () => {
         <DropdownMenuLabel>Customer Service</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>FAQ</DropdownMenuItem>
+          <Link href={"/faq"}>
+            <DropdownMenuItem>FAQ</DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>How to shop</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

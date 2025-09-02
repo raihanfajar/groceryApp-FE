@@ -44,9 +44,9 @@ export const DiscoverDropDown = () => {
         <DropdownMenuLabel>Discover FreshNear</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>About FreshNear</DropdownMenuItem>
-          <DropdownMenuItem>Terms & Condititions</DropdownMenuItem>
-          <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
+          <DropdownMenuItem>About FreshNear (Dev)</DropdownMenuItem>
+          <DropdownMenuItem>Terms & Condititions (Dev)</DropdownMenuItem>
+          <DropdownMenuItem>Privacy Policy (Dev)</DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

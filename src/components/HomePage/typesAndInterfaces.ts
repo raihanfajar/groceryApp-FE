@@ -1,4 +1,5 @@
 import * as FaIcons from "react-icons/fa";
+import * as MdIcons from "react-icons/md";
 
 // Category Model
 export interface Category {
@@ -67,4 +68,16 @@ export interface Benefits {
     image: string;
     title: string;
     description: string;
+}
+
+// !MenuDrawer.tsx
+export interface MenuItem {
+    label: string;
+    href: string;
+    icon: keyof typeof MdIcons; // because you are passing icons
+}
+
+export interface MenuSection {
+    title: string;
+    items: MenuItem[];
 }

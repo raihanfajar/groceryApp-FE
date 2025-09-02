@@ -1,4 +1,4 @@
-import { Benefits, CarouselItem, Category, Product } from "./typesAndInterfaces";
+import { Benefits, CarouselItem, Category, MenuSection, Product } from "./typesAndInterfaces";
 
 export const categories: Category[] = [
     {
@@ -293,5 +293,58 @@ export const benefitBannerBenefits: Benefits[] = [
         image: "/benefitBanner/9.png",
         title: "24/7 Customer Support",
         description: "Got an issue? Our dedicated support team is available 24/7 to help with delivery, payment, or product concerns—anytime you need us.",
+    },
+];
+
+// !MenuDrawer
+export const menuSections: MenuSection[] = [
+    {
+        title: "My Account",
+        items: [
+            { label: "Transactions (dev)", href: "#", icon: "MdOutlineReceiptLong" },
+        ],
+    },
+    {
+        title: "Main",
+        items: [
+            { label: "Brand (Bonus)", href: "#", icon: "MdOutlineBrandingWatermark" },
+            { label: "Promo (dev)", href: "#", icon: "MdOutlineDiscount" },
+            { label: "All Category (dev)", href: "#", icon: "MdOutlineGridView" },
+        ],
+    },
+    {
+        title: "Customer Service",
+        items: [
+            { label: "FAQ", href: "/faq", icon: "MdOutlineQuestionAnswer" },
+            {
+                label: "How to Shop",
+                href: "/faq/how-to-shop",
+                icon: "MdOutlineQuestionMark",
+            },
+        ],
+    },
+    {
+        title: "Discover FreshNear",
+        items: [
+            { label: "About FreshNear (dev)", href: "#", icon: "MdOutlineInfo" },
+            {
+                label: "Terms & Conditions (dev)",
+                href: "#",
+                icon: "MdOutlineDocumentScanner",
+            },
+            { label: "Privacy Policy (dev)", href: "#", icon: "MdOutlinePrivacyTip" },
+            { label: "Career (Bonus)", href: "#", icon: "MdOutlinePeople" },
+        ],
+    },
+    {
+        title: "Contact Us",
+        items: [
+            {
+                label: "fnsupport@gmail.com",
+                href: "mailto:fnsupport@gmail.com",
+                icon: "MdOutlineEmail",
+            },
+            { label: "666-666-666", href: "tel:666-666-666", icon: "MdOutlinePhone" },
+        ],
     },
 ];

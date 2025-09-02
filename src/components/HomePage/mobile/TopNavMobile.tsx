@@ -2,10 +2,10 @@
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineMenu, MdShoppingCart } from "react-icons/md";
-import MenuDrawer from "../desktop/MenuDrawer";
-import { useState } from "react";
+import MenuDrawer from "./MenuDrawer";
 
 export default function TopNavMobile() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

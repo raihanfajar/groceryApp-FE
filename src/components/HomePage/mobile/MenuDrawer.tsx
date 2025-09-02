@@ -6,69 +6,6 @@ import CustomBorder from "../CustomBorder";
 import { menuSections } from "../mapData";
 import * as MdIcons from "react-icons/md";
 
-// interface MenuItem {
-//   label: string;
-//   href: string;
-//   icon: React.ElementType; // because you are passing icons
-// }
-
-// interface MenuSection {
-//   title: string;
-//   items: MenuItem[];
-// }
-
-// const menuSections: MenuSection[] = [
-//   {
-//     title: "My Account",
-//     items: [
-//       { label: "Transactions (dev)", href: "#", icon: MdOutlineReceiptLong },
-//     ],
-//   },
-//   {
-//     title: "Main",
-//     items: [
-//       { label: "Brand (Bonus)", href: "#", icon: MdOutlineBrandingWatermark },
-//       { label: "Promo (dev)", href: "#", icon: MdOutlineDiscount },
-//       { label: "All Category (dev)", href: "#", icon: MdOutlineGridView },
-//     ],
-//   },
-//   {
-//     title: "Customer Service",
-//     items: [
-//       { label: "FAQ", href: "/faq", icon: MdOutlineQuestionAnswer },
-//       {
-//         label: "How to Shop",
-//         href: "/faq/how-to-shop",
-//         icon: MdOutlineQuestionMark,
-//       },
-//     ],
-//   },
-//   {
-//     title: "Discover FreshNear",
-//     items: [
-//       { label: "About FreshNear (dev)", href: "#", icon: MdOutlineInfo },
-//       {
-//         label: "Terms & Conditions (dev)",
-//         href: "#",
-//         icon: MdOutlineDocumentScanner,
-//       },
-//       { label: "Privacy Policy (dev)", href: "#", icon: MdOutlinePrivacyTip },
-//       { label: "Career (Bonus)", href: "#", icon: MdOutlinePeople },
-//     ],
-//   },
-//   {
-//     title: "Contact Us",
-//     items: [
-//       {
-//         label: "fnsupport@gmail.com",
-//         href: "mailto:fnsupport@gmail.com",
-//         icon: MdOutlineEmail,
-//       },
-//       { label: "666-666-666", href: "tel:666-666-666", icon: MdOutlinePhone },
-//     ],
-//   },
-// ];
-
 export default function MenuDrawer({
   isOpen,
   onClose,

@@ -1,0 +1,21 @@
+import ClientQuestion from "@/components/ClientQuestions/ClientQuestion";
+import Topics from "@/components/ClientQuestions/Topics";
+import CustomBorder from "@/components/HomePage/CustomBorder";
+
+const DynamicTopicPage = async ({
+  params,
+}: {
+  params: Promise<{ dynamic: string }>;
+}) => {
+  const dynamic = (await params).dynamic;
+
+  return (
+    <div className="mx-auto min-h-screen">
+      <ClientQuestion topic={dynamic} />
+      <CustomBorder />
+      <Topics />
+    </div>
+  );
+};
+
+export default DynamicTopicPage;

@@ -10,7 +10,7 @@ import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
 import MegaMenu from "./MegaMenu";
 
-const BotNav = () => {
+export default function BotNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -28,12 +28,14 @@ const BotNav = () => {
     <>
       {/* MAIN NAV */}
       <div className="flex h-16 items-center justify-between border-b border-black bg-green-100 px-24">
-        <Image
-          src="/mainLogo/FreshNearLogoFull.png"
-          alt="mainLogo"
-          width={110}
-          height={50}
-        />
+        <Link href={"/"}>
+          <Image
+            src="/mainLogo/FreshNearLogoFull.png"
+            alt="mainLogo"
+            width={110}
+            height={50}
+          />
+        </Link>
         <span
           className="flex items-center justify-center gap-1"
           onMouseEnter={handleMouseEnter}
@@ -52,12 +54,12 @@ const BotNav = () => {
             <FiSearch className="h-[32px]" />
           </button>
         </div>
-        <h1>Brand</h1>
-        <h1>Promo</h1>
+        <h1>Brand (Bonus)</h1>
+        <h1>Promo (Dev)</h1>
         <MdShoppingCart size={24} />
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />
-        <Link href={"#"}>Login</Link>
-        <Link href={"#"}>Register</Link>
+        <Link href={"#"}>Login (Dev)</Link>
+        <Link href={"#"}>Register (Dev)</Link>
       </div>
 
       {/* MEGAMENU */}
@@ -70,6 +72,4 @@ const BotNav = () => {
       />
     </>
   );
-};
-
-export default BotNav;
+}

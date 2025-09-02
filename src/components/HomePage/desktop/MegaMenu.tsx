@@ -11,8 +11,7 @@ export default function MegaMenu({
   activeCategory,
   setActiveCategory,
 }: MegaMenuProps) {
-  if (!isOpen) return null; // Cleaner than wrapping everything in `{isOpen && ...}`
-
+  if (!isOpen) return null; // Cleaner than wrapping terus dan dan
   return (
     <div
       onMouseEnter={handleMouseEnter}

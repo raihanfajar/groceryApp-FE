@@ -1,13 +1,13 @@
-import BenefitBanner from "@/components/HomePage/benefitBanner/BenefitBanner";
-import CategoryCarousel from "@/components/HomePage/categoryCarousel/CategoryCarousel";
-import CustomBorder from "@/components/HomePage/CustomBorder";
+import BenefitBanner from "@/components/homePage/benefitBanner/BenefitBanner";
+import CategoryCarousel from "@/components/homePage/categoryCarousel/CategoryCarousel";
+import CustomBorder from "@/components/homePage/CustomBorder";
 import {
   carouselItems,
   categories,
   dummyRecommendedProducts,
-} from "@/components/HomePage/mapData";
-import { ProductList } from "@/components/HomePage/productDisplay/ProductList";
-import PromoCarousel from "@/components/HomePage/promoCarousel/PromoCarousel";
+} from "@/components/homePage/mapData";
+import { ProductList } from "@/components/homePage/productDisplay/ProductList";
+import PromoCarousel from "@/components/homePage/promoCarousel/PromoCarousel";
 
 export default function HomePage() {
   return (

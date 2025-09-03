@@ -296,7 +296,7 @@ export const benefitBannerBenefits: Benefits[] = [
     },
 ];
 
-// !MenuDrawer
+// !MenuDrawer MOBILE
 export const menuSections: MenuSection[] = [
     {
         title: "My Account",
@@ -326,13 +326,13 @@ export const menuSections: MenuSection[] = [
     {
         title: "Discover FreshNear",
         items: [
-            { label: "About FreshNear (dev)", href: "#", icon: "MdOutlineInfo" },
+            { label: "About FreshNear", href: "/about", icon: "MdOutlineInfo" },
             {
-                label: "Terms & Conditions (dev)",
-                href: "#",
+                label: "Terms & Conditions",
+                href: "/terms",
                 icon: "MdOutlineDocumentScanner",
             },
-            { label: "Privacy Policy (dev)", href: "#", icon: "MdOutlinePrivacyTip" },
+            { label: "Privacy Policy", href: "/privacy", icon: "MdOutlinePrivacyTip" },
             { label: "Career (Bonus)", href: "#", icon: "MdOutlinePeople" },
         ],
     },

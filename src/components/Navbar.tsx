@@ -1,7 +1,7 @@
-import BotNavDesktop from "./HomePage/desktop/BotNav";
-import TopNavDesktop from "./HomePage/desktop/TopNav";
-import BotNavMobile from "./HomePage/mobile/BotNavMobile";
-import TopNavMobile from "./HomePage/mobile/TopNavMobile";
+import BotNavDesktop from "./homePage/desktop/BotNav";
+import TopNavDesktop from "./homePage/desktop/TopNav";
+import BotNavMobile from "./homePage/mobile/BotNavMobile";
+import TopNavMobile from "./homePage/mobile/TopNavMobile";
 
 const Navbar = () => {
   return (

@@ -5,8 +5,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
-import { clientQuestions } from "./mapData";
 import { slugToTitle } from "@/functions/slugToTitle";
+import { clientQuestions } from "./mapData";
 
 const ClientQuestion = ({ topic }: { topic: string }) => {
   const targetObject = clientQuestions.find((obj) => obj.topic === topic);

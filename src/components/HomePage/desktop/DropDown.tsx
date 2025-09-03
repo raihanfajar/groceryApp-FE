@@ -22,12 +22,18 @@ export const CustomerServiceDropDown = () => {
           <Link href={"/faq"}>
             <DropdownMenuItem>FAQ</DropdownMenuItem>
           </Link>
-          <DropdownMenuItem>How to shop</DropdownMenuItem>
+          <Link href={"/faq/how-to-shop"}>
+            <DropdownMenuItem>How to shop</DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>fnsupport@gmail.com</DropdownMenuItem>
-          <DropdownMenuItem>666-666-666</DropdownMenuItem>
+          <Link href={"mailto:fnsupport@gmail.com"}>
+            <DropdownMenuItem>fnsupport@gmail.com</DropdownMenuItem>
+          </Link>
+          <Link href={"tel:666-666-666"}>
+            <DropdownMenuItem>666-666-666</DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -44,9 +50,15 @@ export const DiscoverDropDown = () => {
         <DropdownMenuLabel>Discover FreshNear</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>About FreshNear (Dev)</DropdownMenuItem>
-          <DropdownMenuItem>Terms & Condititions (Dev)</DropdownMenuItem>
-          <DropdownMenuItem>Privacy Policy (Dev)</DropdownMenuItem>
+          <Link href={"/about"}>
+            <DropdownMenuItem>About FreshNear</DropdownMenuItem>
+          </Link>
+          <Link href={"/terms"}>
+            <DropdownMenuItem>Terms & Condititions</DropdownMenuItem>
+          </Link>
+          <Link href={"/privacy"}>
+            <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

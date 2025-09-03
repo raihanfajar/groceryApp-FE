@@ -1,4 +1,8 @@
-import CustomBorder from "./HomePage/CustomBorder";
+import Image from "next/image";
+import CustomBorder from "./homePage/CustomBorder";
+import { SiGojek } from "react-icons/si";
+import { SiGrab } from "react-icons/si";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -14,12 +18,12 @@ export default function Footer() {
             <h2 className="mb-3 text-lg font-semibold">Customer Support</h2>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:underline">
+                <a href={"/faq"} className="hover:underline">
                   FAQ
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <a href={"/faq/how-to-shop"} className="hover:underline">
                   How to Shop
                 </a>
               </li>
@@ -31,17 +35,17 @@ export default function Footer() {
             <h2 className="mb-3 text-lg font-semibold">Discover FreshNear</h2>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:underline">
+                <a href={"/about"} className="hover:underline">
                   About FreshNear
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <a href={"/terms"} className="hover:underline">
                   Terms & Conditions
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <a href={"/privacy"} className="hover:underline">
                   Privacy Policy
                 </a>
               </li>
@@ -61,10 +65,10 @@ export default function Footer() {
             </div>
 
             <div id="deliveryService">
-              <h2 className="mb-3 text-lg font-semibold">Delivery Service</h2>
-              <div className="flex flex-wrap gap-3">
-                <div className="h-8 w-8 rounded bg-gray-300"></div>
-                <div className="h-8 w-8 rounded bg-gray-300"></div>
+              <h2 className="text-lg font-semibold">Delivery Service</h2>
+              <div className="flex flex-wrap items-center gap-3">
+                <SiGojek size={30} color="black" />
+                <SiGrab size={50} color="black" />
               </div>
             </div>
           </div>
@@ -74,9 +78,22 @@ export default function Footer() {
             <div id="followUs">
               <h2 className="mb-3 text-lg font-semibold">Follow Us</h2>
               <div className="flex flex-wrap gap-3">
-                <div className="h-8 w-8 rounded bg-gray-300"></div>
-                <div className="h-8 w-8 rounded bg-gray-300"></div>
-                <div className="h-8 w-8 rounded bg-gray-300"></div>
+                <Link href="#">
+                  <Image
+                    src="/icons/instagram.png"
+                    alt="instagramIcon"
+                    width={30}
+                    height={30}
+                  />
+                </Link>
+                <Link href="#">
+                  <Image
+                    src="/icons/facebook.png"
+                    alt="facebookIcon"
+                    width={30}
+                    height={30}
+                  />
+                </Link>
               </div>
             </div>
 

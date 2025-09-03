@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { ProductCard } from "./ProductCard"; // child component yang dibuat
 import { ProductProps } from "../typesAndInterfaces";
+import { ProductCard } from "./ProductCard";
 
 export function ProductList({ items, name }: ProductProps) {
   const [visibleCount, setVisibleCount] = useState(12); // initial products shown

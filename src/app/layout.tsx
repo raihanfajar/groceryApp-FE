@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Inter } from "next/font/google";
+import ReactQueryProvider from "@/providers/ReactQueryProviders";
+import { Bounce, ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +51,20 @@ export default function RootLayout({
         className={`${inter.className} ${geistSans.variable} ${geistMono.variable}`}
       >
         <Navbar />
-        {children}
+        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          transition={Bounce}
+        />
         <Footer />
       </body>
     </html>

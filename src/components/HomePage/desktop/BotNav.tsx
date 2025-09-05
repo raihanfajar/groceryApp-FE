@@ -58,8 +58,8 @@ export default function BotNav() {
         <h1>Promo (Dev)</h1>
         <MdShoppingCart size={24} />
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />
-        <Link href={"#"}>Login (Dev)</Link>
-        <Link href={"#"}>Register (Dev)</Link>
+        <Link href="/user-login">Login (Dev)</Link>
+        <Link href="/user-register">Register (Dev)</Link>
       </div>
 
       {/* MEGAMENU */}

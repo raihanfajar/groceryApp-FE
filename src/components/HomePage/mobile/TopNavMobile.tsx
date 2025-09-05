@@ -30,12 +30,14 @@ export default function TopNavMobile() {
             <FiSearch className="h-[35px]" />
           </button>
         </div>
-        <MdShoppingCart
-          size={20}
-          className="cursor-pointer"
-          // !TODO REMINDER
-          onClick={() => console.log("clicked")}
-        />
+        <Link href={"/cart"}>
+          <MdShoppingCart
+            size={20}
+            className="cursor-pointer"
+            // !TODO REMINDER
+            onClick={() => console.log("clicked")}
+          />
+        </Link>
         <MdOutlineMenu
           size={27}
           className="cursor-pointer"

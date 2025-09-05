@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { ProductCard } from "./ProductCard"; // child component yang dibuat
+import { ProductCard } from "./ProductCard";
 import { ProductProps } from "../typesAndInterfaces";
 
 export function ProductList({ items, name }: ProductProps) {

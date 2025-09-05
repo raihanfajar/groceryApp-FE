@@ -56,7 +56,9 @@ export default function BotNav() {
         </div>
         <h1>Brand (Bonus)</h1>
         <h1>Promo (Dev)</h1>
-        <MdShoppingCart size={24} />
+        <Link href={"/cart"}>
+          <MdShoppingCart size={24} />
+        </Link>
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />
         <Link href="/user-login">Login (Dev)</Link>
         <Link href="/user-register">Register (Dev)</Link>

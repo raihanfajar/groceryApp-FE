@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { PiTrashBold } from "react-icons/pi";
+// import { PiTrashBold } from "react-icons/pi";
 
 const CartRow = () => {
   return (

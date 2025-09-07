@@ -1,5 +1,5 @@
-import ClientQuestion from "@/components/clientQuestions/ClientQuestion";
-import Topics from "@/components/clientQuestions/Topics";
+import ClientQuestion from "@/components/faq/ClientQuestion";
+import Topics from "@/components/faq/Topics";
 import CustomBorder from "@/components/homePage/CustomBorder";
 
 const DynamicTopicPage = async ({

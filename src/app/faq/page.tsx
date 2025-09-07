@@ -1,4 +1,4 @@
-import Topics from "@/components/clientQuestions/Topics";
+import Topics from "@/components/faq/Topics";
 import React from "react";
 
 const Q = () => {

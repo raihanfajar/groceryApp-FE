@@ -1,11 +1,9 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { Inter } from "next/font/google";
 import ReactQueryProvider from "@/providers/ReactQueryProviders";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { Bounce, ToastContainer } from "react-toastify";
+import "./globals.css";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,22 +48,22 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${geistSans.variable} ${geistMono.variable}`}
       >
-        <Navbar />
-        <ReactQueryProvider>{children}</ReactQueryProvider>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-          transition={Bounce}
-        />
-        <Footer />
+        <LayoutWrapper>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+            transition={Bounce}
+          />
+        </LayoutWrapper>
       </body>
     </html>
   );

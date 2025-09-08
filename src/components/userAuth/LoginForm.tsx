@@ -1,12 +1,19 @@
 "use client";
 import { userRegisterSchema } from "@/validation/userVS";
 import { useFormik } from "formik";
-import { FaFacebookF, FaGithub, FaGoogle, FaSpinner, FaTwitter } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaGithub,
+  FaGoogle,
+  FaSpinner,
+  FaTwitter,
+} from "react-icons/fa";
 import { Button } from "../ui/button";
 import { FormField } from "./FormField";
 import { PasswordField } from "./PasswordField";
 import { LoginFormValues } from "./typesAndInterfaces";
 import { useUserLogin } from "@/hooks/userAuth/useUserLogin";
+import ForgotPasswordDialog from "./ForgotPasswordDialog";
 
 const UserLoginForm = () => {
   const { mutateAsync, isPending } = useUserLogin();
@@ -44,9 +51,14 @@ const UserLoginForm = () => {
           withPopover
         />
 
+        {/* Forgot Password */}
+        <div className="flex items-center justify-end">
+          <ForgotPasswordDialog />
+        </div>
+
         {/* Submit Button */}
         <Button
-          disabled={isPending}
+          disabled={isPending || !formik.isValid}
           type="submit"
           className="w-full rounded-md bg-green-700 font-semibold text-white hover:bg-black"
         >

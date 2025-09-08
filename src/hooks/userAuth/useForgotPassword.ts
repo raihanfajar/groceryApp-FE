@@ -1,18 +1,18 @@
-import { baseError, baseResponse, RegisterFormValues } from "@/components/userAuth/typesAndInterfaces";
+import { baseError, baseResponse } from "@/components/userAuth/typesAndInterfaces";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 
-export const useUserRegister = () => {
+export const useUserForgotPassword = () => {
     return useMutation({
-        mutationFn: async (body: Omit<RegisterFormValues, "confirmPassword">) => {
-            const { data } = await axiosInstance.post<baseResponse>("/user/register", body);
+        mutationFn: async (email: string) => {
+            const { data } = await axiosInstance.post<baseResponse>("/user/forgot-password", { email });
             return data;
         },
         onSuccess: (data: baseResponse) => {
+            console.log(data);
             toast.success(data.message);
-            toast.success(`Verification link sent to ${data.data?.email}`, { autoClose: false });
         },
         onError: (error: baseError) => {
             console.log(error);

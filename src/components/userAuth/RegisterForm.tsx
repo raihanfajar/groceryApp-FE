@@ -71,7 +71,7 @@ const UserRegisterForm = () => {
 
         {/* Submit Button */}
         <Button
-          disabled={isPending}
+          disabled={isPending || !formik.isValid}
           type="submit"
           className="w-full rounded-md bg-green-700 font-semibold text-white hover:bg-black"
         >

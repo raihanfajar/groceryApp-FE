@@ -1,8 +1,7 @@
 "use client";
-
-import { usePathname } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import { usePathname } from "next/navigation";
 
 export default function LayoutWrapper({
   children,
@@ -12,10 +11,10 @@ export default function LayoutWrapper({
   const pathname = usePathname();
 
   //! HIDE NAV PADA ROUTE DAN LANJUTAN-NYA
-  const hideLayoutNavOn = ["/verify-user-email"];
+  const hideLayoutNavOn = ["/verify-user-email", "/reset-password-user"];
 
   //! HIDE FOOTER PADA ROUTE DAN LANJUTAN-NYA
-  const hideLayoutFootOn = ["/verify-user-email"];
+  const hideLayoutFootOn = ["/verify-user-email", "/reset-password-user"];
 
   const shouldHideNav = hideLayoutNavOn.some((route) =>
     pathname.startsWith(route),

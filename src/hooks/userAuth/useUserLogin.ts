@@ -14,11 +14,10 @@ export const useUserLogin = () => {
             console.log(data);
             toast.success(data.message);
             // Set the token to global state
-
         },
         onError: (error: baseError) => {
             console.log(error);
-            toast.error(`${error.response.status}|${error.response.data.message}`);
+            toast.error(`${error.response.status} | ${error.response.data.message}`);
         }
     })
 }

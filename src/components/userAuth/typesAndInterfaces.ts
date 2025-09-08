@@ -33,6 +33,11 @@ export type LoginFormValues = {
     password: string;
 };
 
+export type ResetPasswordFormValues = {
+    newPassword: string;
+    confirmPassword: string;
+}
+
 export type FormFieldProps<T extends Record<string, string>> = {
     id: keyof T & string;
     label: string;

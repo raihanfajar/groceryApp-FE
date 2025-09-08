@@ -44,3 +44,17 @@ export const userLoginSchema = Yup.object({
         .trim()
         .required("Password is required"),
 });
+
+export const userResetPasswordSchema = Yup.object({
+    newPassword: Yup.string()
+        .trim()
+        .matches(
+            passwordRegex,
+            "Password must be at least 6 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        )
+        .required("Password is required"),
+
+    confirmPassword: Yup.string()
+        .oneOf([Yup.ref("newPassword")], "Passwords must match")
+        .required("Confirm Password is required"),
+})

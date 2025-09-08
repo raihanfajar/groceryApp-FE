@@ -7,7 +7,7 @@ export default function BotNavMobile() {
       <p className="flex items-center gap-0.5">
         <MdLocationOn />
         <span className="font-bold text-black">NO LOCATION</span>
-        <Link href={"#"} className="ml-1.5 cursor-pointer">
+        <Link href="/user-login" className="ml-1.5 cursor-pointer">
           Login to change location
         </Link>
       </p>

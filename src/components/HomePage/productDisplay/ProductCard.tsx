@@ -17,7 +17,7 @@ export function ProductCard({
   const displayedPrice = discount ? price * (1 - discount) : price;
 
   return (
-    <Card className="flex w-[180px] flex-col justify-between gap-3 rounded-xl px-0 py-1.5 shadow-md transition hover:shadow-lg">
+    <Card className="flex md:w-[180px] flex-col justify-between gap-3 rounded-xl px-0 py-1.5 shadow-md transition hover:shadow-lg">
       <div className="relative flex h-40 w-full items-center justify-center bg-white">
         <Image
           src={image}
@@ -53,7 +53,10 @@ export function ProductCard({
       </CardContent>
 
       <CardFooter className="p-3">
-        <Button variant="default" className="w-full bg-green-700 cursor-pointer">
+        <Button
+          variant="default"
+          className="w-full cursor-pointer bg-green-700"
+        >
           Buy
         </Button>
       </CardFooter>

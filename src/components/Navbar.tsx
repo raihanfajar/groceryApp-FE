@@ -1,5 +1,5 @@
-import BotNavDesktop from "./homePage/desktop/BotNav";
-import TopNavDesktop from "./homePage/desktop/TopNav";
+import BotNavDesktop from "./homePage/desktop/BotNavDesktop";
+import TopNavDesktop from "./homePage/desktop/TopNavDesktop";
 import BotNavMobile from "./homePage/mobile/BotNavMobile";
 import TopNavMobile from "./homePage/mobile/TopNavMobile";
 

@@ -1,13 +1,21 @@
 import { FormikProps } from "formik";
 
 // !HOOKS
-export interface baseResponse {
-    data?: {
-        email: string;
-        accessToken: string;
-    }
-    message: string;
+export interface baseUserResponse {
     status: string;
+    message: string;
+    data: {
+        id: string;
+        name: string;
+        email: string;
+        phoneNumber: string;
+        oauthProvider: string | null;
+        isVerified: boolean;
+        createdAt: string;
+        updatedAt: string;
+        deletedAt: string | null;
+        accessToken: string;
+    };
 };
 
 export interface baseError {

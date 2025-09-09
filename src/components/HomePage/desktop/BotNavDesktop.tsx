@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -9,8 +8,10 @@ import "simplebar-react/dist/simplebar.min.css";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
 import MegaMenu from "./MegaMenu";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 
-export default function BotNav() {
+export default function BotNavDesktop() {
+  const { name, clearAuth } = useUserAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -56,12 +57,24 @@ export default function BotNav() {
         </div>
         <h1>Brand (Bonus)</h1>
         <h1>Promo (Dev)</h1>
-        <Link href={"/cart"}>
-          <MdShoppingCart size={24} />
-        </Link>
+        {name && (
+          <Link href={"/cart"}>
+            <MdShoppingCart size={24} />
+          </Link>
+        )}
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />
-        <Link href="/user-login">Login (Dev)</Link>
-        <Link href="/user-register">Register (Dev)</Link>
+        {name ? (
+          <>
+            <Link href="/" onClick={() => clearAuth()}>
+              Logout
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link href="/user-login">Login (Dev)</Link>
+            <Link href="/user-register">Register (Dev)</Link>
+          </>
+        )}
       </div>
 
       {/* MEGAMENU */}

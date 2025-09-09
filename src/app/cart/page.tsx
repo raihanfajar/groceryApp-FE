@@ -1,5 +1,5 @@
 import React from "react";
-import EmptyCart from "./components/EmptyCart";
+// import EmptyCart from "./components/EmptyCart";
 import CartTable from "./components/CartTable";
 import CartSumary from "./features/CartSumary";
 

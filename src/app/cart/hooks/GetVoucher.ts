@@ -1,7 +1,10 @@
+import { ApiResponse } from "@/types/apiResponse";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { VoucherResponse } from "./types/voucherInterface";
+import { Voucher } from "./types/voucherInterface";
 
 export const getProductVoucher = async (code: string) => {
-    const res = await axiosInstance.get<VoucherResponse>(`/voucher/product?code=${code}`);
-    return res.data.data.voucher;
+  const res = await axiosInstance.get<ApiResponse<{ voucher: Voucher }>>(
+    `/voucher/product?code=${code}`,
+  );
+  return res.data.data.voucher;
 };

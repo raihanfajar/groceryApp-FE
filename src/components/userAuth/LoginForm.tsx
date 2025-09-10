@@ -3,11 +3,7 @@ import { useUserLogin } from "@/hooks/userAuth/useUserLogin";
 import { userLoginSchema } from "@/validation/userVS";
 import { useFormik } from "formik";
 import {
-  FaFacebookF,
-  FaGithub,
-  FaGoogle,
-  FaSpinner,
-  FaTwitter,
+  FaSpinner
 } from "react-icons/fa";
 import { Button } from "../ui/button";
 import ForgotPasswordDialog from "./ForgotPasswordDialog";
@@ -65,21 +61,7 @@ const UserLoginForm = () => {
           {isPending ? <FaSpinner className="animate-spin" /> : "Login"}
         </Button>
 
-        {/* Social Logins */}
-        <div className="mt-4 flex items-center justify-center gap-4">
-          <Button variant="outline" size="icon" className="hover:bg-gray-100">
-            <FaGoogle />
-          </Button>
-          <Button variant="outline" size="icon" className="hover:bg-gray-100">
-            <FaFacebookF />
-          </Button>
-          <Button variant="outline" size="icon" className="hover:bg-gray-100">
-            <FaTwitter />
-          </Button>
-          <Button variant="outline" size="icon" className="hover:bg-gray-100">
-            <FaGithub />
-          </Button>
-        </div>
+        
       </form>
     </>
   );

@@ -1,5 +1,6 @@
 "use client";
-import { userRegisterSchema } from "@/validation/userVS";
+import { useUserLogin } from "@/hooks/userAuth/useUserLogin";
+import { userLoginSchema } from "@/validation/userVS";
 import { useFormik } from "formik";
 import {
   FaFacebookF,
@@ -9,11 +10,10 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 import { Button } from "../ui/button";
+import ForgotPasswordDialog from "./ForgotPasswordDialog";
 import { FormField } from "./FormField";
 import { PasswordField } from "./PasswordField";
 import { LoginFormValues } from "./typesAndInterfaces";
-import { useUserLogin } from "@/hooks/userAuth/useUserLogin";
-import ForgotPasswordDialog from "./ForgotPasswordDialog";
 
 const UserLoginForm = () => {
   const { mutateAsync, isPending } = useUserLogin();
@@ -22,7 +22,7 @@ const UserLoginForm = () => {
       email: "",
       password: "",
     },
-    validationSchema: userRegisterSchema,
+    validationSchema: userLoginSchema,
     onSubmit: async (values) => {
       await mutateAsync({
         email: values.email,

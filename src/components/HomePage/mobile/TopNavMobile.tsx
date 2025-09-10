@@ -6,8 +6,10 @@ import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineMenu, MdShoppingCart } from "react-icons/md";
 import MenuDrawer from "./MenuDrawer";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 
 export default function TopNavMobile() {
+  const { name } = useUserAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
     <>
@@ -30,14 +32,16 @@ export default function TopNavMobile() {
             <FiSearch className="h-[35px]" />
           </button>
         </div>
-        <Link href={"/cart"}>
-          <MdShoppingCart
-            size={20}
-            className="cursor-pointer"
-            // !TODO REMINDER
-            onClick={() => console.log("clicked")}
-          />
-        </Link>
+        {name && (
+          <Link href={"/cart"}>
+            <MdShoppingCart
+              size={20}
+              className="cursor-pointer"
+              // !TODO REMINDER
+              onClick={() => console.log("clicked")}
+            />
+          </Link>
+        )}
         <MdOutlineMenu
           size={27}
           className="cursor-pointer"

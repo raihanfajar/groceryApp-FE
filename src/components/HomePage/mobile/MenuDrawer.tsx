@@ -5,6 +5,7 @@ import { MdOutlineClose } from "react-icons/md";
 import CustomBorder from "../CustomBorder";
 import { menuSections } from "../mapData";
 import * as MdIcons from "react-icons/md";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 
 export default function MenuDrawer({
   isOpen,
@@ -13,6 +14,8 @@ export default function MenuDrawer({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { name, clearAuth } = useUserAuthStore();
+
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "unset";
@@ -38,16 +41,39 @@ export default function MenuDrawer({
         <div className="space-y-6 px-4 py-4 text-base">
           {/* Buttons Pake Button biasa karena kalo pake button shadcn ada bug, buang" waktu nyari solusi-nya */}
           <div className="flex gap-3 font-bold">
-            <Link onClick={onClose} href="/user-login" className="w-full">
-              <button className="w-full cursor-pointer rounded-md bg-green-700 py-2 text-white hover:bg-black">
-                Login (dev)
-              </button>
-            </Link>
-              <Link onClick={onClose} href="/user-register" className="w-full">
-            <button className="w-full cursor-pointer rounded-md border border-green-700 py-2 text-black hover:bg-black hover:text-white">
-              Register (dev)
-            </button>
-              </Link>
+            {name ? (
+              <>
+                <Link
+                  onClick={() => {
+                    clearAuth();
+                    onClose();
+                  }}
+                  href="/"
+                  className="w-full"
+                >
+                  <button className="w-full cursor-pointer rounded-md bg-green-700 py-2 text-white hover:bg-black">
+                    Logout
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link onClick={onClose} href="/user-login" className="w-full">
+                  <button className="w-full cursor-pointer rounded-md bg-green-700 py-2 text-white hover:bg-black">
+                    Login (dev)
+                  </button>
+                </Link>
+                <Link
+                  onClick={onClose}
+                  href="/user-register"
+                  className="w-full"
+                >
+                  <button className="w-full cursor-pointer rounded-md border border-green-700 py-2 text-black hover:bg-black hover:text-white">
+                    Register (dev)
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Sections */}

@@ -1,4 +1,4 @@
-import { baseError, baseResponse } from "@/components/userAuth/typesAndInterfaces";
+import { baseError, baseUserResponse } from "@/components/userAuth/typesAndInterfaces";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 export const useResetPassword = () => {
     return useMutation({
         mutationFn: async ({ token, newPassword }: { token: string; newPassword: string }) => {
-            const { data } = await axiosInstance.post<baseResponse>(
+            const { data } = await axiosInstance.post<baseUserResponse>(
                 "/user/reset-password",
                 { newPassword },
                 {
@@ -15,7 +15,7 @@ export const useResetPassword = () => {
             );
             return data;
         },
-        onSuccess: (data: baseResponse) => {
+        onSuccess: (data: baseUserResponse) => {
             console.log(data);
             toast.success(data.message);
         },

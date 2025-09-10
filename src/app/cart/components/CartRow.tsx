@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-// import { PiTrashBold } from "react-icons/pi";
 
 const CartRow = () => {
+
   return (
     <>
       {/* Desktop View (tampil di layar md ke atas) */}

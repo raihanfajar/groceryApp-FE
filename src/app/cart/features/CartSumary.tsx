@@ -2,11 +2,10 @@
 
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { getProductVoucher } from "../hooks/GetVoucher";
 import { useDebounce } from "@/hooks/useDebounce";
+import { getProductVoucher } from "@/hooks/voucher/getVoucher";
 
 function CartSumary() {
-  const [total, setTotal] = useState(0);
   const [voucherCode, setVoucherCode] = useState("");
 
   const debouncedCode = useDebounce(voucherCode, 500);

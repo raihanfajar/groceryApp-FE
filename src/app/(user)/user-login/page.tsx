@@ -1,4 +1,5 @@
 import UserLoginForm from "@/components/userAuth/LoginForm";
+import SocialLogin from "@/components/userAuth/SocialLogin";
 import Link from "next/link";
 
 const UserLoginPage = () => {
@@ -23,6 +24,7 @@ const UserLoginPage = () => {
           </Link>
         </p>
         <UserLoginForm />
+        <SocialLogin />
       </div>
     </div>
   );

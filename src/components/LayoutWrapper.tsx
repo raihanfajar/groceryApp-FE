@@ -11,10 +11,18 @@ export default function LayoutWrapper({
   const pathname = usePathname();
 
   //! HIDE NAV PADA ROUTE DAN LANJUTAN-NYA
-  const hideLayoutNavOn = ["/verify-user-email", "/reset-password-user"];
+  const hideLayoutNavOn = [
+    "/verify-user-email",
+    "/reset-password-user",
+    "/login-success",
+  ];
 
   //! HIDE FOOTER PADA ROUTE DAN LANJUTAN-NYA
-  const hideLayoutFootOn = ["/verify-user-email", "/reset-password-user"];
+  const hideLayoutFootOn = [
+    "/verify-user-email",
+    "/reset-password-user",
+    "/login-success",
+  ];
 
   const shouldHideNav = hideLayoutNavOn.some((route) =>
     pathname.startsWith(route),

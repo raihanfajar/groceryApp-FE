@@ -4,6 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 @plugin "daisyui";
 
+/* TESTING LEAFLET */
+@import "leaflet/dist/leaflet.css";
+
 /* html,
 body {
   max-width: 100vw;
@@ -32,19 +35,19 @@ body {
 
 
 /* Font color class */
-.text-primary{
+.text-primary {
   color: #0F172A;
 }
 
-.text-secondary{
+.text-secondary {
   color: #475569;
 }
 
-.text-accent-1{
+.text-accent-1 {
   color: #1E40AF;
 }
 
-.text-accent-2{
+.text-accent-2 {
   color: #B45309;
 }
 

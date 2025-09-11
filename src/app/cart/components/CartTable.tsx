@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import CartRow from "./CartRow";
 import { useUpdateCartQuantity, useUserCart } from "@/hooks/cart/getUserCart";
 import { CartItemWithPromo } from "@/types/cart/getUserCart";
-import EmptyCart from "./EmptyCart";
+import { useState } from "react";
+import CartRow from "./CartRow";
 import ConfirmationModal from "./ConfirmationModel";
-import CartSummary from "../features/CartSumary";
+import EmptyCart from "./EmptyCart";
 
 const CartTable = () => {
   const { data: cart, isLoading, isError } = useUserCart();

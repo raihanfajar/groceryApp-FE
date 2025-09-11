@@ -8,6 +8,7 @@ import {
 } from "@/types/cart/getUserCart";
 import { ApiResponse } from "@/types/apiResponse";
 import { toast } from "react-toastify";
+import { baseError } from "@/components/userAuth/typesAndInterfaces";
 
 export const CART_QUERY_KEY = ["userCart"];
 
@@ -50,7 +51,7 @@ export function useUpdateCartQuantity() {
 
   return useMutation<
     CartItemWithPromo | null,
-    Error,
+    baseError,
     UpdateQuantityPayload,
     MutationContext
   >({
@@ -66,7 +67,7 @@ export function useUpdateCartQuantity() {
       if (previousCart) {
         let updatedItems = previousCart.items.map((item) =>
           item.productId === newItem.productId &&
-          item.storeId === newItem.storeId
+            item.storeId === newItem.storeId
             ? { ...item, quantity: newItem.quantity }
             : item,
         );
@@ -84,14 +85,14 @@ export function useUpdateCartQuantity() {
     },
 
     // Rollback kalau gagal
-    onError: (err: any, _vars, context) => {
+    onError: (err: baseError, _vars, context) => {
       // Kembalikan UI ke kondisi semula (rollback)
       if (context?.previousCart) {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
 
       // Ambil pesan error dari respons backend
-      const errorMessage = err?.response?.data?.message || "Terjadi kesalahan";
+      const errorMessage = err?.response?.data?.message || "Something went wrong";
 
       // Tampilkan notifikasi toast error
       toast.error(errorMessage);

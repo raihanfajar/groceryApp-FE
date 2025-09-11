@@ -38,7 +38,8 @@ const ConfirmationModal = ({
             <h3 className="text-lg font-bold">Delete Item</h3>
             <p>
               Are you sure you want to delete{" "}
-              <span className="font-semibold">"{itemName}"</span> from cart ?
+              <span className="font-semibold">&quot;{itemName}&quot;</span> from
+              cart ?
             </p>
             <div className="flex justify-end gap-3">
               <button onClick={onCancel} className="btn btn-ghost">

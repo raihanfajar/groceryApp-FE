@@ -22,7 +22,7 @@ function CartSummary() {
     enabled: !!debouncedCode,
   });
 
-  const { data: cart, isLoading } = useUserCart();
+  const { data: cart } = useUserCart();
 
   const subtotal =
     cart?.items.reduce(

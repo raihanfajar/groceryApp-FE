@@ -5,10 +5,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineMenu, MdShoppingCart } from "react-icons/md";
-import MenuDrawer from "./MenuDrawer";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import MenuDrawer from "./MenuDrawer";
 
-export default function TopNavMobile() {
+type cartCountProps = {
+  cartCount: number;
+};
+
+export default function TopNavMobile({ cartCount }: cartCountProps) {
   const { name } = useUserAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
@@ -33,13 +37,13 @@ export default function TopNavMobile() {
           </button>
         </div>
         {name && (
-          <Link href={"/cart"}>
-            <MdShoppingCart
-              size={20}
-              className="cursor-pointer"
-              // !TODO REMINDER
-              onClick={() => console.log("clicked")}
-            />
+          <Link href={"/cart"} className="relative">
+            <MdShoppingCart size={20} className="cursor-pointer" />
+            {cartCount > 0 && (
+              <div className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {cartCount}
+              </div>
+            )}
           </Link>
         )}
         <MdOutlineMenu

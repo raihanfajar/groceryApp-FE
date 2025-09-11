@@ -7,10 +7,14 @@ import { MdOutlineGridView, MdShoppingCart } from "react-icons/md";
 import "simplebar-react/dist/simplebar.min.css";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
-import MegaMenu from "./MegaMenu";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import MegaMenu from "./MegaMenu";
 
-export default function BotNavDesktop() {
+type cartCountProps = {
+  cartCount: number;
+};
+
+export default function BotNavDesktop({ cartCount }: cartCountProps) {
   const { name, clearAuth } = useUserAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -58,8 +62,13 @@ export default function BotNavDesktop() {
         <h1>Brand (Bonus)</h1>
         <h1>Promo (Dev)</h1>
         {name && (
-          <Link href={"/cart"}>
+          <Link href={"/cart"} className="relative">
             <MdShoppingCart size={24} />
+            {cartCount > 0 && (
+              <div className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {cartCount}
+              </div>
+            )}
           </Link>
         )}
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />

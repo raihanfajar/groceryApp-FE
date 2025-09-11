@@ -4,8 +4,8 @@ import {
   MdOutlineDiversity3,
   MdOutlineSupportAgent,
 } from "react-icons/md";
-import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 
 export default function TopNavDesktop() {
   const { email } = useUserAuthStore();

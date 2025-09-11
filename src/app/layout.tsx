@@ -23,7 +23,9 @@ const inter = Inter({
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000");
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -41,7 +43,8 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "FreshNear",
     title: "FreshNear",
-    description: "FreshNear makes grocery shopping easy with automatic nearest-store detection.",
+    description:
+      "FreshNear makes grocery shopping easy with automatic nearest-store detection.",
     images: [
       {
         url: "/mainLogo/FreshNearLogoSmall.png", // akan jadi absolut karena ada metadataBase
@@ -54,12 +57,12 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "FreshNear",
-    description: "FreshNear makes grocery shopping easy with automatic nearest-store detection.",
+    description:
+      "FreshNear makes grocery shopping easy with automatic nearest-store detection.",
     images: ["/mainLogo/FreshNearLogoSmall.png"],
   },
   alternates: { canonical: "/" },
 };
-
 
 export default function RootLayout({
   children,
@@ -71,22 +74,24 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${geistSans.variable} ${geistMono.variable}`}
       >
-        <LayoutWrapper>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition={Bounce}
-          />
-        </LayoutWrapper>
+        <ReactQueryProvider>
+          <LayoutWrapper>
+            {children}
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+              transition={Bounce}
+            />
+          </LayoutWrapper>
+        </ReactQueryProvider>
       </body>
     </html>
   );

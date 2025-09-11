@@ -1,57 +1,55 @@
-export type CartResponse = {
-  id: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt?: string | null;
+export type DiscountType = "MANUAL" | "MINIMUM_PURCHASE" | "BOGO" | "AUTOMATIC";
+export type DiscountValueType = "PERCENTAGE" | "NOMINAL";
 
-  items: CartProductResponse[];
+// Tipe untuk 'Product'
+export type Product = {
+  id: string;
+  name: string;
+  price: number;
+  picture1: string;
 };
 
-export type CartProductResponse = {
+// Tipe untuk informasi diskon yang diaplikasikan
+export type AppliedDiscount = {
   id: string;
-  cartId: string;
+  name: string;
+  type: DiscountType;
+  valueType: DiscountValueType;
+  value: number;
+  maxDiscountAmount: number | null;
+};
+
+// Tipe untuk informasi promo BOGO
+export type BogoInfo = {
+  buyQuantity: number;
+  getQuantity: number;
+  applyToSameProduct: boolean;
+  maxBogoSets: number | null;
+};
+
+// Tipe untuk item di keranjang (output dari service getUserCart)
+export type CartItemWithPromo = {
+  id: string; // id dari CartProduct
   productId: string;
   storeId: string;
   quantity: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt?: string | null;
-
-  product: ProductResponse;
+  product: Product; // Objek produk lengkap
+  activePrice: number; // Harga final per item setelah diskon
+  discountAmount: number; // Jumlah potongan harga per item
+  appliedDiscount: AppliedDiscount | null;
+  bogo: BogoInfo | null;
 };
 
-export type PromoProductResponse = {
+// Tipe untuk keseluruhan objek keranjang
+export type Cart = {
   id: string;
+  userId: string;
+  items: CartItemWithPromo[];
+};
+
+// Tipe untuk payload saat update kuantitas
+export type UpdateQuantityPayload = {
   storeId: string;
   productId: string;
-  discountPercentage: number;
-  discountNominal: number;
-  picture?: string | null;
-  startDate: string;
-  expiryDate: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt?: string | null;
-};
-
-export type ProductResponse = {
-  id: string;
-  name: string;
-  description: string;
-  slug: string;
-  price: number;
-  zIndex?: number | null;
-  picture1: string;
-  picture2?: string | null;
-  picture3?: string | null;
-  picture4?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt?: string | null;
-  categoryId: string;
-  isActive: boolean;
-  weight?: number | null;
-
-  promos: PromoProductResponse[];
+  quantity: number;
 };

@@ -31,3 +31,9 @@ export interface baseGeoResponse {
     message: string;
     data: GeoInfo;
 }
+
+export interface baseForwardGeoResponse {
+    status: string;
+    message: string;
+    data: GeoInfo[];
+}

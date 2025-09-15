@@ -1,15 +1,14 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import { useReverseGeocode } from "@/hooks/geocoding/useReverseGeoCode";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { useEffect, useRef, useState } from "react";
-
-// 👇 Fix marker icons
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-import { useReverseGeocode } from "@/hooks/rgc/useReverseGeoCode";
-import { Input } from "@/components/ui/input";
+import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import { useForwardGeocode } from "@/hooks/geocoding/useForwardGeoCode";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -22,20 +21,54 @@ export default function MapLeaflet() {
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
 
+  const [search, setSearch] = useState("");
+
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
     null,
   );
-  // const [address, setAddress] = useState<string | null>(null);
 
   const [ready, setReady] = useState(false);
 
-  // !HOOK
+  // !HOOKS
   const {
     data: geoInfo,
     isPending,
     isError,
   } = useReverseGeocode(position?.lat ?? null, position?.lng ?? null);
+  const { data: suggestions } = useForwardGeocode(search, 5);
 
+  // !HANDLERS (REFACTOR?)
+  const handleSelectSuggestion = (
+    lat: string,
+    lon: string,
+    // display_name: string,
+  ) => {
+    const latNum = parseFloat(lat);
+    const lonNum = parseFloat(lon);
+    // console.log(display_name);
+
+    // Move map
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.setView([latNum, lonNum], 15);
+    }
+
+    // Remove old marker if exists
+    if (markerRef.current) {
+      mapInstanceRef.current?.removeLayer(markerRef.current);
+    }
+
+    // Add new marker
+    markerRef.current = L.marker([latNum, lonNum]).addTo(
+      mapInstanceRef.current!,
+    );
+
+    setPosition({ lat: latNum, lng: lonNum });
+
+    // Optionally clear search after selecting
+    setSearch("");
+  };
+
+  // !USE EFFECT STUFFS (REFACTOR?)
   useEffect(() => {
     const timeout = setTimeout(() => setReady(true), 100);
     return () => clearTimeout(timeout);
@@ -73,15 +106,34 @@ export default function MapLeaflet() {
   return (
     <div className="flex w-full flex-col items-center">
       {/* Search Input */}
-      <div className="mr-auto mb-4 flex w-[40%]">
-        <Input
-          type="search"
-          placeholder="Search for location..."
-          className="!text-md h-[32px] rounded-r-none border border-r-0 border-gray-300 bg-white font-mono text-black focus-visible:border-green-500 focus-visible:ring-0 focus-visible:ring-offset-0"
-        />
-        <button className="flex items-center justify-center rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700">
-          <FiSearch className="h-[32px]" />
-        </button>
+      <div className="relative mr-auto mb-4 flex w-[40%] flex-col">
+        <div className="flex">
+          <Input
+            type="search"
+            placeholder="Search for location..."
+            className="!text-md h-[32px] rounded-r-none border border-r-0 border-gray-300 bg-white font-mono text-black focus-visible:border-green-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button className="flex items-center justify-center rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700">
+            <FiSearch className="h-[32px]" />
+          </button>
+        </div>
+
+        {/* Suggestions dropdown */}
+        {search && suggestions && suggestions.length > 0 && (
+          <ul className="absolute top-[34px] z-20 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow">
+            {suggestions.map((s) => (
+              <li
+                key={s.place_id}
+                className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+                onClick={() => handleSelectSuggestion(s.lat, s.lon)}
+              >
+                {s.display_name}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Map */}

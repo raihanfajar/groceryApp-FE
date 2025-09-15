@@ -23,6 +23,12 @@ export default function TopNavDesktop() {
         )}
       </p>
       <div className="ml-auto flex gap-6 underline">
+        <Link
+          href="/admin-login"
+          className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+        >
+          🛡️ Admin Login
+        </Link>
         <div className="flex items-center gap-1">
           <MdOutlineSupportAgent size={20} />
           <CustomerServiceDropDown />

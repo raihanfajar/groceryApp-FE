@@ -1,11 +1,12 @@
 import { useUserAuthStore } from "@/store/useUserAuthStore";
-import BotNavDesktop from "./homePage/desktop/BotNavDesktop";
-import TopNavDesktop from "./homePage/desktop/TopNavDesktop";
-import BotNavMobile from "./homePage/mobile/BotNavMobile";
-import TopNavMobile from "./homePage/mobile/TopNavMobile";
+
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { CART_QUERY_KEY } from "@/hooks/cart/getUserCart";
+import TopNavDesktop from "./HomePage/desktop/TopNavDesktop";
+import BotNavDesktop from "./HomePage/desktop/BotNavDesktop";
+import TopNavMobile from "./HomePage/mobile/TopNavMobile";
+import BotNavMobile from "./HomePage/mobile/BotNavMobile";
 
 type CartCountResponse = {
   message: string;

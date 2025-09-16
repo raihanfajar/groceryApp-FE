@@ -1,3 +1,6 @@
+// --- Tipe Data Keranjang ---
+
+// Enum dari Prisma (opsional, tapi bagus untuk konsistensi)
 export type DiscountType = "MANUAL" | "MINIMUM_PURCHASE" | "BOGO" | "AUTOMATIC";
 export type DiscountValueType = "PERCENTAGE" | "NOMINAL";
 
@@ -27,6 +30,12 @@ export type BogoInfo = {
   maxBogoSets: number | null;
 };
 
+// TIPE BARU: Definisikan bentuk objek 'availability'
+export type Availability = {
+  status: "AVAILABLE" | "OUT_OF_STOCK";
+  currentStock: number;
+};
+
 // Tipe untuk item di keranjang (output dari service getUserCart)
 export type CartItemWithPromo = {
   id: string; // id dari CartProduct
@@ -38,6 +47,7 @@ export type CartItemWithPromo = {
   discountAmount: number; // Jumlah potongan harga per item
   appliedDiscount: AppliedDiscount | null;
   bogo: BogoInfo | null;
+  availability: Availability; // PERBAIKAN: Tambahkan properti ini
 };
 
 // Tipe untuk keseluruhan objek keranjang

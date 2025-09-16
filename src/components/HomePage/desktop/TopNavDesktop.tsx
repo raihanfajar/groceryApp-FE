@@ -5,10 +5,23 @@ import {
   MdOutlineSupportAgent,
 } from "react-icons/md";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 
 export default function TopNavDesktop() {
   const { email } = useUserAuthStore();
+  const {
+    admin,
+    logout: adminLogout,
+    isAuthenticated: isAdminAuthenticated,
+  } = useAdminAuthStore();
+
+  const handleAdminLogout = () => {
+    adminLogout();
+    // Optionally redirect to home page or show a success message
+    window.location.href = "/";
+  };
+
   return (
     <div className="flex h-8 items-center border-b-1 border-black bg-[#d8d8d8] px-24">
       <p className="flex items-center gap-0.5">
@@ -23,12 +36,21 @@ export default function TopNavDesktop() {
         )}
       </p>
       <div className="ml-auto flex gap-6 underline">
-        <Link
-          href="/admin-login"
-          className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-        >
-          🛡️ Admin Login
-        </Link>
+        {isAdminAuthenticated() ? (
+          <button
+            onClick={handleAdminLogout}
+            className="flex cursor-pointer items-center gap-1 text-sm text-red-600 hover:text-red-800"
+          >
+            🛡️ Admin Logout {admin?.name && `(${admin.name})`}
+          </button>
+        ) : (
+          <Link
+            href="/admin-login"
+            className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+          >
+            🛡️ Admin Login
+          </Link>
+        )}
         <div className="flex items-center gap-1">
           <MdOutlineSupportAgent size={20} />
           <CustomerServiceDropDown />

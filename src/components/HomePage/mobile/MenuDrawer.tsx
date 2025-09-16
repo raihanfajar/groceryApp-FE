@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import * as MdIcons from "react-icons/md";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { menuSections } from "../mapData";
 import CustomBorder from "../CustomBorder";
 
@@ -15,11 +16,23 @@ export default function MenuDrawer({
   onClose: () => void;
 }) {
   const { name, clearAuth } = useUserAuthStore();
+  const {
+    admin,
+    logout: adminLogout,
+    isAuthenticated: isAdminAuthenticated,
+  } = useAdminAuthStore();
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "unset";
   }, [isOpen]);
+
+  const handleAdminLogout = () => {
+    adminLogout();
+    onClose();
+    // Optionally redirect to home page
+    window.location.href = "/";
+  };
 
   if (!isOpen) return null;
 
@@ -39,7 +52,7 @@ export default function MenuDrawer({
 
         {/* Content */}
         <div className="space-y-6 px-4 py-4 text-base">
-          {/* Buttons Pake Button biasa karena kalo pake button shadcn ada bug, buang" waktu nyari solusi-nya */}
+          {/* User Login/Logout Buttons */}
           <div className="flex gap-3 font-bold">
             {name ? (
               <>
@@ -75,6 +88,26 @@ export default function MenuDrawer({
               </>
             )}
           </div>
+
+          {/* Admin Login/Logout Section */}
+          <div className="flex justify-center">
+            {isAdminAuthenticated() ? (
+              <button
+                onClick={handleAdminLogout}
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-red-600 py-2 text-white hover:bg-red-700"
+              >
+                🛡️ Admin Logout {admin?.name && `(${admin.name})`}
+              </button>
+            ) : (
+              <Link onClick={onClose} href="/admin-login" className="w-full">
+                <button className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700">
+                  🛡️ Admin Login
+                </button>
+              </Link>
+            )}
+          </div>
+
+          <CustomBorder />
 
           {/* Sections */}
           <div className="space-y-6">

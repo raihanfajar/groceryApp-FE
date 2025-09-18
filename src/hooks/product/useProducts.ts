@@ -26,6 +26,7 @@ const buildQueryString = (filters: ProductFilters): string => {
 
   if (filters.search) params.append("search", filters.search);
   if (filters.categoryId) params.append("categoryId", filters.categoryId);
+  if (filters.categorySlug) params.append("categorySlug", filters.categorySlug);
   if (filters.storeId) params.append("storeId", filters.storeId);
   if (filters.minPrice !== undefined)
     params.append("minPrice", filters.minPrice.toString());

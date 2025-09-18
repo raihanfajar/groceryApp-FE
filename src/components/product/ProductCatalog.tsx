@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { Search } from "lucide-react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { Search, ChevronRight, Home } from "lucide-react";
+import Link from "next/link";
 import { ProductSearch } from "@/components/product/ProductSearch";
 import { ProductFiltersComponent } from "@/components/product/ProductFilters";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Pagination } from "@/components/product/Pagination";
-import { useProducts } from "@/hooks/product/useProducts";
+import { useProducts, useCategories } from "@/hooks/product/useProducts";
 import { ProductFilters, Product } from "@/types/product/productTypes";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,8 +44,37 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
-  // Fetch products
+  // Update filters when initialFilters change (e.g., URL navigation)
+  useEffect(() => {
+    setFilters({
+      page: 1,
+      limit: 12,
+      ...initialFilters,
+    });
+  }, [initialFilters]);
+
+  // Fetch products and categories
   const { data, isLoading, error } = useProducts(filters);
+  const { data: categoriesData } = useCategories();
+
+  // Get current category info
+  const currentCategory = useMemo(() => {
+    if (!categoriesData?.data?.categories) return null;
+
+    if (filters.categoryId) {
+      return categoriesData.data.categories.find(
+        (cat) => cat.id === filters.categoryId,
+      );
+    }
+
+    if (filters.categorySlug) {
+      return categoriesData.data.categories.find(
+        (cat) => cat.slug === filters.categorySlug,
+      );
+    }
+
+    return null;
+  }, [filters.categoryId, filters.categorySlug, categoriesData]);
 
   // Handlers
   const handleFiltersChange = useCallback((newFilters: ProductFilters) => {
@@ -88,10 +118,6 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     limit: 12,
   };
 
-  // Helper computed values
-  const hasNextPage = pagination.page < pagination.totalPages;
-  const hasPrevPage = pagination.page > 1;
-
   // Count active filters for mobile badge
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -109,12 +135,43 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       {/* Header with Search */}
       {showSearch && (
         <div className="mb-8">
+          {/* Breadcrumb */}
+          <nav className="mb-4 flex items-center space-x-2 text-sm text-gray-600">
+            <Link href="/" className="flex items-center hover:text-green-600">
+              <Home className="mr-1 h-4 w-4" />
+              Home
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link href="/products" className="hover:text-green-600">
+              Products
+            </Link>
+            {currentCategory && (
+              <>
+                <ChevronRight className="h-4 w-4" />
+                <span className="font-medium text-green-600">
+                  {currentCategory.name}
+                </span>
+              </>
+            )}
+          </nav>
+
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Products</h1>
+              <h1 className="text-3xl font-bold">
+                {currentCategory ? currentCategory.name : "Products"}
+              </h1>
               <p className="text-muted-foreground">
-                Discover our wide range of grocery products
+                {currentCategory
+                  ? `Browse ${currentCategory.name.toLowerCase()} products`
+                  : filters.search
+                    ? `Search results for "${filters.search}"`
+                    : "Discover our wide range of grocery products"}
               </p>
+              {currentCategory && (
+                <Badge variant="secondary" className="mt-2">
+                  {products.length} products available
+                </Badge>
+              )}
             </div>
             <div className="w-full max-w-md">
               <ProductSearch

@@ -2,6 +2,7 @@
 export interface ProductCategory {
   id: string;
   name: string;
+  slug: string;
   description?: string;
   isActive: boolean;
 }
@@ -71,6 +72,7 @@ export interface CategoriesResponse {
 export interface ProductFilters {
   search?: string;
   categoryId?: string;
+  categorySlug?: string;
   storeId?: string;
   minPrice?: number;
   maxPrice?: number;

@@ -6,20 +6,42 @@ import {
 } from "react-icons/md";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
+import { useLocationStore } from "@/store/useLocationStore";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function TopNavDesktop() {
   const { email } = useUserAuthStore();
+  const { displayName } = useLocationStore();
+  const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
+
   return (
     <div className="flex h-8 items-center border-b-1 border-black bg-[#d8d8d8] px-24">
       <p className="flex items-center gap-0.5">
         <MdLocationOn />
-        <span className="font-bold text-black">NO LOCATION</span>
+        {/* LOCATION DISPLAY */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="font-bold text-black">
+              {displayName ? purified : "NO LOCATION"}
+            </span>
+          </TooltipTrigger>
+          {displayName && (
+            <TooltipContent>
+              <p>{displayName}</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+        {/* EMAIL DISPLAY */}
         {email ? (
           <span className="ml-1.5">[{email}]</span>
         ) : (
-          <Link href="/user-login" className="ml-1.5 cursor-pointer">
-            Login to change location (Dev)
-          </Link>
+          <span className="ml-1.5 cursor-pointer">
+            {!displayName && "Please allow location access"}
+          </span>
         )}
       </p>
       <div className="ml-auto flex gap-6 underline">

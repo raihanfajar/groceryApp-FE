@@ -23,6 +23,8 @@ export interface GeoInfo {
         postcode?: string;
         country?: string;
         country_code?: string;
+        regency?: string;
+        village?: string;
     };
     boundingbox: string[];
 }

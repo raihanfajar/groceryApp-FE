@@ -1,5 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { useForwardGeocode } from "@/hooks/geocoding/useForwardGeoCode";
 import { useReverseGeocode } from "@/hooks/geocoding/useReverseGeoCode";
 import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -8,7 +9,6 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { useForwardGeocode } from "@/hooks/geocoding/useForwardGeoCode";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -38,14 +38,9 @@ export default function MapLeaflet() {
   const { data: suggestions } = useForwardGeocode(search, 5);
 
   // !HANDLERS (REFACTOR?)
-  const handleSelectSuggestion = (
-    lat: string,
-    lon: string,
-    // display_name: string,
-  ) => {
+  const handleSelectSuggestion = (lat: string, lon: string) => {
     const latNum = parseFloat(lat);
     const lonNum = parseFloat(lon);
-    // console.log(display_name);
 
     // Move map
     if (mapInstanceRef.current) {
@@ -66,6 +61,14 @@ export default function MapLeaflet() {
 
     // Optionally clear search after selecting
     setSearch("");
+  };
+
+  // inside MapLeaflet.tsx
+  const handleSearchClick = () => {
+    if (suggestions && suggestions.length > 0) {
+      const first = suggestions[0];
+      handleSelectSuggestion(first.lat, first.lon);
+    }
   };
 
   // !USE EFFECT STUFFS (REFACTOR?)
@@ -115,7 +118,10 @@ export default function MapLeaflet() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="flex items-center justify-center rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700">
+          <button
+            onClick={() => handleSearchClick()} // !ASK CHATGPT HOW TO HANDLE THIS? THIS IS JUST LIKE REGULAR SEARCHING NOT WITH SUGGESTION
+            className="flex items-center justify-center rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700"
+          >
             <FiSearch className="h-[32px]" />
           </button>
         </div>

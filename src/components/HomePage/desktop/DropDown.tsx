@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 import Link from "next/link";
 
 export const CustomerServiceDropDown = () => {
@@ -58,6 +59,59 @@ export const DiscoverDropDown = () => {
           </Link>
           <Link href={"/privacy"}>
             <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+export const ProfileDropDown = () => {
+  return (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        {/* a circle icon for profile picture */}
+        <Image
+          src="/profile.png"
+          alt="profile"
+          width={40}
+          height={40}
+          className="cursor-pointer rounded-full border border-black"
+        ></Image>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="z-[99] w-fit border-black shadow-md p-0 shadow-gray-400">
+        <DropdownMenuLabel className="bg-green-400">
+          Transactions
+        </DropdownMenuLabel>
+        <DropdownMenuGroup className="p-1">
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Created</DropdownMenuItem>
+          </Link>
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Waiting for Payment</DropdownMenuItem>
+          </Link>
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Processed</DropdownMenuItem>
+          </Link>
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Sent</DropdownMenuItem>
+          </Link>
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Done</DropdownMenuItem>
+          </Link>
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Cancelled</DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
+        <DropdownMenuLabel className="bg-green-400">
+          My Account
+        </DropdownMenuLabel>
+        <DropdownMenuGroup className="p-1">
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+          </Link>
+          <Link href={"/user-profile/settings"}>
+            <DropdownMenuItem>Addresses</DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
       </DropdownMenuContent>

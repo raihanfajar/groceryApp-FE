@@ -1,9 +1,10 @@
+import LayoutWrapper from "@/components/LayoutWrapper";
 import ReactQueryProvider from "@/providers/ReactQueryProviders";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { Bounce, ToastContainer } from "react-toastify";
 import "./globals.css";
-import LayoutWrapper from "@/components/LayoutWrapper";
+import LocationManager from "@/components/LocationManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -76,6 +77,7 @@ export default function RootLayout({
       >
         <ReactQueryProvider>
           <LayoutWrapper>
+            <LocationManager />
             {children}
             <ToastContainer
               position="top-right"

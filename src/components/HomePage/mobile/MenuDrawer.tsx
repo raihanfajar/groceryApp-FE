@@ -3,9 +3,12 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import * as MdIcons from "react-icons/md";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
-import { menuSections } from "../mapData";
-import CustomBorder from "../CustomBorder";
+import {
+  useHydratedUserAuth,
+  useHydratedAdminAuth,
+} from "@/hooks/useHydratedAuth";
+import { menuSections } from "@/components/HomePage/mapData";
+import CustomBorder from "@/components/HomePage/CustomBorder";
 
 export default function MenuDrawer({
   isOpen,
@@ -14,7 +17,9 @@ export default function MenuDrawer({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const { name, clearAuth } = useUserAuthStore();
+  const { name, clearAuth } = useHydratedUserAuth();
+  const { isAuthenticated: isAdminAuthenticated, isHydrated } =
+    useHydratedAdminAuth();
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
@@ -39,7 +44,7 @@ export default function MenuDrawer({
 
         {/* Content */}
         <div className="space-y-6 px-4 py-4 text-base">
-          {/* Buttons Pake Button biasa karena kalo pake button shadcn ada bug, buang" waktu nyari solusi-nya */}
+          {/* User Login/Logout Buttons */}
           <div className="flex gap-3 font-bold">
             {name ? (
               <>
@@ -75,6 +80,23 @@ export default function MenuDrawer({
               </>
             )}
           </div>
+
+          {/* Admin Dashboard Section */}
+          {isHydrated && isAdminAuthenticated() && (
+            <div className="flex justify-center">
+              <Link
+                onClick={onClose}
+                href="/admin/dashboard"
+                className="w-full"
+              >
+                <button className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700">
+                  🛡️ Admin Dashboard
+                </button>
+              </Link>
+            </div>
+          )}
+
+          <CustomBorder />
 
           {/* Sections */}
           <div className="space-y-6">

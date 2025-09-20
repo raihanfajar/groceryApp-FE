@@ -1,22 +1,21 @@
-import BenefitBanner from "@/components/homePage/benefitBanner/BenefitBanner";
-import CategoryCarousel from "@/components/homePage/categoryCarousel/CategoryCarousel";
-import { ProductList } from "@/components/homePage/productDisplay/ProductList";
-import PromoCarousel from "@/components/homePage/promoCarousel/PromoCarousel";
+import BenefitBanner from "@/components/HomePage/benefitBanner/BenefitBanner";
+import CategoryCarousel from "@/components/HomePage/categoryCarousel/CategoryCarousel";
+import { ProductList } from "@/components/HomePage/productDisplay/ProductList";
+import PromoCarousel from "@/components/HomePage/promoCarousel/PromoCarousel";
 
 // Import data dengan path yang sudah dikoreksi
 import {
   carouselItems,
-  categories,
   dummyRecommendedProducts,
-} from "@/components/homePage/mapData";
-import CustomBorder from "@/components/homePage/CustomBorder";
+} from "@/components/HomePage/mapData";
+import CustomBorder from "@/components/HomePage/CustomBorder";
 
 export default function HomePage() {
   return (
     <div className="mx-auto min-h-screen">
       <PromoCarousel items={carouselItems} />
       <CustomBorder />
-      <CategoryCarousel items={categories} />
+      <CategoryCarousel />
       <CustomBorder />
       <ProductList
         items={dummyRecommendedProducts}

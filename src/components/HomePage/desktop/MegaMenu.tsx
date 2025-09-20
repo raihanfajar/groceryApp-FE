@@ -38,7 +38,7 @@ export default function MegaMenu({
             {realCategories.map((category) => (
               <li key={category.id}>
                 <Link
-                  href={`/products?categorySlug=${category.slug || getCategorySlug(category.name)}`}
+                  href={`/products?category=${category.slug || getCategorySlug(category.name)}`}
                   className="flex cursor-pointer items-center gap-3 px-4 py-2 text-sm transition-colors hover:bg-green-50"
                 >
                   <CategoryIcon

@@ -4,8 +4,10 @@ import {
   MdOutlineDiversity3,
   MdOutlineSupportAgent,
 } from "react-icons/md";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
-import { useAdminAuthStore } from "@/store/useAdminAuthStore";
+import {
+  useHydratedUserAuth,
+  useHydratedAdminAuth,
+} from "@/hooks/useHydratedAuth";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 import { useLocationStore } from "@/store/useLocationStore";
 import {
@@ -15,8 +17,9 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function TopNavDesktop() {
-  const { email } = useUserAuthStore();
-  const { isAuthenticated: isAdminAuthenticated } = useAdminAuthStore();
+  const { email } = useHydratedUserAuth();
+  const { isAuthenticated: isAdminAuthenticated, isHydrated } =
+    useHydratedAdminAuth();
   const { displayName } = useLocationStore();
   const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
 
@@ -47,7 +50,7 @@ export default function TopNavDesktop() {
         )}
       </p>
       <div className="ml-auto flex gap-6 underline">
-        {isAdminAuthenticated() && (
+        {isHydrated && isAdminAuthenticated() && (
           <Link
             href="/admin/dashboard"
             className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"

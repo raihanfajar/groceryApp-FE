@@ -73,7 +73,7 @@ export interface CategoriesResponse {
 export interface ProductFilters {
   search?: string;
   categoryId?: string;
-  categorySlug?: string;
+  category?: string;
   storeId?: string;
   minPrice?: number;
   maxPrice?: number;

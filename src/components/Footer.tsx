@@ -5,11 +5,14 @@ import CustomBorder from "./HomePage/CustomBorder";
 import { SiGojek } from "react-icons/si";
 import { SiGrab } from "react-icons/si";
 import Link from "next/link";
-import { useAdminAuthStore } from "@/store/useAdminAuthStore";
+import { useHydratedAdminAuth } from "@/hooks/useHydratedAuth";
 
 export default function Footer() {
-  const { logout: adminLogout, isAuthenticated: isAdminAuthenticated } =
-    useAdminAuthStore();
+  const {
+    logout: adminLogout,
+    isAuthenticated: isAdminAuthenticated,
+    isHydrated,
+  } = useHydratedAdminAuth();
 
   const handleAdminLogout = () => {
     adminLogout();
@@ -45,7 +48,7 @@ export default function Footer() {
               <h2 className="mb-3 text-lg font-semibold">Admin</h2>
               <ul className="space-y-2">
                 <li>
-                  {isAdminAuthenticated() ? (
+                  {isHydrated && isAdminAuthenticated() ? (
                     <button
                       onClick={handleAdminLogout}
                       className="text-left hover:underline"

@@ -3,8 +3,10 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import * as MdIcons from "react-icons/md";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
-import { useAdminAuthStore } from "@/store/useAdminAuthStore";
+import {
+  useHydratedUserAuth,
+  useHydratedAdminAuth,
+} from "@/hooks/useHydratedAuth";
 import { menuSections } from "@/components/HomePage/mapData";
 import CustomBorder from "@/components/HomePage/CustomBorder";
 
@@ -15,8 +17,9 @@ export default function MenuDrawer({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const { name, clearAuth } = useUserAuthStore();
-  const { isAuthenticated: isAdminAuthenticated } = useAdminAuthStore();
+  const { name, clearAuth } = useHydratedUserAuth();
+  const { isAuthenticated: isAdminAuthenticated, isHydrated } =
+    useHydratedAdminAuth();
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
@@ -79,7 +82,7 @@ export default function MenuDrawer({
           </div>
 
           {/* Admin Dashboard Section */}
-          {isAdminAuthenticated() && (
+          {isHydrated && isAdminAuthenticated() && (
             <div className="flex justify-center">
               <Link
                 onClick={onClose}

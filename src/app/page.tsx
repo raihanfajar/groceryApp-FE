@@ -6,7 +6,6 @@ import PromoCarousel from "@/components/HomePage/promoCarousel/PromoCarousel";
 // Import data dengan path yang sudah dikoreksi
 import {
   carouselItems,
-  categories,
   dummyRecommendedProducts,
 } from "@/components/HomePage/mapData";
 import CustomBorder from "@/components/HomePage/CustomBorder";
@@ -16,7 +15,7 @@ export default function HomePage() {
     <div className="mx-auto min-h-screen">
       <PromoCarousel items={carouselItems} />
       <CustomBorder />
-      <CategoryCarousel items={categories} />
+      <CategoryCarousel />
       <CustomBorder />
       <ProductList
         items={dummyRecommendedProducts}

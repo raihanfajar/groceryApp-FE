@@ -67,14 +67,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       );
     }
 
-    if (filters.categorySlug) {
+    if (filters.category) {
       return categoriesData.data.categories.find(
-        (cat) => cat.slug === filters.categorySlug,
+        (cat) => cat.slug === filters.category,
       );
     }
 
     return null;
-  }, [filters.categoryId, filters.categorySlug, categoriesData]);
+  }, [filters.categoryId, filters.category, categoriesData]);
 
   // Handlers
   const handleFiltersChange = useCallback((newFilters: ProductFilters) => {

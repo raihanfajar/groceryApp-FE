@@ -12,14 +12,14 @@ export default function ProductsPage() {
   const initialFilters: Partial<ProductFilters> = {};
 
   const categoryId = searchParams.get("categoryId");
-  const categorySlug = searchParams.get("categorySlug");
+  const category = searchParams.get("category");
   const search = searchParams.get("search");
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
   const storeId = searchParams.get("storeId");
 
   if (categoryId) initialFilters.categoryId = categoryId;
-  if (categorySlug) initialFilters.categorySlug = categorySlug;
+  if (category) initialFilters.category = category;
   if (search) initialFilters.search = search;
   if (minPrice) initialFilters.minPrice = parseFloat(minPrice);
   if (maxPrice) initialFilters.maxPrice = parseFloat(maxPrice);

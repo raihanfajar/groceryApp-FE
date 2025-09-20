@@ -6,11 +6,16 @@ import {
   MdOutlineDiversity3,
   MdOutlineSupportAgent,
 } from "react-icons/md";
-import SendToDialog from "../SendToDialog";
+import {
+  useHydratedUserAuth,
+  useHydratedAdminAuth,
+} from "@/hooks/useHydratedAuth";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 
 export default function TopNavDesktop() {
-  const { email } = useUserAuthStore();
+  const { email } = useHydratedUserAuth();
+  const { isAuthenticated: isAdminAuthenticated, isHydrated } =
+    useHydratedAdminAuth();
   const { displayName } = useLocationStore();
 
   return (
@@ -29,12 +34,14 @@ export default function TopNavDesktop() {
         )}
       </p>
       <div className="ml-auto flex gap-6 underline">
-        <Link
-          href="/admin-login"
-          className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-        >
-          🛡️ Admin Login
-        </Link>
+        {isHydrated && isAdminAuthenticated() && (
+          <Link
+            href="/admin/dashboard"
+            className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+          >
+            🛡️ Admin Dashboard
+          </Link>
+        )}
         <div className="flex items-center gap-1">
           <MdOutlineSupportAgent size={20} />
           <CustomerServiceDropDown />

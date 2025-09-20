@@ -3,20 +3,20 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
+export const useResendVerification = () => {
 
-export const useUserForgotPassword = () => {
     return useMutation({
         mutationFn: async (email: string) => {
-            const { data } = await axiosInstance.post<baseUserResponse>("/user/forgot-password", { email });
+            const { data } = await axiosInstance.post<baseUserResponse>("/user/resend-verification", { email });
             return data;
         },
         onSuccess: (data: baseUserResponse) => {
-            console.log(data); // !Delete on production
+            console.log(data); //! Delete on production
             toast.success(data.message);
         },
         onError: (error: baseError) => {
-            console.log(error); // !Delete on production
-            toast.error(`${error.response.status} | ${error.response.data.message}`);
+            console.log(error); //! Delete on production
+            toast.error(`${error.response.status} | ${error.response.data.message}` || "Something went wrong");
         }
     })
 }

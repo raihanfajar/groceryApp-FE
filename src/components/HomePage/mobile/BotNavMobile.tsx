@@ -1,20 +1,40 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useLocationStore } from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
-import Link from "next/link";
 import { MdLocationOn } from "react-icons/md";
 
 export default function BotNavMobile() {
   const { email } = useUserAuthStore();
+  const { displayName } = useLocationStore();
+  const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
   return (
     <div className="flex h-8 items-center border-b-1 border-black bg-[#d8d8d8] px-4 text-[0.7rem]">
       <p className="flex items-center gap-0.5">
         <MdLocationOn />
-        <span className="font-bold text-black">NO LOCATION</span>
+        {/* LOCATION DISPLAY */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="font-bold text-black">
+              {displayName ? purified : "NO LOCATION"}
+            </span>
+          </TooltipTrigger>
+          {displayName && (
+            <TooltipContent>
+              <p>{displayName}</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+        {/* EMAIL DISPLAY */}
         {email ? (
           <span className="ml-1.5">[{email}]</span>
         ) : (
-          <Link href="/user-login" className="ml-1.5 cursor-pointer">
-            Login to change location
-          </Link>
+          <span className="ml-1.5 cursor-pointer">
+            {!displayName && "Please allow location access"}
+          </span>
         )}
       </p>
     </div>

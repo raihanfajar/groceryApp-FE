@@ -10,6 +10,7 @@ import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import MegaMenu from "./MegaMenu";
+import { ProfileDropDown } from "./DropDown";
 
 type cartCountProps = {
   cartCount: number;
@@ -104,6 +105,7 @@ export default function BotNavDesktop({ cartCount }: cartCountProps) {
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />
         {name ? (
           <>
+            <ProfileDropDown />
             <Link href="/" onClick={() => clearAuth()}>
               Logout
             </Link>

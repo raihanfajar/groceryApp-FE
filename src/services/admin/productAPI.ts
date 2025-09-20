@@ -51,6 +51,16 @@ export const adminProductAPI = {
     return response.data as AdminProductResponse;
   },
 
+  // Get product by slug
+  getProductBySlug: async (
+    token: string,
+    slug: string,
+  ): Promise<AdminProductResponse> => {
+    const api = createAuthAxios(token);
+    const response = await api.get(`/products/slug/${slug}`);
+    return response.data as AdminProductResponse;
+  },
+
   // Create product with image upload
   createProduct: async (
     token: string,
@@ -150,6 +160,16 @@ export const adminCategoryAPI = {
   ): Promise<AdminCategoryResponse> => {
     const api = createAuthAxios(token);
     const response = await api.get(`/categories/${id}`);
+    return response.data as AdminCategoryResponse;
+  },
+
+  // Get category by slug
+  getCategoryBySlug: async (
+    token: string,
+    slug: string,
+  ): Promise<AdminCategoryResponse> => {
+    const api = createAuthAxios(token);
+    const response = await api.get(`/categories/slug/${slug}`);
     return response.data as AdminCategoryResponse;
   },
 

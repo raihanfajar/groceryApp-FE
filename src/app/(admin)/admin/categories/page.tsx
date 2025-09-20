@@ -235,7 +235,7 @@ export default function AdminCategoriesPage() {
 
                   <div className="mt-4 flex space-x-2">
                     <Link
-                      href={`/admin/categories/${category.id}`}
+                      href={`/admin/categories/${category.slug}`}
                       className="flex-1"
                     >
                       <Button variant="outline" size="sm" className="w-full">
@@ -247,7 +247,7 @@ export default function AdminCategoriesPage() {
                     {admin.isSuper && (
                       <>
                         <Link
-                          href={`/admin/categories/${category.id}/edit`}
+                          href={`/admin/categories/${category.slug}/edit`}
                           className="flex-1"
                         >
                           <Button size="sm" className="w-full">

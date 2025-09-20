@@ -32,14 +32,14 @@ export default function EditProductPage() {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
   const params = useParams();
-  const productId = params.id as string;
+  const productSlug = params.slug as string;
 
   const [product, setProduct] = useState<AdminProduct | null>(null);
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<UpdateProductFormData>({
-    id: productId,
+    id: "", // Will be set when product loads
     name: undefined,
     description: undefined,
     categoryId: undefined,
@@ -74,13 +74,13 @@ export default function EditProductPage() {
 
   const loadProduct = useCallback(async () => {
     try {
-      if (!admin?.accessToken || !productId) return;
+      if (!admin?.accessToken || !productSlug) return;
 
-      const response = await adminProductAPI.getProduct(
+      const response = await adminProductAPI.getProductBySlug(
         admin.accessToken,
-        productId,
+        productSlug,
       );
-      const productData = response.data;
+      const productData = response.data.product; // Fix: access nested product data
 
       setProduct(productData);
       const newFormData = {
@@ -109,7 +109,7 @@ export default function EditProductPage() {
     } finally {
       setLoading(false);
     }
-  }, [admin?.accessToken, productId, router]);
+  }, [admin?.accessToken, productSlug, router]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -123,14 +123,14 @@ export default function EditProductPage() {
       return;
     }
 
-    if (productId) {
+    if (productSlug) {
       loadProduct();
       loadCategories();
     }
   }, [
     isAuthenticated,
     router,
-    productId,
+    productSlug,
     admin?.isSuper,
     loadProduct,
     loadCategories,
@@ -239,7 +239,7 @@ export default function EditProductPage() {
 
       await adminProductAPI.updateProduct(
         admin.accessToken,
-        productId,
+        formData.id, // Use the product ID from the loaded product data
         updateData,
       );
       toast.success("Product updated successfully!");

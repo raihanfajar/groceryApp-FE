@@ -24,20 +24,20 @@ export default function CategoryViewPage() {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
   const params = useParams();
-  const categoryId = params.id as string;
+  const categorySlug = params.slug as string;
 
   const [category, setCategory] = useState<AdminProductCategory | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadCategory = useCallback(async () => {
     try {
-      if (!admin?.accessToken || !categoryId) return;
+      if (!admin?.accessToken || !categorySlug) return;
 
-      const response = await adminCategoryAPI.getCategory(
+      const response = await adminCategoryAPI.getCategoryBySlug(
         admin.accessToken,
-        categoryId,
+        categorySlug,
       );
-      setCategory(response.data);
+      setCategory(response.data.category); // Fix: access nested category data
     } catch (error) {
       console.error("Error loading category:", error);
       toast.error("Failed to load category");
@@ -45,17 +45,17 @@ export default function CategoryViewPage() {
     } finally {
       setLoading(false);
     }
-  }, [admin?.accessToken, categoryId, router]);
+  }, [admin?.accessToken, categorySlug, router]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push("/admin-login");
       return;
     }
-    if (categoryId) {
+    if (categorySlug) {
       loadCategory();
     }
-  }, [isAuthenticated, router, categoryId, loadCategory]);
+  }, [isAuthenticated, router, categorySlug, loadCategory]);
 
   if (!isAuthenticated()) {
     return null;
@@ -114,7 +114,7 @@ export default function CategoryViewPage() {
           </div>
 
           {admin?.isSuper && (
-            <Link href={`/admin/categories/${category.id}/edit`}>
+            <Link href={`/admin/categories/${category.slug}/edit`}>
               <Button>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Category

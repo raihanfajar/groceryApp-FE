@@ -283,7 +283,7 @@ export default function AdminProductsPage() {
 
                   <div className="mt-4 flex space-x-2">
                     <Link
-                      href={`/admin/products/${product.id}`}
+                      href={`/admin/products/${product.slug}`}
                       className="flex-1"
                     >
                       <Button variant="outline" size="sm" className="w-full">
@@ -295,7 +295,7 @@ export default function AdminProductsPage() {
                     {admin.isSuper && (
                       <>
                         <Link
-                          href={`/admin/products/${product.id}/edit`}
+                          href={`/admin/products/${product.slug}/edit`}
                           className="flex-1"
                         >
                           <Button size="sm" className="w-full">

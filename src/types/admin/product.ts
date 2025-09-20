@@ -102,12 +102,16 @@ export interface AdminCategoriesResponse {
 
 export interface AdminProductResponse {
   status: string;
-  data: AdminProduct;
+  data: {
+    product: AdminProduct;
+  };
 }
 
 export interface AdminCategoryResponse {
   status: string;
-  data: AdminProductCategory;
+  data: {
+    category: AdminProductCategory;
+  };
 }
 
 export interface ProductFilters {

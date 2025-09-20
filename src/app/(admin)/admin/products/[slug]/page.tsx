@@ -18,20 +18,20 @@ export default function ProductViewPage() {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
   const params = useParams();
-  const productId = params.id as string;
+  const productSlug = params.slug as string;
 
   const [product, setProduct] = useState<AdminProduct | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadProduct = useCallback(async () => {
     try {
-      if (!admin?.accessToken || !productId) return;
+      if (!admin?.accessToken || !productSlug) return;
 
-      const response = await adminProductAPI.getProduct(
+      const response = await adminProductAPI.getProductBySlug(
         admin.accessToken,
-        productId,
+        productSlug,
       );
-      setProduct(response.data);
+      setProduct(response.data.product); // Fix: access nested product data
     } catch (error) {
       console.error("Error loading product:", error);
       toast.error("Failed to load product");
@@ -39,17 +39,17 @@ export default function ProductViewPage() {
     } finally {
       setLoading(false);
     }
-  }, [admin?.accessToken, productId, router]);
+  }, [admin?.accessToken, productSlug, router]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push("/admin-login");
       return;
     }
-    if (productId) {
+    if (productSlug) {
       loadProduct();
     }
-  }, [isAuthenticated, router, productId, loadProduct]);
+  }, [isAuthenticated, router, productSlug, loadProduct]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -116,7 +116,7 @@ export default function ProductViewPage() {
           </div>
 
           {admin?.isSuper && (
-            <Link href={`/admin/products/${product.id}/edit`}>
+            <Link href={`/admin/products/${product.slug}/edit`}>
               <Button>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Product

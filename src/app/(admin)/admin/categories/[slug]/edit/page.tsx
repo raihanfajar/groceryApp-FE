@@ -23,13 +23,13 @@ export default function EditCategoryPage() {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
   const params = useParams();
-  const categoryId = params.id as string;
+  const categorySlug = params.slug as string;
 
   const [category, setCategory] = useState<AdminProductCategory | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<UpdateCategoryFormData>({
-    id: categoryId,
+    id: "", // Will be set when category loads
     name: "",
     description: "",
     isActive: true,
@@ -37,13 +37,13 @@ export default function EditCategoryPage() {
 
   const loadCategory = useCallback(async () => {
     try {
-      if (!admin?.accessToken || !categoryId) return;
+      if (!admin?.accessToken || !categorySlug) return;
 
-      const response = await adminCategoryAPI.getCategory(
+      const response = await adminCategoryAPI.getCategoryBySlug(
         admin.accessToken,
-        categoryId,
+        categorySlug,
       );
-      const categoryData = response.data;
+      const categoryData = response.data.category; // Fix: access nested category data
 
       setCategory(categoryData);
       setFormData({
@@ -59,7 +59,7 @@ export default function EditCategoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [admin?.accessToken, categoryId, router]);
+  }, [admin?.accessToken, categorySlug, router]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -73,10 +73,10 @@ export default function EditCategoryPage() {
       return;
     }
 
-    if (categoryId) {
+    if (categorySlug) {
       loadCategory();
     }
-  }, [isAuthenticated, router, categoryId, admin?.isSuper, loadCategory]);
+  }, [isAuthenticated, router, categorySlug, admin?.isSuper, loadCategory]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -127,7 +127,7 @@ export default function EditCategoryPage() {
 
       await adminCategoryAPI.updateCategory(
         admin.accessToken,
-        categoryId,
+        formData.id, // Use the category ID from the loaded category data
         updateData,
       );
       toast.success("Category updated successfully!");

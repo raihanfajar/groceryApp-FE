@@ -23,7 +23,7 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { admin, logout, isAuthenticated, isSuperAdmin } = useAdminAuthStore();
+  const { admin, logout, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
   const pathname = usePathname();
 

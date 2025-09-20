@@ -5,8 +5,8 @@ import { MdOutlineClose } from "react-icons/md";
 import * as MdIcons from "react-icons/md";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
-import { menuSections } from "../mapData";
-import CustomBorder from "../CustomBorder";
+import { menuSections } from "@/components/HomePage/mapData";
+import CustomBorder from "@/components/HomePage/CustomBorder";
 
 export default function MenuDrawer({
   isOpen,
@@ -16,23 +16,12 @@ export default function MenuDrawer({
   onClose: () => void;
 }) {
   const { name, clearAuth } = useUserAuthStore();
-  const {
-    admin,
-    logout: adminLogout,
-    isAuthenticated: isAdminAuthenticated,
-  } = useAdminAuthStore();
+  const { isAuthenticated: isAdminAuthenticated } = useAdminAuthStore();
 
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "unset";
   }, [isOpen]);
-
-  const handleAdminLogout = () => {
-    adminLogout();
-    onClose();
-    // Optionally redirect to home page
-    window.location.href = "/";
-  };
 
   if (!isOpen) return null;
 
@@ -89,23 +78,20 @@ export default function MenuDrawer({
             )}
           </div>
 
-          {/* Admin Login/Logout Section */}
-          <div className="flex justify-center">
-            {isAdminAuthenticated() ? (
-              <button
-                onClick={handleAdminLogout}
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-red-600 py-2 text-white hover:bg-red-700"
+          {/* Admin Dashboard Section */}
+          {isAdminAuthenticated() && (
+            <div className="flex justify-center">
+              <Link
+                onClick={onClose}
+                href="/admin/dashboard"
+                className="w-full"
               >
-                🛡️ Admin Logout {admin?.name && `(${admin.name})`}
-              </button>
-            ) : (
-              <Link onClick={onClose} href="/admin-login" className="w-full">
                 <button className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700">
-                  🛡️ Admin Login
+                  🛡️ Admin Dashboard
                 </button>
               </Link>
-            )}
-          </div>
+            </div>
+          )}
 
           <CustomBorder />
 

@@ -1,10 +1,21 @@
+"use client";
+
 import Image from "next/image";
-import CustomBorder from "./homePage/CustomBorder";
+import CustomBorder from "./HomePage/CustomBorder";
 import { SiGojek } from "react-icons/si";
 import { SiGrab } from "react-icons/si";
 import Link from "next/link";
+import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 
 export default function Footer() {
+  const { logout: adminLogout, isAuthenticated: isAdminAuthenticated } =
+    useAdminAuthStore();
+
+  const handleAdminLogout = () => {
+    adminLogout();
+    // Optionally redirect to home page or show a success message
+    window.location.href = "/";
+  };
   return (
     <>
       <CustomBorder />
@@ -28,6 +39,32 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
+
+            {/* Admin Section - Under Customer Support */}
+            <div className="mt-6">
+              <h2 className="mb-3 text-lg font-semibold">Admin</h2>
+              <ul className="space-y-2">
+                <li>
+                  {isAdminAuthenticated() ? (
+                    <button
+                      onClick={handleAdminLogout}
+                      className="text-left hover:underline"
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <Link href="/admin-login" className="hover:underline">
+                      Login
+                    </Link>
+                  )}
+                </li>
+                <li>
+                  <Link href="/admin-register" className="hover:underline">
+                    Register
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* Discover FreshNear */}

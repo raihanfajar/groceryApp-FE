@@ -1,18 +1,19 @@
 "use client";
+import { useResendVerification } from "@/hooks/userAuth/useResendVerification";
 import { useUserLogin } from "@/hooks/userAuth/useUserLogin";
 import { userLoginSchema } from "@/validation/userVS";
 import { useFormik } from "formik";
-import {
-  FaSpinner
-} from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import { Button } from "../ui/button";
 import ForgotPasswordDialog from "./ForgotPasswordDialog";
 import { FormField } from "./FormField";
 import { PasswordField } from "./PasswordField";
-import { LoginFormValues } from "./typesAndInterfaces";
+import { baseError, LoginFormValues } from "./typesAndInterfaces";
 
 const UserLoginForm = () => {
-  const { mutateAsync, isPending } = useUserLogin();
+  const { mutateAsync, isPending, error } = useUserLogin();
+  const { mutateAsync: resendVerification } = useResendVerification();
+
   const formik = useFormik<LoginFormValues>({
     initialValues: {
       email: "",
@@ -26,6 +27,9 @@ const UserLoginForm = () => {
       }).then(() => formik.resetForm());
     },
   });
+
+  const backendError = error as baseError;
+  const errorMessage = backendError?.response?.data?.message;
 
   return (
     <>
@@ -52,6 +56,19 @@ const UserLoginForm = () => {
           <ForgotPasswordDialog />
         </div>
 
+        {errorMessage === "Please verify your email first" && (
+          <div className="mt-2 text-xs text-red-600">
+            <p>Your email is not verified yet.</p>
+            <p>Please check your registered email.</p>
+            <span
+              className="cursor-pointer text-blue-600 underline"
+              onClick={() => resendVerification(formik.values.email)}
+            >
+              Resend verification email
+            </span>
+          </div>
+        )}
+
         {/* Submit Button */}
         <Button
           disabled={isPending || !formik.isValid}
@@ -60,8 +77,6 @@ const UserLoginForm = () => {
         >
           {isPending ? <FaSpinner className="animate-spin" /> : "Login"}
         </Button>
-
-        
       </form>
     </>
   );

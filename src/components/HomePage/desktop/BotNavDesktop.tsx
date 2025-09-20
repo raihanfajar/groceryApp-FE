@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineGridView, MdShoppingCart } from "react-icons/md";
-import "simplebar-react/dist/simplebar.min.css";
+import "simplebar/dist/simplebar.min.css";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import MegaMenu from "./MegaMenu";
+import { ProfileDropDown } from "./DropDown";
 
 type cartCountProps = {
   cartCount: number;
@@ -74,6 +75,7 @@ export default function BotNavDesktop({ cartCount }: cartCountProps) {
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />
         {name ? (
           <>
+            <ProfileDropDown />
             <Link href="/" onClick={() => clearAuth()}>
               Logout
             </Link>

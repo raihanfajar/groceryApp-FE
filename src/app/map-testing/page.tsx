@@ -3,13 +3,15 @@
 import dynamic from "next/dynamic";
 
 const MapLeaflet = dynamic(() => import("./MapLeaflet"), {
-  ssr: false, // 👈 disables server-side rendering for this component
+  ssr: false,
 });
 
 export default function MapPage() {
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="mb-4 text-xl font-bold">Pick a Location</h1>
+    <div className="scaledown mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center px-4 py-6 sm:px-6 lg:px-8">
+      <h1 className="mb-6 text-center text-2xl font-bold sm:text-3xl">
+        Pick a Location
+      </h1>
       <MapLeaflet />
     </div>
   );

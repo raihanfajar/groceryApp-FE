@@ -9,7 +9,8 @@ export interface baseUserResponse {
         name: string;
         email: string;
         phoneNumber: string;
-        oauthProvider: string | null;
+        provider: string | null;
+        providerId: string | null;
         isVerified: boolean;
         createdAt: string;
         updatedAt: string;

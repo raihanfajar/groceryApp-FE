@@ -22,7 +22,7 @@ const AddNewAddressDialog = () => {
           <DialogHeader className="h-fit">
             <DialogTitle>Add New Location</DialogTitle>
             <DialogDescription>
-              Choose and edit your location that suited you.
+              Fill the form and add new location
             </DialogDescription>
           </DialogHeader>
           <div className="h-full">Testing</div>

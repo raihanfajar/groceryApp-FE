@@ -1,5 +1,5 @@
 import Image from "next/image";
-import CustomBorder from "./homePage/CustomBorder";
+import CustomBorder from "./HomePage/CustomBorder";
 import { SiGojek } from "react-icons/si";
 import { SiGrab } from "react-icons/si";
 import Link from "next/link";

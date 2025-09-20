@@ -1,22 +1,20 @@
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useLocationStore } from "@/store/useLocationStore";
 import AddNewAddressDialog from "./AddNewAddressDialog";
 
-const SendToDialog = () => {
-  const { displayName } = useLocationStore();
+const SendToDialog = ({ displayName }: { displayName: string | null }) => {
   const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
 
   return (

@@ -18,7 +18,7 @@ export default function TopNavDesktop() {
       <p className="flex items-center gap-0.5">
         <MdLocationOn />
         {/* LOCATION DISPLAY */}
-        <SendToDialog />
+        <SendToDialog displayName={displayName} />
         {/* EMAIL DISPLAY */}
         {email ? (
           <span className="ml-1.5">[{email}]</span>

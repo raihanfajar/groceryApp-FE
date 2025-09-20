@@ -1,18 +1,26 @@
 "use client";
 import { useReverseGeocode } from "@/hooks/geocoding/useReverseGeoCode";
 import { useLocationStore } from "@/store/useLocationStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function LocationManager() {
+  const [isClient, setIsClient] = useState(false);
   const dynamicLat = useLocationStore((s) => s.dynamicLatitude);
   const dynamicLon = useLocationStore((s) => s.dynamicLongitude);
   const setLocation = useLocationStore((s) => s.setLocation);
   const setPermission = useLocationStore((s) => s.setPermission);
   const setDisplayName = useLocationStore((s) => s.setDisplayName);
 
+  // Set client flag to avoid hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // watchPosition to keep coordinates updated
   useEffect(() => {
+    if (!isClient || typeof navigator === "undefined") return;
+
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
         setLocation(pos.coords.latitude, pos.coords.longitude);
@@ -43,7 +51,7 @@ export default function LocationManager() {
     });
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, [setLocation, setPermission]);
+  }, [setLocation, setPermission, isClient]);
 
   // 🔹 Here is where we run the reverse geocode hook
   const { data: dynamicGeoInfo } = useReverseGeocode(dynamicLat, dynamicLon);
@@ -52,7 +60,7 @@ export default function LocationManager() {
   useEffect(() => {
     if (dynamicGeoInfo?.display_name) {
       setDisplayName(dynamicGeoInfo?.display_name);
-    } 
+    }
     // else {
     //   setDisplayName("UNKNOWN");
     // }

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineGridView, MdShoppingCart } from "react-icons/md";
-import "simplebar-react/dist/simplebar.min.css";
+import "simplebar/dist/simplebar.min.css";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
 import { useUserAuthStore } from "@/store/useUserAuthStore";

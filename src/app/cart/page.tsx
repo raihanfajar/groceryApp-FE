@@ -8,6 +8,7 @@ import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "@/utils/axiosInstance";
 import EmptyCart from "./components/EmptyCart";
+import UserAuthGuard from "@/providers/UserAuthGuard";
 
 type CartCountResponse = {
   message: string;
@@ -37,17 +38,19 @@ function Cart() {
   const cartItemCount = cartData?.data?.count || 0;
 
   return (
-    <section className="container mx-auto min-h-screen px-4 pt-14">
-      <div className="text-primary mb-5 text-3xl font-medium">CART</div>
-      {cartItemCount > 0 ? (
-        <>
-          <CartTable />
-          <CartSumary />
-        </>
-      ) : (
-        <EmptyCart />
-      )}
-    </section>
+    <UserAuthGuard>
+      <section className="container mx-auto min-h-screen px-4 pt-14">
+        <div className="text-primary mb-5 text-3xl font-medium">CART</div>
+        {cartItemCount > 0 ? (
+          <>
+            <CartTable />
+            <CartSumary />
+          </>
+        ) : (
+          <EmptyCart />
+        )}
+      </section>
+    </UserAuthGuard>
   );
 }
 

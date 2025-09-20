@@ -16,7 +16,7 @@ export const useUserLogin = () => {
             return data;
         },
         onSuccess: (data: baseUserResponse) => {
-            console.log(data);
+            console.log(data); //! Delete on production
             toast.success(data.message);
             // Set the token to global state
             setUserAuth({
@@ -28,7 +28,7 @@ export const useUserLogin = () => {
             router.push("/");
         },
         onError: (error: baseError) => {
-            console.log(error);
+            console.log(error); //! Delete on production
             toast.error(`${error.response.status} | ${error.response.data.message}`);
         }
     })

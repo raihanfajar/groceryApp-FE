@@ -1,8 +1,8 @@
-import * as FaIcons from "react-icons/fa";
 import Link from "next/link";
 import { useCategories } from "@/hooks/product/useProducts";
-import { MegaMenuProps } from "../typesAndInterfaces";
+import { MegaMenuProps } from "../../HomePage/typesAndInterfaces";
 import { getCategorySlug } from "@/utils/slug";
+import CategoryIcon from "@/components/ui/CategoryIcon";
 
 export default function MegaMenu({
   isOpen,
@@ -22,7 +22,6 @@ export default function MegaMenu({
       onMouseLeave={handleMouseLeave}
       className="absolute top-full left-0 z-50 mt-6 w-64 rounded-lg border border-gray-200 bg-white shadow-lg"
     >
-
       {/* Categories List */}
       <div className="max-h-80 overflow-y-auto">
         {categoriesLoading ? (
@@ -42,7 +41,11 @@ export default function MegaMenu({
                   href={`/products?categorySlug=${category.slug || getCategorySlug(category.name)}`}
                   className="flex cursor-pointer items-center gap-3 px-4 py-2 text-sm transition-colors hover:bg-green-50"
                 >
-                  <FaIcons.FaTag className="text-green-600" size={14} />
+                  <CategoryIcon
+                    iconId={category.icon}
+                    size={16}
+                    showBackground={false}
+                  />
                   <span className="text-gray-700">{category.name}</span>
                 </Link>
               </li>

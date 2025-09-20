@@ -4,6 +4,7 @@ export interface ProductCategory {
   name: string;
   slug: string;
   description?: string;
+  icon?: string;
   isActive: boolean;
 }
 

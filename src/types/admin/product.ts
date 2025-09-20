@@ -42,6 +42,7 @@ export interface AdminProductCategory {
   id: string;
   name: string;
   description?: string;
+  icon?: string;
   slug: string;
   isActive: boolean;
   createdAt: string;
@@ -72,6 +73,7 @@ export interface UpdateProductFormData extends Partial<CreateProductFormData> {
 export interface CreateCategoryFormData {
   name: string;
   description?: string;
+  icon?: string;
 }
 
 export interface UpdateCategoryFormData

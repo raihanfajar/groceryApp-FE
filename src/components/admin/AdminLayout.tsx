@@ -13,6 +13,7 @@ import {
   FolderTree,
   Users,
   BarChart3,
+  Archive,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -50,6 +51,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin/products",
       icon: Package,
       current: pathname.startsWith("/admin/products"),
+    },
+    {
+      name: "Inventory",
+      href: "/admin/inventory",
+      icon: Archive,
+      current: pathname.startsWith("/admin/inventory"),
     },
     {
       name: "Categories",

@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import RichTextEditor from "@/components/ui/rich-text-editor";
 import {
   Select,
   SelectContent,
@@ -20,6 +20,7 @@ interface ProductBasicFormProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
   onCategoryChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void;
 }
 
 const ProductBasicForm: React.FC<ProductBasicFormProps> = ({
@@ -27,6 +28,7 @@ const ProductBasicForm: React.FC<ProductBasicFormProps> = ({
   categories,
   onInputChange,
   onCategoryChange,
+  onDescriptionChange,
 }) => {
   return (
     <>
@@ -73,7 +75,6 @@ const ProductBasicForm: React.FC<ProductBasicFormProps> = ({
             name="price"
             type="number"
             min="0"
-            step="1000"
             value={formData.price}
             onChange={onInputChange}
             placeholder="0"
@@ -82,7 +83,7 @@ const ProductBasicForm: React.FC<ProductBasicFormProps> = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="weight">Weight (grams) *</Label>
+          <Label htmlFor="weight">Weight (grams/ml) *</Label>
           <Input
             id="weight"
             name="weight"
@@ -96,18 +97,24 @@ const ProductBasicForm: React.FC<ProductBasicFormProps> = ({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Description *</Label>
-        <Textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={onInputChange}
-          placeholder="Enter product description"
-          rows={4}
-          required
-        />
-      </div>
+      <RichTextEditor
+        label="Product Description"
+        value={formData.description}
+        onChange={onDescriptionChange}
+        placeholder="Enter a detailed product description...
+
+Examples of good formatting:
+• Use bullet points for features
+• Bold text for important details
+• Headers to organize information
+
+Product highlights:
+- Fresh quality guaranteed
+- Premium ingredients
+- Perfect for daily use"
+        required
+        className="col-span-full"
+      />
     </>
   );
 };

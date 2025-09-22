@@ -47,6 +47,10 @@ export const useProductCreate = () => {
     setFormData((prev) => ({ ...prev, categoryId: value }));
   }, []);
 
+  const handleDescriptionChange = useCallback((value: string) => {
+    setFormData((prev) => ({ ...prev, description: value }));
+  }, []);
+
   const handleImageChange = useCallback(
     (
       e: React.ChangeEvent<HTMLInputElement>,
@@ -155,6 +159,7 @@ export const useProductCreate = () => {
     loading,
     handleInputChange,
     handleCategoryChange,
+    handleDescriptionChange,
     handleImageChange,
     removeImage,
     handleSubmit,

@@ -1,12 +1,10 @@
-import UserAuthGuard from "@/providers/UserAuthGuard";
-import React from "react";
+"use client";
 
-const page = () => {
-  return (
-    <UserAuthGuard>
-      <div>page</div>
-    </UserAuthGuard>
-  );
-};
+import { useRouter } from "next/navigation";
+
+function page() {
+  const router = useRouter();
+  return router.push("/");
+}
 
 export default page;

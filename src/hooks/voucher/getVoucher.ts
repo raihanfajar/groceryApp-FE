@@ -8,3 +8,10 @@ export const getProductVoucher = async (code: string) => {
   );
   return res.data.data.voucher;
 };
+
+export const getDeliveryVoucher = async (code: string) => {
+  const res = await axiosInstance.get<ApiResponse<{ voucher: Voucher }>>(
+    `/voucher/delivery?code=${code}`,
+  );
+  return res.data.data.voucher;
+};

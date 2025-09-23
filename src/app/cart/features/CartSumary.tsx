@@ -6,10 +6,12 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { getProductVoucher } from "@/hooks/voucher/getVoucher";
 import { useUserCart } from "@/hooks/cart/getUserCart";
 import formatCurrency from "@/utils/FormatCurrency";
+import { useRouter } from "next/router";
 
 function CartSummary() {
   const [voucherCode, setVoucherCode] = useState("");
   const debouncedCode = useDebounce(voucherCode, 500);
+  const router = useRouter();
 
   const {
     data: voucherData,
@@ -86,7 +88,10 @@ function CartSummary() {
             {formatCurrency(grandTotal)}
           </div>
         </div>
-        <button className="mt-7 w-full rounded-md bg-[#00a63e] p-2 font-medium text-white">
+        <button 
+        type="button"
+        className="mt-7 w-full rounded-md bg-[#00a63e] p-2 font-medium text-white"
+        onClick={() => router.push("/checkout")}>
           Proceed to Checkout
         </button>
       </div>

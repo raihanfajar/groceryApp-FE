@@ -1,0 +1,114 @@
+import { baseError } from "@/components/userAuth/typesAndInterfaces";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { ApiResponse } from "@/types/apiResponse";
+import { Cart } from "@/types/cart/getUserCart";
+import {
+  CreateTransactionInput,
+  TransactionResponse,
+  UserAddressInterface,
+} from "@/types/checkout/checkoutTypes";
+import { axiosInstance } from "@/utils/axiosInstance";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+
+
+// Get User Address
+export function useUserAddressQuery() {
+  const { accessToken } = useUserAuthStore();
+  return useQuery({
+    queryKey: ["userAddress", accessToken],
+    queryFn: async () => {
+      if (!accessToken) return null;
+      const response = await axiosInstance.get<
+        ApiResponse<{ address: UserAddressInterface | null }>
+      >("/transaction/address", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      return response.data.data.address ?? null;
+    },
+    enabled: !!accessToken,
+  });
+}
+
+// Get User Cart
+export function useUserCartQuery() {
+  const { accessToken } = useUserAuthStore();
+  return useQuery({
+    queryKey: ["userCart", accessToken],
+    queryFn: async () => {
+      if (!accessToken) return null;
+      const response = await axiosInstance.get<
+        ApiResponse<{ cart: Cart | null }>
+      >("/cart/user", { headers: { Authorization: `Bearer ${accessToken}` } });
+      return response.data.data.cart ?? null;
+    },
+    enabled: !!accessToken,
+  });
+}
+
+// Get shipping price
+export function useShippingPriceQuery(
+  userAddressId: string | null,
+  storeId: string | null,
+) {
+  const { accessToken } = useUserAuthStore();
+  return useQuery({
+    queryKey: ["shippingPrice", userAddressId, storeId],
+    queryFn: async () => {
+      if (!userAddressId || !storeId || !accessToken) return null;
+      const response = await axiosInstance.get<
+        ApiResponse<{ shippingPrice: number | null }>
+      >("/transaction/shipping", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: { userAddressId, storeId },
+      });
+      return response.data.data.shippingPrice ?? null;
+    },
+    enabled: !!userAddressId && !!storeId && !!accessToken,
+  });
+}
+
+// Create user Transaction
+export function useCreateTransactionMutation() {
+  const queryClient = useQueryClient();
+  const { accessToken } = useUserAuthStore();
+
+  return useMutation<TransactionResponse, baseError, CreateTransactionInput>({
+    mutationFn: async (input: CreateTransactionInput) => {
+      if (!accessToken) {
+        throw new Error("Access token is not available.");
+      }
+      try {
+        const response = await axiosInstance.post<TransactionResponse>(
+          "/transaction/create",
+          input,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        );
+        return response.data;
+      } catch (error: any) {
+        throw {
+          message:
+            error.response?.data?.message || "An unexpected error occurred.",
+        };
+      }
+    },
+    onSuccess: (response) => {
+      toast.success("Transaction created successfully!");
+      queryClient.invalidateQueries({ queryKey: ["userCart"] });
+
+      const paymentDetails = response.data.paymentDetails;
+      if (paymentDetails && paymentDetails.token) {
+        window.snap?.pay(paymentDetails.token);
+      }
+    },
+    onError: (err: baseError) => {
+      const errorMessage =
+        err?.response?.data?.message || "Something went wrong";
+
+      toast.error(errorMessage);
+    },
+  });
+}

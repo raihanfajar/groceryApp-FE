@@ -1,15 +1,15 @@
+import {
+  useHydratedAdminAuth,
+  useHydratedUserAuth,
+} from "@/hooks/useHydratedAuth";
 import { useLocationStore } from "@/store/useLocationStore";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Link from "next/link";
 import {
   MdLocationOn,
   MdOutlineDiversity3,
   MdOutlineSupportAgent,
 } from "react-icons/md";
-import {
-  useHydratedUserAuth,
-  useHydratedAdminAuth,
-} from "@/hooks/useHydratedAuth";
+import SendToDialog from "../SendToDialog";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 
 export default function TopNavDesktop() {

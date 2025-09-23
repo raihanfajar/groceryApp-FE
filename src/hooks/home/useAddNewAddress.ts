@@ -1,0 +1,23 @@
+import { AddNewAddressDialogRequest } from "@/components/HomePage/typesAndInterfaces"
+import { baseError } from "@/components/userAuth/typesAndInterfaces"
+import { axiosInstance } from "@/utils/axiosInstance"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "react-toastify"
+import { baseGeoResponse } from "../geocoding/typesAndInterfaces"
+
+export const useAddNewAddress = (accessToken: string) => {
+    return useMutation({
+        mutationFn: async (body: AddNewAddressDialogRequest) => {
+            const { data } = await axiosInstance.post<baseGeoResponse>("/geocoding/add-new-user-address", body, { headers: { Authorization: `Bearer ${accessToken}` } });
+            return data;
+        },
+        onSuccess: (data: baseGeoResponse) => {
+            console.log(data); // !Delete on production
+            toast.success(data.message);
+        },
+        onError: (error: baseError) => {
+            console.log(error); // !Delete on production
+            toast.error(`${error.response.status} | ${error.response.data.message}`);
+        }
+    })
+}

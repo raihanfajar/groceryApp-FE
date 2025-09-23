@@ -81,3 +81,23 @@ export interface MenuSection {
     title: string;
     items: MenuItem[];
 }
+
+// !AddNewAddressDialog.tsx
+export type AddNewAddressDialogFormValues = {
+    addressLabel: string;
+    receiverName: string;
+    receiverPhoneNumber: string;
+    latLon: { lat: number; lon: number };
+    addressDetails: string;
+    isDefault: boolean;
+};
+
+export interface AddNewAddressDialogRequest {
+    addressLabel: string;
+    receiverName: string;
+    receiverPhoneNumber: string;
+    lat: number;
+    lon: number;
+    addressDetails: string;
+    isDefault: boolean;
+}

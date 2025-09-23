@@ -43,7 +43,7 @@ const SendToDialog = ({ displayName }: { displayName: string | null }) => {
               Choose and edit your location that suited you.
             </DialogDescription>
           </DialogHeader>
-          <div className="h-full">Testing</div>
+          <div className="h-full"></div>
           <DialogFooter className="mt-auto">
             <AddNewAddressDialog />
           </DialogFooter>

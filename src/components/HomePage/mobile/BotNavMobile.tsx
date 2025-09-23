@@ -3,13 +3,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useLocationStore } from "@/store/useLocationStore";
+import {
+  useActualLocationStore,
+  useDynamicLocationStore,
+} from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { MdLocationOn } from "react-icons/md";
 
 export default function BotNavMobile() {
   const { email } = useUserAuthStore();
-  const { displayName } = useLocationStore();
+  const { dynamicDisplayName } = useDynamicLocationStore();
+  const { actualDisplayName } = useActualLocationStore();
+  const displayName = actualDisplayName || dynamicDisplayName;
+
   const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
   return (
     <div className="flex h-8 items-center border-b-1 border-black bg-[#d8d8d8] px-4 text-[0.7rem]">

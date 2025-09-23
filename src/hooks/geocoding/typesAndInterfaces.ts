@@ -39,3 +39,27 @@ export interface baseForwardGeoResponse {
     message: string;
     data: GeoInfo[];
 }
+
+export interface userAddressInfo {
+    id: string;
+    addressLabel: string;
+    receiverName: string;
+    receiverPhoneNumber: string;
+    addressDisplayName: string;
+    addressDetails: string;
+    lat: string;
+    lon: string;
+    isDefault: boolean;
+    provinceId: number;
+    province: string;
+    cityId: number;
+    city: string;
+    district: string;
+    districtId: number
+}
+
+export interface baseGetUserAddressResponse {
+    status: string;
+    message: string;
+    data: userAddressInfo[];
+}

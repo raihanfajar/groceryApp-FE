@@ -1,29 +1,33 @@
 "use client";
 import { useReverseGeocode } from "@/hooks/geocoding/useReverseGeoCode";
-import { useLocationStore } from "@/store/useLocationStore";
+import { useDynamicLocationStore } from "@/store/useLocationStore";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function LocationManager() {
   const [isClient, setIsClient] = useState(false);
-  const dynamicLat = useLocationStore((s) => s.dynamicLatitude);
-  const dynamicLon = useLocationStore((s) => s.dynamicLongitude);
-  const setLocation = useLocationStore((s) => s.setLocation);
-  const setPermission = useLocationStore((s) => s.setPermission);
-  const setDisplayName = useLocationStore((s) => s.setDisplayName);
 
-  // Set client flag to avoid hydration mismatch
+  // !Dynamic Setup
+  const dynamicLat = useDynamicLocationStore((s) => s.dynamicLatitude);
+  const dynamicLon = useDynamicLocationStore((s) => s.dynamicLongitude);
+  const setDynamicLocation = useDynamicLocationStore((s) => s.setLocation);
+  const setPermission = useDynamicLocationStore((s) => s.setPermission);
+  const setDynamicDisplayName = useDynamicLocationStore(
+    (s) => s.setDisplayName,
+  );
+
+  // !Set client flag to avoid hydration mismatch
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // watchPosition to keep coordinates updated
+  // !watchPosition to keep coordinates updated
   useEffect(() => {
     if (!isClient || typeof navigator === "undefined") return;
 
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
-        setLocation(pos.coords.latitude, pos.coords.longitude);
+        setDynamicLocation(pos.coords.latitude, pos.coords.longitude);
       },
       (err) => console.error("Error getting location:", err),
       { enableHighAccuracy: true },
@@ -43,7 +47,7 @@ export default function LocationManager() {
         setPermission(result.state as "granted" | "prompt" | "denied");
         if (result.state === "granted") {
           navigator.geolocation.getCurrentPosition((pos) =>
-            setLocation(pos.coords.latitude, pos.coords.longitude),
+            setDynamicLocation(pos.coords.latitude, pos.coords.longitude),
           );
         }
         window.location.reload();
@@ -51,20 +55,17 @@ export default function LocationManager() {
     });
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, [setLocation, setPermission, isClient]);
+  }, [setDynamicLocation, setPermission, isClient]);
 
-  // 🔹 Here is where we run the reverse geocode hook
+  // !WHERE THE REVERSE GEOCODE HOOK RUN
   const { data: dynamicGeoInfo } = useReverseGeocode(dynamicLat, dynamicLon);
 
-  // 🔹 When geoInfo changes, push the display name into the store
+  // !When geoInfo changes, push the display name into the store
   useEffect(() => {
     if (dynamicGeoInfo?.display_name) {
-      setDisplayName(dynamicGeoInfo?.display_name);
+      setDynamicDisplayName(dynamicGeoInfo?.display_name);
     }
-    // else {
-    //   setDisplayName("UNKNOWN");
-    // }
-  }, [dynamicGeoInfo, setDisplayName]);
+  }, [dynamicGeoInfo, setDynamicDisplayName]);
 
   return null; // !NO UI BOSS
 }

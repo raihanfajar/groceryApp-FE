@@ -9,7 +9,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { Input } from "../ui/input";
+import { Input } from "../../ui/input";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,

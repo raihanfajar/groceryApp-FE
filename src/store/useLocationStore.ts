@@ -1,11 +1,12 @@
 // stores/useLocationStore.ts
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 // stores/useLocationStore.ts
-interface LocationState {
+interface DynamicLocationState {
     dynamicLatitude: number | null;
     dynamicLongitude: number | null;
-    displayName: string | null;
+    dynamicDisplayName: string | null;
     permissionState: 'granted' | 'denied' | 'prompt' | null;
     setLocation: (lat: number, lon: number) => void;
     setDisplayName: (name: string | null) => void;
@@ -13,16 +14,41 @@ interface LocationState {
     clearLocation: () => void;
 }
 
-export const useLocationStore = create<LocationState>()((set) => ({
+export const useDynamicLocationStore = create<DynamicLocationState>()((set) => ({
     dynamicLatitude: null,
     dynamicLongitude: null,
-    displayName: null,
+    dynamicDisplayName: null,
     permissionState: null,
     setLocation: (lat, lon) =>
         set({ dynamicLatitude: lat, dynamicLongitude: lon }),
-    setDisplayName: (name) => set({ displayName: name }),
+    setDisplayName: (name) => set({ dynamicDisplayName: name }),
     setPermission: (state) => set({ permissionState: state }),
     clearLocation: () =>
-        set({ dynamicLatitude: null, dynamicLongitude: null, displayName: null }),
+        set({ dynamicLatitude: null, dynamicLongitude: null, dynamicDisplayName: null }),
 }));
 
+interface ActualLocationState {
+    actualLatitude: number | null;
+    actualLongitude: number | null;
+    actualDisplayName: string | null;
+    setLocation: (lat: number, lon: number) => void;
+    setDisplayName: (name: string | null) => void;
+    clearLocation: () => void;
+}
+
+export const useActualLocationStore = create<ActualLocationState>()(persist((set) => ({
+    actualLatitude: null,
+    actualLongitude: null,
+    actualDisplayName: null,
+    setLocation: (lat, lon) => set({ actualLatitude: lat, actualLongitude: lon }),
+    setDisplayName: (name) => set({ actualDisplayName: name }),
+    clearLocation: () => set({ actualLatitude: null, actualLongitude: null, actualDisplayName: null }),
+}), {
+    name: 'actual-location',
+    partialize: (state) => ({
+        actualLatitude: state.actualLatitude,
+        actualLongitude: state.actualLongitude,
+        actualDisplayName: state.actualDisplayName,
+    }),
+    storage: createJSONStorage(() => localStorage),
+}));

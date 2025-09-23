@@ -2,21 +2,27 @@ import {
   useHydratedAdminAuth,
   useHydratedUserAuth,
 } from "@/hooks/useHydratedAuth";
-import { useLocationStore } from "@/store/useLocationStore";
+import {
+  useActualLocationStore,
+  useDynamicLocationStore,
+} from "@/store/useLocationStore";
 import Link from "next/link";
 import {
   MdLocationOn,
   MdOutlineDiversity3,
   MdOutlineSupportAgent,
 } from "react-icons/md";
-import SendToDialog from "../SendToDialog";
+import SendToDialog from "../location/SendToDialog";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 
 export default function TopNavDesktop() {
   const { email } = useHydratedUserAuth();
   const { isAuthenticated: isAdminAuthenticated, isHydrated } =
     useHydratedAdminAuth();
-  const { displayName } = useLocationStore();
+  const { actualDisplayName } = useActualLocationStore();
+  const { dynamicDisplayName } = useDynamicLocationStore();
+
+  const displayName = actualDisplayName || dynamicDisplayName;
 
   return (
     <div className="flex h-8 items-center border-b-1 border-black bg-[#d8d8d8] px-24">

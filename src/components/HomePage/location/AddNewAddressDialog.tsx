@@ -14,10 +14,10 @@ import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { addNewAddressSchema } from "@/validation/addNewAddressVS";
 import { useFormik } from "formik";
 import dynamic from "next/dynamic";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
+import { Checkbox } from "../../ui/checkbox";
+import { Label } from "../../ui/label";
+import { AddNewAddressDialogFormValues } from "../typesAndInterfaces";
 import AddNewAddressDialogFormField from "./AddNewAddressDialogFormField";
-import { AddNewAddressDialogFormValues } from "./typesAndInterfaces";
 
 const MapLeaflet = dynamic(() => import("./MapLeaflet"), { ssr: false });
 // declare typed global for leaflet map

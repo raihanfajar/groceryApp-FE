@@ -1,5 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
+
 import { useForwardGeocode } from "@/hooks/geocoding/useForwardGeoCode";
 import { useReverseGeocode } from "@/hooks/geocoding/useReverseGeoCode";
 import L from "leaflet";
@@ -9,6 +9,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import { Input } from "../../ui/input";
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x.src,
@@ -16,20 +17,36 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow.src,
 });
 
-export default function MapLeaflet() {
-  const mapRef = useRef<HTMLDivElement>(null);
+// typed global for leaflet
+declare global {
+  interface Window {
+    __LEAFLET_MAP__?: import("leaflet").Map;
+  }
+}
+
+type Suggestion = {
+  place_id: number | string;
+  lat: string;
+  lon: string;
+  display_name: string;
+};
+
+type MapLeafletProps = {
+  onLocationChange?: (lat: number, lon: number) => void;
+};
+
+export default function MapLeaflet({ onLocationChange }: MapLeafletProps) {
+  const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
 
   const [search, setSearch] = useState("");
-
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
     null,
   );
-
   const [ready, setReady] = useState(false);
 
-  // !HOOKS
+  // geocode hooks (keep your hooks as-is)
   const {
     data: geoInfo,
     isPending,
@@ -37,41 +54,37 @@ export default function MapLeaflet() {
   } = useReverseGeocode(position?.lat ?? null, position?.lng ?? null);
   const { data: suggestions } = useForwardGeocode(search, 5);
 
-  // !HANDLERS (REFACTOR?)
+  // safely cast suggestions to the typed array (hooks likely return similar shape)
+  const suggestionsTyped = (suggestions as Suggestion[] | undefined) ?? [];
+
   const handleSelectSuggestion = (lat: string, lon: string) => {
     const latNum = parseFloat(lat);
     const lonNum = parseFloat(lon);
 
-    // Move map
     if (mapInstanceRef.current) {
       mapInstanceRef.current.setView([latNum, lonNum], 15);
     }
 
-    // Remove old marker if exists
-    if (markerRef.current) {
-      mapInstanceRef.current?.removeLayer(markerRef.current);
+    if (markerRef.current && mapInstanceRef.current) {
+      mapInstanceRef.current.removeLayer(markerRef.current);
     }
 
-    // Add new marker
     markerRef.current = L.marker([latNum, lonNum]).addTo(
-      mapInstanceRef.current!,
+      mapInstanceRef.current as L.Map,
     );
 
     setPosition({ lat: latNum, lng: lonNum });
-
-    // Optionally clear search after selecting
+    onLocationChange?.(latNum, lonNum);
     setSearch("");
   };
 
-  // inside MapLeaflet.tsx
   const handleSearchClick = () => {
-    if (suggestions && suggestions.length > 0) {
-      const first = suggestions[0];
+    if (suggestionsTyped.length > 0) {
+      const first = suggestionsTyped[0];
       handleSelectSuggestion(first.lat, first.lon);
     }
   };
 
-  // !USE EFFECT STUFFS (REFACTOR?)
   useEffect(() => {
     const timeout = setTimeout(() => setReady(true), 100);
     return () => clearTimeout(timeout);
@@ -82,54 +95,56 @@ export default function MapLeaflet() {
       const map = L.map(mapRef.current).setView([-6.2, 106.8], 11);
       mapInstanceRef.current = map;
 
+      // store to typed global so parent can call invalidateSize without `any`
+      window.__LEAFLET_MAP__ = map;
+
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: "",
       }).addTo(map);
 
-      setTimeout(() => map.invalidateSize(), 200);
+      // give some time for dialog to finish animation/layout then invalidate
+      setTimeout(() => map.invalidateSize(), 500);
 
-      map.on("click", async (e: L.LeafletMouseEvent) => {
+      map.on("click", (e: L.LeafletMouseEvent) => {
         const { lat, lng } = e.latlng;
 
-        // Remove old marker if exists
         if (markerRef.current) {
           map.removeLayer(markerRef.current);
         }
 
-        // Add new marker
         markerRef.current = L.marker([lat, lng]).addTo(map);
 
-        // Update React state
         setPosition({ lat, lng });
+        onLocationChange?.(lat, lng);
       });
     }
-  }, [ready]);
+  }, [ready, onLocationChange]);
 
   return (
     <div className="flex w-full flex-col items-center">
       {/* Search Input */}
-      <div className="relative mr-auto mb-4 flex w-[40%] flex-col">
-        <div className="flex">
+      <div className="relative mr-auto mb-4 flex w-[100%] flex-col">
+        <div className="flex !text-sm">
           <Input
             type="search"
             placeholder="Search for location..."
-            className="!text-md h-[32px] rounded-r-none border border-r-0 border-gray-300 bg-white font-mono text-black focus-visible:border-green-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="h-[32px] rounded-r-none border border-r-0 border-gray-300 bg-white font-mono text-black focus-visible:border-green-500 focus-visible:ring-0 focus-visible:ring-offset-0"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <button
-            onClick={() => handleSearchClick()} // !ASK CHATGPT HOW TO HANDLE THIS? THIS IS JUST LIKE REGULAR SEARCHING NOT WITH SUGGESTION
+            type="button"
+            onClick={handleSearchClick}
             className="flex items-center justify-center rounded-r-md bg-green-600 px-3 text-white hover:bg-green-700"
           >
-            <FiSearch className="h-[32px]" />
+            <FiSearch className="h-[18px]" />
           </button>
         </div>
 
         {/* Suggestions dropdown */}
-        {search && suggestions && suggestions.length > 0 && (
+        {search && suggestionsTyped.length > 0 && (
           <ul className="absolute top-[34px] z-20 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow">
-            {suggestions.map((s) => (
+            {suggestionsTyped.map((s) => (
               <li
                 key={s.place_id}
                 className="cursor-pointer px-3 py-2 hover:bg-gray-100"
@@ -145,21 +160,13 @@ export default function MapLeaflet() {
       {/* Map */}
       <div
         ref={mapRef}
-        className="z-10 h-[300px] w-full rounded-xl border border-gray-300 shadow sm:h-[400px]"
+        className="z-10 h-[300px] w-full rounded-xl border border-gray-300 shadow"
       />
 
       {/* Lat / Lng info */}
-      <div className="mt-4 w-full rounded-md bg-gray-50 p-4 text-center shadow sm:w-2/3 md:w-1/2">
+      <div className="mt-2 w-full text-left text-xs text-gray-500">
         {position ? (
-          <div className="text-sm sm:text-base">
-            <p>
-              <span className="font-semibold">Lat:</span>{" "}
-              {position.lat.toFixed(5)}
-            </p>
-            <p>
-              <span className="font-semibold">Lng:</span>{" "}
-              {position.lng.toFixed(5)}
-            </p>
+          <div>
             {isPending ? (
               <p>Loading address...</p>
             ) : isError ? (

@@ -79,7 +79,7 @@ export const ProfileDropDown = () => {
           className="cursor-pointer rounded-full border border-black"
         ></Image>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="z-[99] w-fit border-black shadow-md p-0 shadow-gray-400">
+      <DropdownMenuContent className="z-[99] w-fit border-black p-0 shadow-md shadow-gray-400">
         <DropdownMenuLabel className="bg-green-400">
           Transactions
         </DropdownMenuLabel>

@@ -26,6 +26,8 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [stockValue, setStockValue] = useState("");
   const [showStockInput, setShowStockInput] = useState(false);
+  const [pendingStock, setPendingStock] = useState<number | null>(null);
+  const [pendingReason, setPendingReason] = useState("");
 
   // Get current stock for the selected store
   const getCurrentStock = () => {
@@ -55,33 +57,41 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
     }).format(price);
   };
 
-  const handleStockUpdate = async (
-    operation: "add" | "subtract" | "set",
-    amount?: number,
-  ) => {
-    if (!selectedStoreId) return;
+  const handleQuickAdd = () => {
+    const newStock = (pendingStock ?? currentStock) + 1;
+    setPendingStock(newStock);
+    setPendingReason(`Stock increased by 1`);
+  };
+
+  const handleQuickSubtract = () => {
+    const newStock = Math.max(0, (pendingStock ?? currentStock) - 1);
+    setPendingStock(newStock);
+    setPendingReason(`Stock decreased by 1`);
+  };
+
+  const handleSetStock = () => {
+    const value = parseInt(stockValue);
+    if (!isNaN(value) && value >= 0) {
+      setPendingStock(value);
+      setPendingReason(`Stock set to ${value}`);
+      setShowStockInput(false);
+      setStockValue("");
+    }
+  };
+
+  const handleApplyChanges = async () => {
+    if (!selectedStoreId || pendingStock === null) return;
 
     setIsUpdating(true);
     try {
-      let newStock: number;
-      let reason: string;
-
-      if (operation === "set" && amount !== undefined) {
-        newStock = amount;
-        reason = `Stock set to ${amount}`;
-      } else if (operation === "add" && amount !== undefined) {
-        newStock = currentStock + amount;
-        reason = `Stock increased by ${amount}`;
-      } else if (operation === "subtract" && amount !== undefined) {
-        newStock = Math.max(0, currentStock - amount);
-        reason = `Stock decreased by ${amount}`;
-      } else {
-        return;
-      }
-
-      await onUpdateStock(product.id, selectedStoreId, newStock, reason);
-      setShowStockInput(false);
-      setStockValue("");
+      await onUpdateStock(
+        product.id,
+        selectedStoreId,
+        pendingStock,
+        pendingReason,
+      );
+      setPendingStock(null);
+      setPendingReason("");
     } catch (error) {
       console.error("Failed to update stock:", error);
     } finally {
@@ -89,14 +99,11 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
     }
   };
 
-  const handleQuickAdd = () => handleStockUpdate("add", 1);
-  const handleQuickSubtract = () => handleStockUpdate("subtract", 1);
-
-  const handleSetStock = () => {
-    const value = parseInt(stockValue);
-    if (!isNaN(value) && value >= 0) {
-      handleStockUpdate("set", value);
-    }
+  const handleCancelChanges = () => {
+    setPendingStock(null);
+    setPendingReason("");
+    setShowStockInput(false);
+    setStockValue("");
   };
 
   return (
@@ -147,11 +154,18 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
               <span className="text-sm font-medium text-gray-700">
                 Current Stock:
               </span>
-              <span
-                className={`text-lg font-bold ${isLowStock ? "text-red-600" : "text-green-600"}`}
-              >
-                {currentStock}
-              </span>
+              <div className="text-right">
+                <span
+                  className={`text-lg font-bold ${isLowStock ? "text-red-600" : "text-green-600"}`}
+                >
+                  {currentStock}
+                </span>
+                {pendingStock !== null && pendingStock !== currentStock && (
+                  <div className="text-sm font-medium text-blue-600">
+                    → {pendingStock} (pending)
+                  </div>
+                )}
+              </div>
             </div>
             {minStock > 0 && (
               <div className="flex items-center justify-between text-sm">
@@ -162,37 +176,62 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
           </div>
 
           {/* Stock Actions */}
-          {selectedStoreId && (
+          {selectedStoreId ? (
             <div className="space-y-2">
               {!showStockInput ? (
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleQuickSubtract}
-                    disabled={isUpdating || currentStock === 0}
-                    className="flex-1"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowStockInput(true)}
-                    className="flex-1"
-                  >
-                    Set Stock
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleQuickAdd}
-                    disabled={isUpdating}
-                    className="flex-1"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+                <>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleQuickSubtract}
+                      disabled={isUpdating}
+                      className="flex-1"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowStockInput(true)}
+                      className="flex-1"
+                    >
+                      Set Stock
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleQuickAdd}
+                      disabled={isUpdating}
+                      className="flex-1"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Apply/Cancel buttons when there are pending changes */}
+                  {pendingStock !== null && pendingStock !== currentStock && (
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleCancelChanges}
+                        disabled={isUpdating}
+                        className="flex-1"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={handleApplyChanges}
+                        disabled={isUpdating}
+                        className="flex-1"
+                      >
+                        {isUpdating ? "Applying..." : "Apply Changes"}
+                      </Button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="space-y-2">
                   <Input
@@ -217,14 +256,20 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
                     <Button
                       size="sm"
                       onClick={handleSetStock}
-                      disabled={isUpdating || !stockValue}
+                      disabled={!stockValue || isNaN(parseInt(stockValue))}
                       className="flex-1"
                     >
-                      {isUpdating ? "Updating..." : "Update"}
+                      Set Pending
                     </Button>
                   </div>
                 </div>
               )}
+            </div>
+          ) : (
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-center">
+              <p className="text-sm font-medium text-yellow-700">
+                Select a store to manage stock
+              </p>
             </div>
           )}
         </div>

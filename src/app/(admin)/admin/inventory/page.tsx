@@ -364,7 +364,9 @@ export default function InventoryDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  <Link href="/admin/inventory/stock">
+                  <Link
+                    href={`/admin/inventory/stock${selectedStoreId ? `?storeId=${selectedStoreId}` : ""}`}
+                  >
                     <Button className="w-full" variant="outline">
                       <Plus className="mr-2 h-4 w-4" />
                       Update Stock

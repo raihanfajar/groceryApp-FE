@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { adminProductAPI, adminCategoryAPI } from "@/services/admin/productAPI";
 import { adminInventoryAPI } from "@/services/admin/inventoryAPI";
@@ -22,6 +22,10 @@ interface StockFilters extends ProductFilters {
 export const useStockManagement = () => {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get storeId from URL params (when coming from inventory dashboard)
+  const urlStoreId = searchParams.get("storeId");
 
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
@@ -31,7 +35,9 @@ export const useStockManagement = () => {
     page: 1,
     limit: 12,
     search: "",
-    storeId: admin?.isSuper ? undefined : admin?.store?.id || "store-1",
+    storeId: admin?.isSuper
+      ? urlStoreId || undefined // Use URL param if available for Super Admin
+      : admin?.store?.id || "store-1", // Use assigned store for Store Admin
   });
 
   useEffect(() => {
@@ -39,8 +45,11 @@ export const useStockManagement = () => {
     if (!admin?.isSuper) {
       const storeId = admin?.store?.id || "store-1"; // Default store if none assigned
       setFilters((prev) => ({ ...prev, storeId }));
+    } else if (urlStoreId && !filters.storeId) {
+      // Set URL store ID for Super Admin if not already set
+      setFilters((prev) => ({ ...prev, storeId: urlStoreId }));
     }
-  }, [admin]);
+  }, [admin, urlStoreId, filters.storeId]);
 
   const [pagination, setPagination] = useState({
     total: 0,
@@ -83,11 +92,11 @@ export const useStockManagement = () => {
     try {
       if (!admin?.accessToken || !admin?.isSuper) return;
 
-      // TODO: Create a stores API endpoint if needed
-      // For now, we'll use an empty array since Super Admin would see all stores
-      setStores([]);
+      const response = await adminInventoryAPI.getStores(admin.accessToken);
+      setStores(response.data);
     } catch (error) {
       console.error("Error loading stores:", error);
+      toast.error("Failed to load stores");
     }
   }, [admin?.accessToken, admin?.isSuper]);
 

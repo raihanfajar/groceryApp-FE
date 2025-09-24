@@ -210,9 +210,17 @@ const ProductItem: React.FC<ProductItemProps> = ({
                   <h3 className="line-clamp-1 text-lg font-medium">
                     {product.name}
                   </h3>
-                  <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
-                    {product.description}
-                  </p>
+                  {product.description.includes("<") &&
+                  product.description.includes(">") ? (
+                    <div
+                      className="text-muted-foreground mt-1 line-clamp-2 text-sm [&_em]:italic [&_ol]:list-decimal [&_strong]:font-bold [&_ul]:list-disc"
+                      dangerouslySetInnerHTML={{ __html: product.description }}
+                    />
+                  ) : (
+                    <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                      {product.description}
+                    </p>
+                  )}
                   <div className="mt-2 flex items-center gap-2">
                     {product.category && (
                       <Badge variant="secondary" className="text-xs">
@@ -285,9 +293,17 @@ const ProductItem: React.FC<ProductItemProps> = ({
               </Badge>
             )}
             <h3 className="mb-1 line-clamp-2 font-medium">{product.name}</h3>
-            <p className="text-muted-foreground line-clamp-2 text-sm">
-              {product.description}
-            </p>
+            {product.description.includes("<") &&
+            product.description.includes(">") ? (
+              <div
+                className="text-muted-foreground line-clamp-2 text-sm [&_em]:italic [&_ol]:list-decimal [&_strong]:font-bold [&_ul]:list-disc"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            ) : (
+              <p className="text-muted-foreground line-clamp-2 text-sm">
+                {product.description}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center justify-between">

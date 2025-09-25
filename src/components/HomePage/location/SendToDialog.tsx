@@ -16,11 +16,21 @@ import { useGetUserAddressInfo } from "@/hooks/home/useGetUserAddress";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import AddNewAddressDialog from "./AddNewAddressDialog";
 import { AddressCard } from "./AddressCard";
+// import { useActualLocationStore } from "@/store/useLocationStore";
+// import { useSetUserDefaultAddress } from "@/hooks/home/useSetUserDefaultAddress";
 
-const SendToDialog = ({ displayName }: { displayName: string | null }) => {
+const SendToDialog = ({
+  displayName,
+  label,
+}: {
+  displayName: string | null;
+  label: string | null;
+}) => {
   const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
   const { accessToken } = useUserAuthStore();
   const { data: userAddressInfo } = useGetUserAddressInfo(accessToken);
+  // const { setLocation: setActualLocation } = useActualLocationStore();
+  // const {mutateAsync: setAddressAsDefault} = useSetUserDefaultAddress(accessToken); //prettier-ignore
 
   return (
     <>
@@ -30,7 +40,7 @@ const SendToDialog = ({ displayName }: { displayName: string | null }) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="font-bold text-black">
-                  {displayName ? purified : "NO LOCATION"}
+                  {label ? label : displayName ? purified : "NO LOCATION"}
                 </span>
               </TooltipTrigger>
               {displayName && (
@@ -65,6 +75,10 @@ const SendToDialog = ({ displayName }: { displayName: string | null }) => {
                     addressDisplayName={addr.addressDisplayName}
                     addressDetails={addr.addressDetails}
                     isDefault={addr.isDefault}
+                    // onClick={() => {
+                    //   setActualLocation(Number(addr.lat), Number(addr.lon));
+                    //   setAddressAsDefault(addr.id);
+                    // }}
                   />
                 ))}
             </div>

@@ -1,4 +1,9 @@
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   useHydratedAdminAuth,
   useHydratedUserAuth,
 } from "@/hooks/useHydratedAuth";
@@ -6,6 +11,7 @@ import {
   useActualLocationStore,
   useDynamicLocationStore,
 } from "@/store/useLocationStore";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Link from "next/link";
 import {
   MdLocationOn,
@@ -14,19 +20,13 @@ import {
 } from "react-icons/md";
 import SendToDialog from "../location/SendToDialog";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 export default function TopNavDesktop() {
   const { accessToken } = useUserAuthStore();
   const { email } = useHydratedUserAuth();
   const { isAuthenticated: isAdminAuthenticated, isHydrated } =
     useHydratedAdminAuth();
-  const { actualDisplayName } = useActualLocationStore();
+  const { actualDisplayName, label } = useActualLocationStore();
   const { dynamicDisplayName } = useDynamicLocationStore();
 
   const displayName = actualDisplayName || dynamicDisplayName;
@@ -38,7 +38,7 @@ export default function TopNavDesktop() {
         <MdLocationOn />
         {/* LOCATION DISPLAY */}
         {accessToken ? (
-          <SendToDialog displayName={displayName} />
+          <SendToDialog displayName={displayName} label={label} />
         ) : (
           <span className="cursor-pointer font-bold text-black">
             <Tooltip>

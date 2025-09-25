@@ -53,9 +53,12 @@ const SendToDialog = ({ displayName }: { displayName: string | null }) => {
               {userAddressInfo
                 ?.slice() // make a shallow copy so we don’t mutate react-query cache
                 .sort((a, b) => Number(b.isDefault) - Number(a.isDefault))
-                .map((addr) => (
+                .map((addr, index) => (
                   <AddressCard
-                    key={addr.id}
+                    key={index}
+                    id={addr.id}
+                    lat={Number(addr.lat)}
+                    lon={Number(addr.lon)}
                     addressLabel={addr.addressLabel}
                     receiverName={addr.receiverName}
                     receiverPhoneNumber={addr.receiverPhoneNumber}

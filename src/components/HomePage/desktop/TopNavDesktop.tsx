@@ -14,8 +14,15 @@ import {
 } from "react-icons/md";
 import SendToDialog from "../location/SendToDialog";
 import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function TopNavDesktop() {
+  const { accessToken } = useUserAuthStore();
   const { email } = useHydratedUserAuth();
   const { isAuthenticated: isAdminAuthenticated, isHydrated } =
     useHydratedAdminAuth();
@@ -23,13 +30,32 @@ export default function TopNavDesktop() {
   const { dynamicDisplayName } = useDynamicLocationStore();
 
   const displayName = actualDisplayName || dynamicDisplayName;
+  const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
 
   return (
     <div className="flex h-8 items-center border-b-1 border-black bg-[#d8d8d8] px-24">
       <p className="flex items-center gap-0.5">
         <MdLocationOn />
         {/* LOCATION DISPLAY */}
-        <SendToDialog displayName={displayName} />
+        {accessToken ? (
+          <SendToDialog displayName={displayName} />
+        ) : (
+          <span className="cursor-pointer font-bold text-black">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="font-bold text-black">
+                  {displayName ? purified : "NO LOCATION"}
+                </span>
+              </TooltipTrigger>
+              {displayName && (
+                <TooltipContent>
+                  <p>{displayName}</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </span>
+        )}
+
         {/* EMAIL DISPLAY */}
         {email ? (
           <span className="ml-1.5">[{email}]</span>

@@ -33,7 +33,7 @@ export const AddressCard = ({
       onClick={onClick}
       className={cn(
         // base card style
-        "group relative cursor-pointer rounded-xl border bg-white/50 p-5 shadow-sm transition-all hover:bg-white hover:shadow-md",
+        "group relative rounded-xl border bg-white/50 p-5 shadow-sm transition-all hover:bg-white hover:shadow-md",
         // default address accent needed kah?
         "border-gray-200",
       )}
@@ -47,11 +47,16 @@ export const AddressCard = ({
           </h3>
           {isDefault && (
             <span className="ml-1 rounded-full bg-blue-500/90 px-2 py-0.5 text-xs font-medium text-white">
-              Default
+              Target
             </span>
           )}
         </div>
-        <AddressCardDropdown id={id} lat={lat} lon={lon} />
+        <AddressCardDropdown
+          id={id}
+          lat={lat}
+          lon={lon}
+          isDefault={isDefault}
+        />
       </div>
 
       {/* receiver info */}

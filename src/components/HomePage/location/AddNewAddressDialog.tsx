@@ -174,7 +174,7 @@ const AddNewAddressDialog = () => {
                     />
                     <div className="grid gap-1.5 font-normal">
                       <p className="text-sm leading-none font-medium">
-                        Make this address your default
+                        Target this location as my default address
                       </p>
                     </div>
                   </Label>

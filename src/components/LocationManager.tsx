@@ -1,14 +1,24 @@
 "use client";
 import { useReverseGeocode } from "@/hooks/geocoding/useReverseGeoCode";
+import { useGetUserAddressInfo } from "@/hooks/home/useGetUserAddress";
 import {
   useActualLocationStore,
   useDynamicLocationStore,
 } from "@/store/useLocationStore";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function LocationManager() {
   const [isClient, setIsClient] = useState(false);
+  const { accessToken } = useUserAuthStore();
+
+  const { data: locationArray } = useGetUserAddressInfo(accessToken);
+  const defaultLocation = locationArray?.find(
+    (item) => item.isDefault === true,
+  );
+  console.log(locationArray);
+  console.log(defaultLocation);
 
   // !Dynamic Setup
   const dynamicLat = useDynamicLocationStore((s) => s.dynamicLatitude);
@@ -24,6 +34,7 @@ export default function LocationManager() {
   const actualLon = useActualLocationStore((s) => s.actualLongitude);
   const setActualLocation = useActualLocationStore((s) => s.setLocation);
   const setActualDisplayName = useActualLocationStore((s) => s.setDisplayName);
+  const setActualLabel = useActualLocationStore((s) => s.setLabel);
 
   // !Set client flag to avoid hydration mismatch
   useEffect(() => {
@@ -36,12 +47,12 @@ export default function LocationManager() {
     console.log(`Dynamic: ${dynamicLat}, ${dynamicLon}`);
 
     if (!isClient || typeof navigator === "undefined") return;
+    if (defaultLocation) return;
 
     if (!actualLat || !actualLon) {
       const watchId = navigator.geolocation.watchPosition(
         (pos) => {
           setDynamicLocation(pos.coords.latitude, pos.coords.longitude);
-          console.log(`Dynamic insdie useEffect: ${dynamicLat}, ${dynamicLon}`);
         },
         (err) => console.error("Error getting location:", err),
         { enableHighAccuracy: true },
@@ -73,6 +84,7 @@ export default function LocationManager() {
       setActualLocation(actualLat, actualLon);
     }
   }, [
+    defaultLocation,
     actualLat,
     actualLon,
     dynamicLat,
@@ -89,12 +101,14 @@ export default function LocationManager() {
 
   // !When geoInfo changes, push the display name into the store
   useEffect(() => {
+    if (defaultLocation) return;
     if (actualGeoInfo?.display_name && actualLat && actualLon) {
       setActualDisplayName(actualGeoInfo?.display_name);
     } else if (dynamicGeoInfo?.display_name && dynamicLat && dynamicLon) {
       setDynamicDisplayName(dynamicGeoInfo?.display_name);
     }
   }, [
+    defaultLocation,
     actualLat,
     actualLon,
     dynamicLat,
@@ -103,6 +117,22 @@ export default function LocationManager() {
     dynamicGeoInfo,
     setActualDisplayName,
     setDynamicDisplayName,
+  ]);
+
+  useEffect(() => {
+    if (defaultLocation) {
+      setActualLocation(
+        Number(defaultLocation.lat),
+        Number(defaultLocation.lon),
+      );
+      setActualDisplayName(defaultLocation.addressDisplayName);
+      setActualLabel(defaultLocation.addressLabel);
+    }
+  }, [
+    defaultLocation,
+    setActualLocation,
+    setActualDisplayName,
+    setActualLabel,
   ]);
 
   return null; // !NO UI BOSS

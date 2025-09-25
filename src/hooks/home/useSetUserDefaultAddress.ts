@@ -3,11 +3,11 @@ import { axiosInstance } from "@/utils/axiosInstance"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-toastify"
 
-export const useSetUserDefaultAddress = (accessToken: string, addressId: string) => {
+export const useSetUserDefaultAddress = (accessToken: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async () => {
+        mutationFn: async (addressId: string) => {
             const { data } = await axiosInstance.post<{ status: string, message: string }>("/geocoding/set-user-default-address", { addressId }, { headers: { Authorization: `Bearer ${accessToken}` } });
             return data;
         },

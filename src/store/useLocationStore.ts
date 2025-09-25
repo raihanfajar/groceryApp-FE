@@ -31,8 +31,10 @@ interface ActualLocationState {
     actualLatitude: number | null;
     actualLongitude: number | null;
     actualDisplayName: string | null;
+    label: string | null;
     setLocation: (lat: number, lon: number) => void;
     setDisplayName: (name: string | null) => void;
+    setLabel: (label: string | null) => void;
     clearLocation: () => void;
 }
 
@@ -42,13 +44,16 @@ export const useActualLocationStore = create<ActualLocationState>()(
             actualLatitude: null,
             actualLongitude: null,
             actualDisplayName: null,
+            label: null,
             setLocation: (lat, lon) => set({ actualLatitude: lat, actualLongitude: lon }),
             setDisplayName: (name) => set({ actualDisplayName: name }),
+            setLabel: (label) => set({ label }),
             clearLocation: () =>
                 set({
                     actualLatitude: null,
                     actualLongitude: null,
                     actualDisplayName: null, // <-- null, not ""
+                    label: null,
                 }),
         }),
         {
@@ -57,6 +62,7 @@ export const useActualLocationStore = create<ActualLocationState>()(
                 actualLatitude: state.actualLatitude,
                 actualLongitude: state.actualLongitude,
                 actualDisplayName: state.actualDisplayName, // null is now written
+                label: state.label,
             }),
             storage: createJSONStorage(() => localStorage),
         },

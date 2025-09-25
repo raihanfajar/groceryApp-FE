@@ -15,15 +15,17 @@ const AddressCardDropdown = ({
   id,
   lat,
   lon,
+  isDefault,
 }: {
   id: string;
   lat: number;
   lon: number;
+  isDefault: boolean;
 }) => {
   const { accessToken } = useUserAuthStore();
   const { setLocation: setActualLocation } = useActualLocationStore();
   const { mutateAsync: deleteAddress } = useDeleteUserAddress(accessToken, id);
-  const {mutateAsync: setAddressAsDefault} = useSetUserDefaultAddress(accessToken, id); //prettier-ignore
+  const {mutateAsync: setAddressAsDefault} = useSetUserDefaultAddress(accessToken); //prettier-ignore
 
   return (
     <DropdownMenu modal={false}>
@@ -36,22 +38,21 @@ const AddressCardDropdown = ({
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() => {
-              console.log(id);
-            }}
-          >
-            Select
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
               setActualLocation(lat, lon);
-              setAddressAsDefault();
+              setAddressAsDefault(id);
             }}
           >
-            Set As Default
+            Choose Location
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => deleteAddress()}>
-            Delete
-          </DropdownMenuItem>
+          {!isDefault && (
+            <DropdownMenuItem
+              onClick={() => {
+                deleteAddress();
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

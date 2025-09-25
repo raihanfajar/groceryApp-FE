@@ -15,12 +15,15 @@ const UserLoginPage = () => {
         {/* Title */}
         <h2 className="text-center text-lg font-bold text-gray-800">Login</h2>
         <p className="mt-1 text-center text-sm text-gray-600">
-          Don&apos;t have a FreshNear account yet?{" "}
+          Sign in to your FreshNear account or admin dashboard
+        </p>
+        <p className="mt-2 text-center text-xs text-gray-500">
+          Don&apos;t have a customer account yet?{" "}
           <Link
             href={"/user-register"}
             className="font-bold text-blue-600 hover:underline"
           >
-            Register
+            Register here
           </Link>
         </p>
         <UserLoginForm />

@@ -1,6 +1,6 @@
 "use client";
 import { useResendVerification } from "@/hooks/userAuth/useResendVerification";
-import { useUserLogin } from "@/hooks/userAuth/useUserLogin";
+import { useUnifiedLogin } from "@/hooks/auth/useUnifiedLogin";
 import { userLoginSchema } from "@/validation/userVS";
 import { useFormik } from "formik";
 import { FaSpinner } from "react-icons/fa";
@@ -11,7 +11,7 @@ import { PasswordField } from "./PasswordField";
 import { baseError, LoginFormValues } from "./typesAndInterfaces";
 
 const UserLoginForm = () => {
-  const { mutateAsync, isPending, error } = useUserLogin();
+  const { mutateAsync, isPending, error } = useUnifiedLogin();
   const { mutateAsync: resendVerification } = useResendVerification();
 
   const formik = useFormik<LoginFormValues>({
@@ -78,6 +78,19 @@ const UserLoginForm = () => {
           {isPending ? <FaSpinner className="animate-spin" /> : "Login"}
         </Button>
       </form>
+
+      {/* Development Helper for Admin Credentials */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
+          <p className="text-xs font-semibold text-gray-700 mb-2">
+            🛠️ Development Admin Credentials:
+          </p>
+          <div className="space-y-1 text-xs text-gray-600">
+            <p><strong>Super Admin:</strong> superadmin@groceryapp.com / superadmin123</p>
+            <p><strong>Store Admin:</strong> jakarta@groceryapp.com / storeadmin123</p>
+          </div>
+        </div>
+      )}
     </>
   );
 };

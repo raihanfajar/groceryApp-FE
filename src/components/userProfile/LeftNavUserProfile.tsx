@@ -15,7 +15,6 @@ const transactionMapItems = [
 
 const myAccountMapItems = [
   { title: "Settings", href: "/user-profile/settings" },
-  { title: "Addresses", href: "/user-profile/addresses" },
 ];
 
 const LeftNavUserProfile = () => {

@@ -1,0 +1,67 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Package, Upload, Download } from "lucide-react";
+
+interface StockManagementHeaderProps {
+  isSuper: boolean;
+  storeName?: string;
+}
+
+const StockManagementHeader: React.FC<StockManagementHeaderProps> = ({
+  isSuper,
+  storeName,
+}) => {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Stock Management</h1>
+          <p className="text-gray-600">
+            {isSuper
+              ? "Manage stock levels across all stores"
+              : `Manage stock for ${storeName || "your store"}`}
+          </p>
+        </div>
+        <div className="flex space-x-2">
+          <Button variant="outline" size="sm">
+            <Download className="mr-2 h-4 w-4" />
+            Export Stock
+          </Button>
+          <Button variant="outline" size="sm">
+            <Upload className="mr-2 h-4 w-4" />
+            Import Stock
+          </Button>
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Package className="mr-2 h-5 w-5" />
+            Quick Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">0</div>
+              <div className="text-sm text-gray-600">
+                Products Updated Today
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-600">0</div>
+              <div className="text-sm text-gray-600">Low Stock Alerts</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">0</div>
+              <div className="text-sm text-gray-600">Stock Movements Today</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default StockManagementHeader;

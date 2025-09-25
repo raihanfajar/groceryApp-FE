@@ -181,9 +181,17 @@ export default function ProductDetail({ slug }: ProductDetailProps) {
           {product.description && (
             <div>
               <h3 className="mb-2 font-semibold">Description</h3>
-              <p className="leading-relaxed text-gray-700">
-                {product.description}
-              </p>
+              {product.description.includes("<") &&
+              product.description.includes(">") ? (
+                <div
+                  className="max-w-none leading-relaxed text-gray-700 [&_br]:mb-2 [&_br]:block [&_em]:italic [&_h1]:mb-4 [&_h1]:text-xl [&_h1]:font-bold [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-4 [&_strong]:font-bold [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              ) : (
+                <div className="leading-relaxed whitespace-pre-wrap text-gray-700">
+                  {product.description}
+                </div>
+              )}
             </div>
           )}
 

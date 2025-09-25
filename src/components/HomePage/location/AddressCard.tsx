@@ -4,6 +4,9 @@ import AddressCardDropdown from "./AddressCardDropdown";
 import { MapPin } from "lucide-react"; // nice icon for location
 
 interface AddressCardProps {
+  id: string;
+  lat: number;
+  lon: number;
   addressLabel: string;
   receiverName: string;
   receiverPhoneNumber: string;
@@ -14,6 +17,9 @@ interface AddressCardProps {
 }
 
 export const AddressCard = ({
+  id,
+  lat,
+  lon,
   addressLabel,
   receiverName,
   receiverPhoneNumber,
@@ -28,20 +34,14 @@ export const AddressCard = ({
       className={cn(
         // base card style
         "group relative cursor-pointer rounded-xl border bg-white/50 p-5 shadow-sm transition-all hover:bg-white hover:shadow-md",
-        // default address accent
-        isDefault ? "border-blue-500 ring-1 ring-blue-300" : "border-gray-200",
+        // default address accent needed kah?
+        "border-gray-200",
       )}
     >
       {/* header */}
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <MapPin
-            size={18}
-            className={cn(
-              "mt-[2px]",
-              isDefault ? "text-blue-500" : "text-gray-400",
-            )}
-          />
+          <MapPin size={18} className={cn("mt-[2px]", "text-gray-400")} />
           <h3 className="text-base font-semibold text-gray-800">
             {addressLabel}
           </h3>
@@ -51,7 +51,7 @@ export const AddressCard = ({
             </span>
           )}
         </div>
-        <AddressCardDropdown />
+        <AddressCardDropdown id={id} lat={lat} lon={lon} />
       </div>
 
       {/* receiver info */}

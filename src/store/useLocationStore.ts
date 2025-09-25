@@ -36,19 +36,29 @@ interface ActualLocationState {
     clearLocation: () => void;
 }
 
-export const useActualLocationStore = create<ActualLocationState>()(persist((set) => ({
-    actualLatitude: null,
-    actualLongitude: null,
-    actualDisplayName: null,
-    setLocation: (lat, lon) => set({ actualLatitude: lat, actualLongitude: lon }),
-    setDisplayName: (name) => set({ actualDisplayName: name }),
-    clearLocation: () => set({ actualLatitude: null, actualLongitude: null, actualDisplayName: null }),
-}), {
-    name: 'actual-location',
-    partialize: (state) => ({
-        actualLatitude: state.actualLatitude,
-        actualLongitude: state.actualLongitude,
-        actualDisplayName: state.actualDisplayName,
-    }),
-    storage: createJSONStorage(() => localStorage),
-}));
+export const useActualLocationStore = create<ActualLocationState>()(
+    persist(
+        (set) => ({
+            actualLatitude: null,
+            actualLongitude: null,
+            actualDisplayName: null,
+            setLocation: (lat, lon) => set({ actualLatitude: lat, actualLongitude: lon }),
+            setDisplayName: (name) => set({ actualDisplayName: name }),
+            clearLocation: () =>
+                set({
+                    actualLatitude: null,
+                    actualLongitude: null,
+                    actualDisplayName: null, // <-- null, not ""
+                }),
+        }),
+        {
+            name: 'actual-location',
+            partialize: (state) => ({
+                actualLatitude: state.actualLatitude,
+                actualLongitude: state.actualLongitude,
+                actualDisplayName: state.actualDisplayName, // null is now written
+            }),
+            storage: createJSONStorage(() => localStorage),
+        },
+    ),
+);

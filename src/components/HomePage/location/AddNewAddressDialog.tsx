@@ -18,6 +18,7 @@ import { Checkbox } from "../../ui/checkbox";
 import { Label } from "../../ui/label";
 import { AddNewAddressDialogFormValues } from "../typesAndInterfaces";
 import AddNewAddressDialogFormField from "./AddNewAddressDialogFormField";
+import { useActualLocationStore } from "@/store/useLocationStore";
 
 const MapLeaflet = dynamic(() => import("./MapLeaflet"), { ssr: false });
 // declare typed global for leaflet map
@@ -31,6 +32,7 @@ const inputBaseCn =
 
 const AddNewAddressDialog = () => {
   const { accessToken } = useUserAuthStore();
+  const { setLocation: setActualLocation } = useActualLocationStore();
   const { mutateAsync: addNewAddress, isPending } =
     useAddNewAddress(accessToken);
   const formik = useFormik<AddNewAddressDialogFormValues>({
@@ -45,6 +47,9 @@ const AddNewAddressDialog = () => {
     validationSchema: addNewAddressSchema,
     onSubmit: (values) => {
       console.log("Form submitted:", values);
+      if (values.isDefault) {
+        setActualLocation(values.latLon.lat, values.latLon.lon);
+      }
       addNewAddress({
         addressLabel: values.addressLabel,
         receiverName: values.receiverName,

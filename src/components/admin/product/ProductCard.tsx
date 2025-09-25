@@ -49,9 +49,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <CardContent className="p-4">
         <div className="space-y-2">
           <h3 className="truncate font-medium text-gray-900">{product.name}</h3>
-          <p className="line-clamp-2 text-sm text-gray-600">
-            {product.description}
-          </p>
+          {product.description.includes("<") &&
+          product.description.includes(">") ? (
+            <div
+              className="line-clamp-2 text-sm text-gray-600 [&_em]:italic [&_ol]:list-decimal [&_strong]:font-bold [&_ul]:list-disc"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
+          ) : (
+            <p className="line-clamp-2 text-sm text-gray-600">
+              {product.description}
+            </p>
+          )}
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold text-green-600">
               {formatPrice(product.price)}

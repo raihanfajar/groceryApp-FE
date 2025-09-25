@@ -13,6 +13,8 @@ import {
   FolderTree,
   Users,
   BarChart3,
+  Archive,
+  CreditCard,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -52,10 +54,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       current: pathname.startsWith("/admin/products"),
     },
     {
+      name: "Inventory",
+      href: "/admin/inventory",
+      icon: Archive,
+      current: pathname.startsWith("/admin/inventory"),
+    },
+    {
       name: "Categories",
       href: "/admin/categories",
       icon: FolderTree,
       current: pathname.startsWith("/admin/categories"),
+    },
+    {
+      name: "Transactions",
+      href: "/admin/transactions",
+      icon: CreditCard,
+      current: pathname.startsWith("/admin/transactions"),
+      disabled: true,
     },
     {
       name: "Reports",

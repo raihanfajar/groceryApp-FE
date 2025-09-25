@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LeftNavUserProfile from "@/components/userProfile/LeftNavUserProfile";
+import ChangePasswordDialog from "@/components/userProfile/myAccount/ChangePasswordDialog";
 import SettingsPersonalInfo from "@/components/userProfile/myAccount/SettingsPersonalInfo";
 
 const UserProfilePage = () => {
@@ -25,9 +25,7 @@ const UserProfilePage = () => {
               {/* Avatar + Change password */}
               <div className="flex flex-col items-center">
                 <div className="mb-4 h-24 w-24 rounded-full bg-gray-300"></div>
-                <Button className="cursor-pointer rounded-full bg-green-600 px-4 text-white hover:bg-green-700">
-                  Change Password
-                </Button>
+                <ChangePasswordDialog />
               </div>
 
               {/* Personal Info */}

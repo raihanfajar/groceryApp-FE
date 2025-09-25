@@ -6,7 +6,7 @@ import { useUpdateUserProfileInfo } from "@/hooks/userProfile/useUpdateUserProfi
 import { cn } from "@/lib/utils";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { Form, Formik } from "formik";
-import { Check, Pencil, X } from "lucide-react";
+import { Check, Pencil, X, User, Phone, Mail } from "lucide-react";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -27,12 +27,16 @@ const SettingsPersonalInfo = () => {
   >(null);
 
   if (isLoading || !userData) {
-    return <div className="p-4 text-gray-600">Loading user info…</div>;
+    return (
+      <div className="flex items-center justify-center p-6 text-gray-500">
+        <span className="animate-pulse">Loading user info…</span>
+      </div>
+    );
   }
 
   return (
     <div className="md:col-span-2">
-      <h3 className="mb-4 text-lg font-semibold text-gray-800">Info</h3>
+      <h3 className="mb-6 text-2xl font-bold text-gray-800">Personal Info</h3>
 
       <Formik
         enableReinitialize
@@ -43,7 +47,7 @@ const SettingsPersonalInfo = () => {
         }}
         validationSchema={ProfileSchema}
         validateOnBlur
-        validateOnChange // 👈 real-time validation
+        validateOnChange
         onSubmit={async (values) => {
           try {
             await mutateAsync({
@@ -66,98 +70,92 @@ const SettingsPersonalInfo = () => {
           touched,
           dirty,
         }) => (
-          <Form className="space-y-6 text-gray-700">
-            {(["name", "phone", "email"] as const).map((field) => {
-              const label =
-                field === "name"
-                  ? "Name"
-                  : field === "phone"
-                    ? "Phone"
-                    : "Email";
-
+          <Form className="space-y-6">
+            {(
+              [
+                { key: "name", label: "Name", icon: User },
+                { key: "phone", label: "Phone", icon: Phone },
+                { key: "email", label: "Email", icon: Mail },
+              ] as const
+            ).map(({ key, label, icon: Icon }) => {
+              const field = key as "name" | "phone" | "email";
               const error = errors[field];
               const isTouched = touched[field];
 
               return (
-                <div
-                  key={field}
-                  className="flex flex-col sm:flex-row sm:items-center sm:gap-3"
-                >
-                  <span className="font-medium sm:w-40">{label}:</span>
+                <div key={key} className="group">
+                  <div className="flex items-start gap-4">
+                    {/* Icon */}
+                    <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-50">
+                      <Icon className="h-5 w-5 text-green-600" />
+                    </div>
 
-                  {/* Editing */}
-                  {editingField === field ? (
+                    {/* Content */}
                     <div className="flex-1">
-                      <input
-                        name={field}
-                        className={cn(
-                          "mt-1 w-full rounded-md border px-2 py-1 text-gray-700 focus:outline-none sm:mt-0",
-                          error && isTouched
-                            ? "border-red-500 focus:border-red-500"
-                            : "border-gray-300 focus:border-green-500",
-                        )}
-                        value={values[field]}
-                        onChange={handleChange}
-                        onBlur={() => setFieldTouched(field, true)} // persist touched on blur
-                        autoFocus
-                        disabled={isUpdatingUser}
-                      />
-                      {/* {error && isTouched && (
-                        <p className="mt-1 text-sm text-red-600">{error}</p>
-                      )} */}
-                    </div>
-                  ) : (
-                    <span className="mt-1 w-full flex-1 font-semibold sm:mt-0">
-                      {values[field]}
-                    </span>
-                  )}
+                      <label className="mb-1 block text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                        {label}
+                      </label>
 
-                  {/* Icons */}
-                  {editingField === field ? (
-                    <div className="mt-2 ml-auto flex gap-2 sm:mt-0">
-                      <Check
-                        size={18}
-                        className={`cursor-pointer text-green-600 hover:text-green-700 ${
-                          isUpdatingUser ? "cursor-not-allowed opacity-50" : ""
-                        }`}
-                        onClick={() => {
-                          if (!isUpdatingUser) {
-                            setEditingField(null);
-                          }
-                        }}
-                      />
-                      <X
-                        size={18}
-                        className={`cursor-pointer text-gray-500 hover:text-red-500 ${
-                          isUpdatingUser ? "cursor-not-allowed opacity-50" : ""
-                        }`}
-                        onClick={() => {
-                          if (!isUpdatingUser) {
-                            // reset to original
-                            setFieldValue(
-                              field,
-                              userData[
-                                field === "phone" ? "phoneNumber" : field
-                              ],
-                            );
-                            setEditingField(null);
-                          }
-                        }}
-                      />
+                      {editingField === field ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            name={field}
+                            className={cn(
+                              "h-10 w-full rounded-lg border px-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none",
+                              error && isTouched
+                                ? "border-red-400"
+                                : "border-gray-300",
+                            )}
+                            value={values[field]}
+                            onChange={handleChange}
+                            onBlur={() => setFieldTouched(field, true)}
+                            autoFocus
+                            disabled={isUpdatingUser}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setEditingField(null)}
+                            disabled={isUpdatingUser}
+                            className="rounded-lg p-2 hover:bg-gray-100"
+                          >
+                            <Check className="h-5 w-5 text-green-600" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFieldValue(
+                                field,
+                                field === "phone"
+                                  ? userData.phoneNumber
+                                  : userData[field],
+                              );
+                              setEditingField(null);
+                            }}
+                            disabled={isUpdatingUser}
+                            className="rounded-lg p-2 hover:bg-gray-100"
+                          >
+                            <X className="h-5 w-5 text-gray-500" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 shadow-sm">
+                          <span className="text-sm font-medium text-gray-800">
+                            {values[field]}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingField(field);
+                              setFieldTouched(field, true, false);
+                            }}
+                            className="rounded-lg p-1.5 hover:bg-white"
+                          >
+                            <Pencil className="h-4 w-4 text-gray-400 hover:text-green-600" />
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <Pencil
-                      size={18}
-                      className="mt-2 ml-auto cursor-pointer text-gray-500 hover:text-green-600 sm:mt-0"
-                      onClick={() => {
-                        if (!isUpdatingUser) {
-                          setEditingField(field);
-                          // Mark touched immediately so error shows if invalid
-                          setFieldTouched(field, true, false);
-                        }
-                      }}
-                    />
-                  )}
+                  </div>
                 </div>
               );
             })}
@@ -166,7 +164,7 @@ const SettingsPersonalInfo = () => {
               <div className="pt-4">
                 <Button
                   type="submit"
-                  className="w-full rounded-full bg-green-600 px-6 text-white hover:bg-green-700 sm:w-auto"
+                  className="w-full rounded-full bg-green-600 text-white hover:bg-green-700 sm:w-auto"
                   disabled={isUpdatingUser}
                 >
                   {isUpdatingUser ? "Saving..." : "Save Changes"}

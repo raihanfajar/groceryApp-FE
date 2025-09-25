@@ -4,7 +4,6 @@ import { ApiResponse } from "@/types/apiResponse";
 import { Transaction } from "@/types/transaction/transactionTypes";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { error } from "console";
 import { toast } from "react-toastify";
 
 interface UploadProofVariables {
@@ -60,29 +59,39 @@ export function useCompleteTransaction(transactionId: string) {
 }
 
 // Cancel Transaction
-export function useCancelTransaction(transactionId: string) {
+export function useCancelTransaction(transactionId?: string) {
   const { accessToken } = useUserAuthStore();
-  return useQuery({
-    queryKey: ["cancelTransaction", transactionId],
-    queryFn: async () => {
-      if (!transactionId) return null;
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!transactionId) throw new Error("Transaction ID is missing");
+      if (!accessToken) throw new Error("Access token is missing");
+
       const response = await axiosInstance.put<
         ApiResponse<{ transaction: Transaction }>
-      >(
-        `/transaction/cancel/?transactionId=${transactionId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
+      >(`/transaction/cancel/?transactionId=${transactionId}`, {}, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
       return response.data;
     },
-    enabled: !!transactionId,
+    onSuccess: (data) => {
+      toast.success(data?.message ?? "Transaction canceled");
+      queryClient.invalidateQueries({
+        queryKey: ["transactionDetails", transactionId],
+        exact: true,
+      });
+    },
+    onError: (err: any) => {
+      const msg =
+        err?.response?.data?.message || err?.message || "Cancel failed";
+      toast.error(msg);
+    },
   });
 }
 
 // Upload Proof of Payment
-// Tip: sesuaikan tipe UploadProofResponse/UploadProofVariables/baseError sesuai definisi Anda
 export function useUploadProofOfPayment() {
   const { accessToken } = useUserAuthStore();
   const queryClient = useQueryClient();

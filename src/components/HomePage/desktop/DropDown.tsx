@@ -84,22 +84,22 @@ export const ProfileDropDown = () => {
           Transactions
         </DropdownMenuLabel>
         <DropdownMenuGroup className="p-1">
-          <Link href={"/user-profile/settings"}>
+          <Link href={"/user-profile/created"}>
             <DropdownMenuItem>Created</DropdownMenuItem>
           </Link>
-          <Link href={"/user-profile/settings"}>
+          <Link href={"/user-profile/waiting-for-payment"}>
             <DropdownMenuItem>Waiting for Payment</DropdownMenuItem>
           </Link>
-          <Link href={"/user-profile/settings"}>
+          <Link href={"/user-profile/processed"}>
             <DropdownMenuItem>Processed</DropdownMenuItem>
           </Link>
-          <Link href={"/user-profile/settings"}>
+          <Link href={"/user-profile/sent"}>
             <DropdownMenuItem>Sent</DropdownMenuItem>
           </Link>
-          <Link href={"/user-profile/settings"}>
+          <Link href={"/user-profile/done"}>
             <DropdownMenuItem>Done</DropdownMenuItem>
           </Link>
-          <Link href={"/user-profile/settings"}>
+          <Link href={"/user-profile/cancelled"}>
             <DropdownMenuItem>Cancelled</DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
@@ -109,9 +109,6 @@ export const ProfileDropDown = () => {
         <DropdownMenuGroup className="p-1">
           <Link href={"/user-profile/settings"}>
             <DropdownMenuItem>Settings</DropdownMenuItem>
-          </Link>
-          <Link href={"/user-profile/settings"}>
-            <DropdownMenuItem>Addresses</DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
       </DropdownMenuContent>

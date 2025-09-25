@@ -108,7 +108,7 @@ export const dummyTransaction: Transaction = {
   codeVoucherDelivery: "ONGKIRHEMAT",
 
   paymentProof: null,
-  paymentMethod: "midtrans",
+  paymentMethod: "manual_transfer",
   snapToken: null,
   snapRedirectUrl: null,
   paidAt: null,

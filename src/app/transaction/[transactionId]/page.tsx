@@ -1,16 +1,15 @@
 "use client";
-import { useTransactionDetailsQuery } from "@/hooks/transaction/useTransaction";
-import UserAuthGuard from "@/providers/UserAuthGuard";
-import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import TransactionHeading from "../components/TransactionHeading";
 import TransactionAddress from "../components/TransactionAddress";
 import TransactionProductItem from "../components/TransactionProductItem";
 import TransactionSummary from "../components/TransactionSummary";
+import TransactionDetails from "../components/TransactionDetails";
 import { dummyTransaction } from "@/types/checkout/dummyDataTransaction";
+import { useRouter } from "next/navigation";
 
 function page() {
-  const router = useRouter(); 
+  const router = useRouter();
   // const transactionId = useParams<{ transactionId: string }>();
   // const { data: transaction, isLoading } = useTransactionDetailsQuery(
   //   transactionId?.transactionId,
@@ -35,8 +34,13 @@ function page() {
 
   return (
     // <UserAuthGuard>
-      <div className="container mx-auto mb-10 p-4">
-        <TransactionHeading />
+    <div className="container mx-auto mb-10 p-4">
+      <TransactionHeading />
+      <TransactionDetails transaction={transaction} />
+      {transaction.productsTransaction?.map((item) => (
+        <TransactionProductItem key={item.id} item={item} />
+      ))}
+      <div className="mt-10 w-full flex-row justify-center space-y-5 md:flex md:justify-between md:gap-5 md:space-y-0">
         <TransactionAddress
           receiverName={transaction.receiverName}
           receiverPhoneNumber={transaction.phoneNumber}
@@ -46,11 +50,9 @@ function page() {
           province={transaction.province}
           addressLabel={transaction.addressLabel}
         />
-        {transaction.productsTransaction?.map((item) => (
-          <TransactionProductItem key={item.id} item={item} />
-        ))}
         <TransactionSummary transaction={transaction} />
       </div>
+    </div>
     // </UserAuthGuard>
   );
 }

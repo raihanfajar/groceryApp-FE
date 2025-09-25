@@ -15,7 +15,7 @@ export function createPaymentActionHandler({
   midtransUrl,
 }: CreatePaymentActionHandlerArgs) {
   return function handlePaymentAction() {
-    const method = transaction?.paymentMethod ?? null;
+    const method = transaction?.paymentMethod;
 
     if (method === "manual_transfer") {
       openUploadModal();
@@ -23,8 +23,7 @@ export function createPaymentActionHandler({
     }
 
     if (method === "midtrans") {
-      const url = transaction?.snapRedirectUrl ?? null;
-
+      const url = midtransUrl;
       if (!url) {
         toast.error("Midtrans payment link not available.");
         return;
@@ -35,19 +34,29 @@ export function createPaymentActionHandler({
         return;
       }
 
-      // Default popup window
       const width = 600;
       const height = 700;
       const left = window.screenX + (window.outerWidth - width) / 2;
       const top = window.screenY + (window.outerHeight - height) / 2;
 
-      window.open(
+      const popup = window.open(
         url,
         "midtrans_payment_window",
         `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`,
       );
+
+      if (popup) {
+        try {
+          popup.focus();
+        } catch {}
+      } else {
+        toast.error(
+          "Popup blocked. Please allow popups or open the link manually.",
+        );
+      }
       return;
     }
+
     toast.error("Unsupported payment method.");
   };
 }

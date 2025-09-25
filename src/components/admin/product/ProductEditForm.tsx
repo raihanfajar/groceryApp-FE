@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import RichTextEditor from "@/components/ui/rich-text-editor";
 import {
   Select,
   SelectContent,
@@ -23,6 +23,7 @@ interface ProductEditFormProps {
   ) => void;
   onCategoryChange: (value: string) => void;
   onActiveChange: (checked: boolean) => void;
+  onDescriptionChange: (value: string) => void;
 }
 
 export default function ProductEditForm({
@@ -32,6 +33,7 @@ export default function ProductEditForm({
   onChange,
   onCategoryChange,
   onActiveChange,
+  onDescriptionChange,
 }: ProductEditFormProps) {
   if (loading) {
     return (
@@ -109,7 +111,6 @@ export default function ProductEditForm({
             name="price"
             type="number"
             min="0"
-            step="1000"
             value={formData.price ?? ""}
             onChange={onChange}
             placeholder="0"
@@ -118,7 +119,7 @@ export default function ProductEditForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="weight">Weight (grams) *</Label>
+          <Label htmlFor="weight">Weight (grams/ml) *</Label>
           <Input
             id="weight"
             name="weight"
@@ -132,18 +133,24 @@ export default function ProductEditForm({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Description *</Label>
-        <Textarea
-          id="description"
-          name="description"
-          value={formData.description ?? ""}
-          onChange={onChange}
-          placeholder="Enter product description"
-          rows={4}
-          required
-        />
-      </div>
+      <RichTextEditor
+        label="Product Description"
+        value={formData.description ?? ""}
+        onChange={onDescriptionChange}
+        placeholder="Enter a detailed product description...
+
+Examples of good formatting:
+• Use bullet points for features
+• Bold text for important details
+• Headers to organize information
+
+Product highlights:
+- Fresh quality guaranteed
+- Premium ingredients
+- Perfect for daily use"
+        required
+        className="col-span-full"
+      />
 
       {/* Active Status */}
       <div className="flex items-center space-x-2">

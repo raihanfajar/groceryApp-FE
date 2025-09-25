@@ -57,7 +57,7 @@ const page = () => {
 
   if (isLoadingAddress || isLoadingCart) {
     return (
-      <div className="container mx-auto p-4 text-center">
+      <div className="container mx-auto flex min-h-screen items-center justify-center p-4 text-center">
         <span className="loading loading-ring loading-sm"></span>
         <span className="loading loading-ring loading-md"></span>
         <span className="loading loading-ring loading-lg"></span>

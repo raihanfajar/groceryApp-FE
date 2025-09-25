@@ -6,7 +6,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { IoLocationSharp } from "react-icons/io5";
 
 type UserAddressProps = {
-  addresses: UserAddressInterface[] ;
+  addresses: UserAddressInterface[];
   selectedAddress: UserAddressInterface | null;
   onAddressChange: (address: UserAddressInterface) => void;
 };
@@ -78,7 +78,9 @@ const UserAddress = ({
         </div>
         <div className="flex-row items-center justify-between space-y-4 lg:flex lg:space-y-0">
           <div className="text-primary text-l font-bold md:text-lg">
-            <div>{selectedAddress.receiverName} ({selectedAddress.addressLabel})</div>
+            <div>
+              {selectedAddress.receiverName} ({selectedAddress.addressLabel})
+            </div>
             <div>{selectedAddress.receiverPhoneNumber}</div>
           </div>
           <div className="text-primary text-sm font-medium md:text-base">

@@ -7,31 +7,34 @@ import TransactionHeading from "../components/TransactionHeading";
 import TransactionAddress from "../components/TransactionAddress";
 import TransactionProductItem from "../components/TransactionProductItem";
 import TransactionSummary from "../components/TransactionSummary";
+import { dummyTransaction } from "@/types/checkout/dummyDataTransaction";
 
 function page() {
-  const router = useRouter();
-  const transactionId = useParams<{ transactionId: string }>();
-  const { data: transaction, isLoading } = useTransactionDetailsQuery(
-    transactionId?.transactionId,
-  );
+  const router = useRouter(); 
+  // const transactionId = useParams<{ transactionId: string }>();
+  // const { data: transaction, isLoading } = useTransactionDetailsQuery(
+  //   transactionId?.transactionId,
+  // );
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-4 text-center">
-        <span className="loading loading-ring loading-sm"></span>
-        <span className="loading loading-ring loading-md"></span>
-        <span className="loading loading-ring loading-lg"></span>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="container mx-auto flex min-h-screen items-center justify-center p-4 text-center">
+  //       <span className="loading loading-ring loading-sm"></span>
+  //       <span className="loading loading-ring loading-md"></span>
+  //       <span className="loading loading-ring loading-lg"></span>
+  //     </div>
+  //   );
+  // }
 
-  if (!transactionId || !transaction) {
-    router.push("/");
-    return null;
-  }
+  // if (!transactionId || !transaction) {
+  //   router.push("/");
+  //   return null;
+  // }
+
+  const transaction = dummyTransaction;
 
   return (
-    <UserAuthGuard>
+    // <UserAuthGuard>
       <div className="container mx-auto mb-10 p-4">
         <TransactionHeading />
         <TransactionAddress
@@ -48,7 +51,7 @@ function page() {
         ))}
         <TransactionSummary transaction={transaction} />
       </div>
-    </UserAuthGuard>
+    // </UserAuthGuard>
   );
 }
 

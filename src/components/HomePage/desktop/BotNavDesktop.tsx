@@ -1,23 +1,24 @@
 "use client";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineGridView, MdShoppingCart } from "react-icons/md";
 import "simplebar/dist/simplebar.min.css";
 import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
-import MegaMenu from "./MegaMenu";
+import LogoutDialog from "../LogoutDialog";
 import { ProfileDropDown } from "./DropDown";
+import MegaMenu from "./MegaMenu";
 
 type cartCountProps = {
   cartCount: number;
 };
 
 export default function BotNavDesktop({ cartCount }: cartCountProps) {
-  const { name, clearAuth } = useUserAuthStore();
+  const { name } = useUserAuthStore();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -106,14 +107,12 @@ export default function BotNavDesktop({ cartCount }: cartCountProps) {
         {name ? (
           <>
             <ProfileDropDown />
-            <Link href="/" onClick={() => clearAuth()}>
-              Logout
-            </Link>
+            <LogoutDialog />
           </>
         ) : (
           <>
-            <Link href="/user-login">Login (Dev)</Link>
-            <Link href="/user-register">Register (Dev)</Link>
+            <Link href="/user-login">Login</Link>
+            <Link href="/user-register">Register</Link>
           </>
         )}
       </div>

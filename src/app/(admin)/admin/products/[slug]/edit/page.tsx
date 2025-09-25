@@ -32,6 +32,7 @@ export default function EditProductPage() {
     loadProduct,
     handleInputChange,
     handleCategoryChange,
+    handleDescriptionChange,
     handleActiveChange,
     handleImageChange,
     removeImage,
@@ -116,6 +117,7 @@ export default function EditProductPage() {
                 loading={loading}
                 onChange={handleInputChange}
                 onCategoryChange={handleCategoryChange}
+                onDescriptionChange={handleDescriptionChange}
                 onActiveChange={handleActiveChange}
               />
 

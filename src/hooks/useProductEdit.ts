@@ -102,6 +102,10 @@ export function useProductEdit(productSlug: string, accessToken: string) {
     setFormData((prev) => ({ ...prev, categoryId: value }));
   };
 
+  const handleDescriptionChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, description: value }));
+  };
+
   const handleActiveChange = (checked: boolean) => {
     setFormData((prev) => ({ ...prev, isActive: checked }));
   };
@@ -176,6 +180,8 @@ export function useProductEdit(productSlug: string, accessToken: string) {
 
       const updateData: Partial<UpdateProductFormData> = {
         ...formData,
+        // Ensure isActive is a boolean, not a string
+        isActive: Boolean(formData.isActive),
         ...imageFiles,
       };
 
@@ -209,6 +215,7 @@ export function useProductEdit(productSlug: string, accessToken: string) {
     loadProduct,
     handleInputChange,
     handleCategoryChange,
+    handleDescriptionChange,
     handleActiveChange,
     handleImageChange,
     removeImage,

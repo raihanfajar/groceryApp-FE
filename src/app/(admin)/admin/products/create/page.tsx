@@ -25,6 +25,7 @@ export default function CreateProductPage() {
     loading,
     handleInputChange,
     handleCategoryChange,
+    handleDescriptionChange,
     handleImageChange,
     removeImage,
     handleSubmit,
@@ -70,6 +71,7 @@ export default function CreateProductPage() {
                 categories={categories}
                 onInputChange={handleInputChange}
                 onCategoryChange={handleCategoryChange}
+                onDescriptionChange={handleDescriptionChange}
               />
 
               <ProductImageUpload

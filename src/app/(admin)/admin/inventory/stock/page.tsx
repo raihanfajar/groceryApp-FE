@@ -1,5 +1,8 @@
 "use client";
 
+// ! ERROR ketika npm run build, disuruh wrap suspense, jadi beginiin (ghazi)
+
+import { Suspense } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import StockManagementHeader from "@/components/admin/inventory/StockManagementHeader";
 import StockFiltersComponent from "@/components/admin/inventory/StockFiltersComponent";
@@ -9,7 +12,7 @@ import StockPagination from "@/components/admin/inventory/StockPagination";
 import { useStockManagement } from "@/hooks/useStockManagement";
 import { AdminProduct } from "@/types/admin/product";
 
-export default function StockManagementPage() {
+function StockManagementPage() {
   const {
     products,
     categories,
@@ -79,5 +82,19 @@ export default function StockManagementPage() {
         />
       </div>
     </AdminLayout>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <span>Loading…</span>
+        </div>
+      }
+    >
+      <StockManagementPage />
+    </Suspense>
   );
 }

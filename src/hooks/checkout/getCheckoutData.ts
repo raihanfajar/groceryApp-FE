@@ -11,21 +11,28 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-
 // Get User Address
-export function useUserAddressQuery() {
+export function useUserAddressesQuery() {
   const { accessToken } = useUserAuthStore();
-  return useQuery({
-    queryKey: ["userAddress", accessToken],
+
+  return useQuery<UserAddressInterface[]>({
+    queryKey: ["userAddresses", "userAddressList", accessToken],
     queryFn: async () => {
-      if (!accessToken) return null;
+      if (!accessToken) return [];
+
       const response = await axiosInstance.get<
-        ApiResponse<{ address: UserAddressInterface | null }>
+        ApiResponse<{
+          address: UserAddressInterface | UserAddressInterface[] | null;
+        }>
       >("/transaction/address", {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      return response.data.data.address ?? null;
+      const raw = response.data?.data?.address ?? null;
+
+      if (!raw) return [];
+      if (Array.isArray(raw)) return raw;
+      return [raw];
     },
     enabled: !!accessToken,
   });

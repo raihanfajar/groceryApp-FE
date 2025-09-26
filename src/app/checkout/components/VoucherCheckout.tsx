@@ -88,7 +88,7 @@ function VoucherCheckout({ onVoucherApplied }: VoucherCheckoutProps) {
 
   return (
     <div className="mt-2">
-      <h2 className="text-xl font-bold mb-5">Have a Voucher?</h2>
+      <h2 className="mb-5 text-xl font-bold">Have a Voucher?</h2>
       <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
         <div className="flex-1">
           <div className="text-primary mb-2 font-medium">Product Voucher</div>

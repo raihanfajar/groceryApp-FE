@@ -79,7 +79,7 @@ const AddNewAddressDialog = () => {
     >
       <DialogTrigger asChild>
         <Button className="w-full cursor-pointer bg-green-700" type="button">
-          Add Address
+          Add New Address
         </Button>
       </DialogTrigger>
       <DialogContent className="flex h-[600px] flex-col sm:max-w-[425px] md:max-w-[600px] lg:max-w-[1000px]">

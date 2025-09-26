@@ -10,7 +10,7 @@ import { UserAddressInterface } from "@/types/checkout/checkoutTypes";
 import CheckoutSummary from "./components/CheckoutSummary";
 import CheckoutHeading from "./components/CheckoutHeading";
 import {
-  useUserAddressQuery,
+  useUserAddressesQuery,
   useUserCartQuery,
 } from "@/hooks/checkout/getCheckoutData";
 
@@ -20,14 +20,16 @@ const page = () => {
   const [selectedAddress, setSelectedAddress] =
     useState<UserAddressInterface | null>(null);
 
-  const { data: addressData, isLoading: isLoadingAddress } =
-    useUserAddressQuery();
+  const { data: addressData = [], isLoading: isLoadingAddress } =
+    useUserAddressesQuery();
+
   const { data: cartData, isLoading: isLoadingCart } = useUserCartQuery();
 
   useEffect(() => {
-    if (addressData) {
-      setSelectedAddress(addressData);
-    }
+    if (!addressData || addressData.length === 0) return;
+    const defaultAddress =
+      addressData.find((a) => a.isDefault) ?? addressData[0];
+    setSelectedAddress(defaultAddress);
   }, [addressData]);
 
   const handleAddressChange = (newAddress: UserAddressInterface) => {
@@ -74,18 +76,18 @@ const page = () => {
           selectedAddress={selectedAddress}
           onAddressChange={handleAddressChange}
         />
-        <div className="mb-5 h-auto w-full rounded-lg bg-[#f5f5f5] p-3">
+        <div className="border-lg mb-7 w-full rounded-lg border border-black bg-[#f5f5f5] p-4">
           {cartData?.items?.map((singleItem) => (
             <CartUser key={singleItem.id} item={singleItem} />
           ))}
         </div>
-        <div className="mb-5 flex w-full flex-col gap-4 rounded-lg bg-[#f5f5f5] p-4 md:flex-row md:items-start md:justify-between">
-          <div className="w-full md:w-[60%]">
+        <div className="mb-5 flex w-full flex-col gap-4 rounded-lg p-4 md:flex-row md:items-start md:justify-between">
+          <div className="w-full rounded-lg border border-black p-5 md:w-[55%]">
             <VoucherCheckout onVoucherApplied={handleVoucherApply} />
           </div>
 
           <div className="w-full md:flex md:w-[40%] md:justify-end">
-            <div className="w-full">
+            <div className="w-full rounded-lg border border-black p-5">
               <CheckoutSummary
                 userAddress={selectedAddress}
                 productVoucher={productVoucher}

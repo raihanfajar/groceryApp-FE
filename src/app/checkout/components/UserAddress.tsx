@@ -1,5 +1,6 @@
 "use client";
 
+import AddNewAddressDialog from "@/components/homePage/location/AddNewAddressDialog";
 import { UserAddressInterface } from "@/types/checkout/checkoutTypes";
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
@@ -36,6 +37,10 @@ const UserAddress = ({
     modalRef.current?.close();
   };
 
+  // const addNewAddress = () => {
+  //   <AddNewAddressDialog />
+  // };
+
   const handleConfirmSelection = () => {
     const newSelectedAddress = addresses.find(
       (addr) => addr.id === tempSelectedId,
@@ -50,16 +55,10 @@ const UserAddress = ({
 
   if (!addresses || addresses.length === 0) {
     return (
-      <div className="mb-5 flex h-auto min-h-[150px] w-full items-center justify-center rounded-lg bg-[#f5f5f5] p-6 text-center">
+      <div className="mb-5 flex h-auto min-h-[150px] w-full items-center justify-center rounded-lg border border-black bg-white p-6 text-center shadow-md">
         <div>
           <p className="mb-4 text-gray-600">You have no saved addresses.</p>
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            className="cursor-pointer rounded-lg border-2 border-black bg-white p-3 font-medium text-black"
-          >
-            Add New Address
-          </button>
+          <AddNewAddressDialog />
         </div>
       </div>
     );
@@ -71,13 +70,13 @@ const UserAddress = ({
 
   return (
     <>
-      <div className="mb-5 h-auto w-full rounded-lg bg-[#f5f5f5] p-6">
+      <div className="mb-5 h-auto w-full rounded-lg border border-black bg-[#ffffffdb] p-4 shadow-md">
         <div className="mb-4 flex items-center gap-4 text-lg font-semibold text-[#249731] md:text-xl">
           <IoLocationSharp className="text-2xl" />
           Shipping Address
         </div>
         <div className="flex-row items-center justify-between space-y-4 lg:flex lg:space-y-0">
-          <div className="text-primary text-l font-bold md:text-lg">
+          <div className="text-primary text-xs font-semibold md:text-base">
             <div>
               {selectedAddress.receiverName} ({selectedAddress.addressLabel})
             </div>
@@ -88,7 +87,7 @@ const UserAddress = ({
           </div>
           <button
             type="button"
-            className="text-primary flex h-auto w-auto cursor-pointer items-center justify-center rounded-lg border-2 border-black bg-white p-3 font-medium"
+            className="text-primary flex h-auto w-auto cursor-pointer items-center justify-center rounded-lg border-2 border-black bg-white p-3 text-sm font-medium"
             onClick={openModal}
           >
             Change Address

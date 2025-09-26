@@ -68,3 +68,14 @@ export type Product = {
   isActive: boolean;
   weight: number;
 };
+
+export type PaginatedTransactions = {
+  data: Transaction[];
+  meta?: {
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    hasNext: boolean;
+  };
+};

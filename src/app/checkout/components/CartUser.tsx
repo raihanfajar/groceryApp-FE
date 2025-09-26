@@ -8,7 +8,7 @@ function CartUser({ item }: { item: CartItemWithPromo }) {
   return (
     <>
       {/* Desktop View */}
-      <div className="mt-2 hidden items-center border-b-2 py-4 text-gray-800 md:flex">
+      <div className="mt-2 hidden items-center rounded-lg border bg-white p-6 text-gray-800 shadow-lg md:flex">
         <div className="flex w-5/12 items-center gap-6">
           <div className="avatar">
             <div className="mask mask-squircle h-16 w-16">

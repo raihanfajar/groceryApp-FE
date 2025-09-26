@@ -11,13 +11,13 @@ function TransactionSummary({ transaction }: { transaction: Transaction }) {
 
   return (
     <>
-      <div className="w-full max-w-md rounded-lg border-2 border-black bg-[#ffffffdb] p-4 shadow-lg">
+      <div className="w-full max-w-md rounded-lg border border-black bg-[#ffffffdb] p-4 shadow-md md:ml-auto">
         <h2 className="mb-5 text-lg font-semibold">Transaction Summary</h2>
 
         {/* Subtotal */}
         <div className="flex justify-between border-b-2 pb-2">
-          <div className="text-primary text-sm">Subtotal:</div>
-          <div className="text-primary text-sm font-medium">
+          <div className="text-primary text-xs md:text-sm">Subtotal:</div>
+          <div className="text-primary text-xs font-medium md:text-sm">
             {formatCurrency(transaction.totalProductPrice)}
           </div>
         </div>
@@ -25,8 +25,10 @@ function TransactionSummary({ transaction }: { transaction: Transaction }) {
         {/* Product Discount */}
         {transaction.discountedProductPrice > 0 && (
           <div className="mt-4 flex justify-between border-b-2 pb-2">
-            <div className="text-primary text-sm">Product Discount:</div>
-            <div className="text-sm font-medium text-green-500">
+            <div className="text-primary text-xs md:text-sm">
+              Product Discount:
+            </div>
+            <div className="text-xs font-medium text-green-500 md:text-sm">
               - {formatCurrency(transaction.discountedProductPrice)}
             </div>
           </div>
@@ -34,8 +36,8 @@ function TransactionSummary({ transaction }: { transaction: Transaction }) {
 
         {/* Shipping Price */}
         <div className="mt-4 flex justify-between border-b-2 pb-2">
-          <div className="text-primary text-sm">Shipping Price:</div>
-          <div className="text-primary text-sm font-medium">
+          <div className="text-primary text-xs md:text-sm">Shipping Price:</div>
+          <div className="text-primary text-xs font-medium md:text-sm">
             {formatCurrency(transaction.shippingPrice)}
           </div>
         </div>
@@ -43,8 +45,10 @@ function TransactionSummary({ transaction }: { transaction: Transaction }) {
         {/* Shipping Discount */}
         {(transaction.discountedShipping ?? 0) > 0 && (
           <div className="mt-4 flex justify-between border-b-2 pb-2">
-            <div className="text-primary text-sm">Shipping Discount:</div>
-            <div className="text-sm font-medium text-green-500">
+            <div className="text-primary text-xs md:text-sm">
+              Shipping Discount:
+            </div>
+            <div className="text-xs font-medium text-green-500 md:text-sm">
               - {formatCurrency(transaction.discountedShipping ?? 0)}
             </div>
           </div>
@@ -52,8 +56,10 @@ function TransactionSummary({ transaction }: { transaction: Transaction }) {
 
         {/* Grand Total */}
         <div className="mt-4 flex justify-between border-b-2 pb-2">
-          <div className="text-primary text-sm font-semibold">Grand Total:</div>
-          <div className="text-primary text-sm font-semibold">
+          <div className="text-primary text-xs font-semibold md:text-sm">
+            Grand Total:
+          </div>
+          <div className="text-primary text-xs font-semibold md:text-sm">
             {formatCurrency(transaction.totalPrice)}
           </div>
         </div>
@@ -61,7 +67,9 @@ function TransactionSummary({ transaction }: { transaction: Transaction }) {
         {/* Expiring Time */}
         {transaction.status === "waiting_payment" && transaction.expiryAt && (
           <div className="mt-4 flex items-center justify-between">
-            <em className="text-primary text-sm font-semibold">Time Left:</em>
+            <em className="text-primary text-xs font-semibold md:text-sm">
+              Time Left:
+            </em>
             <span className="font-semibold text-red-600">{countdown}</span>
           </div>
         )}

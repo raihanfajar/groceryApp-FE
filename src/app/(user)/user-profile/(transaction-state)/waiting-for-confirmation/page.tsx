@@ -7,7 +7,7 @@ const WaitingForPaymentPage = () => {
   const [params, setParams] = useState({
     page: 1,
     pageSize: 5,
-    status: "on_process",
+    status: "waiting_confirmation",
     orderId: "",
     startDate: "",
     endDate: "",

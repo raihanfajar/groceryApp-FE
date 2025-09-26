@@ -21,19 +21,19 @@ function TransactionAddress({
   addressLabel,
 }: TransactionAddressProps) {
   return (
-    <div className="w-full self-start rounded-lg border-2 border-black bg-[#ffffffdb] p-4 shadow-lg">
-      <div className="mb-4 flex items-center gap-4 text-base font-semibold text-[#249731] md:text-lg">
+    <div className="mb-5 w-full rounded-lg border border-black bg-[#ffffffdb] p-4 shadow-md">
+      <div className="mb-4 flex items-center gap-2 text-base font-semibold text-[#249731] md:text-base">
         <IoLocationSharp className="text-xl" />
         Shipping Address
       </div>
       <div className="flex-row items-center justify-between space-y-4 lg:flex lg:space-y-0">
-        <div className="text-primary text-sm font-semibold md:text-lg">
+        <div className="text-primary text-xs font-semibold md:text-base">
           <div>
             {receiverName} ({addressLabel})
           </div>
           <div>{receiverPhoneNumber}</div>
         </div>
-        <div className="text-primary text-sm font-medium md:text-base">
+        <div className="text-primary text-xs font-medium md:text-base">
           {`${addressDetails}, ${district}, ${city}, ${province}`}
         </div>
       </div>

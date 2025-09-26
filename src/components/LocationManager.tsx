@@ -1,5 +1,6 @@
 "use client";
 import { useReverseGeocode } from "@/hooks/geocoding/useReverseGeoCode";
+import { useGetNearestStore } from "@/hooks/home/useGetNearestStore";
 import { useGetUserAddressInfo } from "@/hooks/home/useGetUserAddress";
 import {
   useActualLocationStore,
@@ -11,14 +12,12 @@ import { toast } from "react-toastify";
 
 export default function LocationManager() {
   const [isClient, setIsClient] = useState(false);
-  const { accessToken } = useUserAuthStore();
+  const { accessToken, setTargetStore } = useUserAuthStore();
 
   const { data: locationArray } = useGetUserAddressInfo(accessToken);
   const defaultLocation = locationArray?.find(
     (item) => item.isDefault === true,
   );
-  console.log(locationArray);
-  console.log(defaultLocation);
 
   // !Dynamic Setup
   const dynamicLat = useDynamicLocationStore((s) => s.dynamicLatitude);
@@ -134,6 +133,21 @@ export default function LocationManager() {
     setActualDisplayName,
     setActualLabel,
   ]);
+
+  const { data: nearestStore } = useGetNearestStore(accessToken);
+  if (nearestStore) {
+    console.log(nearestStore);
+  }
+
+  useEffect(() => {
+    if (nearestStore) {
+      setTargetStore({
+        id: nearestStore.store.id,
+        name: nearestStore.store.name,
+        distanceKm: nearestStore.distance / 1000,
+      });
+    }
+  }, [nearestStore, setTargetStore]);
 
   return null; // !NO UI BOSS
 }

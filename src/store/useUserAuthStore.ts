@@ -6,8 +6,9 @@ interface userAuthStore {
     name: string;
     email: string;
     accessToken: string;
-    targetStoreId?: string | null;
-    setAuth: (payload: Omit<userAuthStore, 'setAuth' | 'clearAuth'>) => void;
+    targetStore?: { id: string; name: string; distanceKm: number } | null;
+    setAuth: (payload: Omit<userAuthStore, 'setAuth' | 'clearAuth' | 'setTargetStore'>) => void;
+    setTargetStore: (payload: userAuthStore['targetStore']) => void;
     clearAuth: () => void;
 }
 
@@ -18,9 +19,10 @@ export const useUserAuthStore = create<userAuthStore>()(
             name: '',
             email: '',
             accessToken: '',
-            targetStoreId: null,
+            targetStore: null,
             setAuth: (payload) => set(payload),
-            clearAuth: () => set({ id: '', name: '', email: '', accessToken: '', targetStoreId: null }),
+            setTargetStore: (payload) => set({ targetStore: payload }),
+            clearAuth: () => set({ id: '', name: '', email: '', accessToken: '', targetStore: null }),
         }),
         {
             name: 'user-auth-store', // <- unique key, NOT "state"

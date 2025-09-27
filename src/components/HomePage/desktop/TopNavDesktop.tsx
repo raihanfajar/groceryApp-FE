@@ -55,7 +55,7 @@ export default function TopNavDesktop() {
         )}
 
         {/* EMAIL DISPLAY */}
-        {userProfileInfo?.isVerified ? (
+        {userProfileInfo?.isVerified && accessToken ? (
           <span className="ml-1.5">[{userProfileInfo.email}]</span>
         ) : (
           <span className="ml-1.5 cursor-pointer">

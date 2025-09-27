@@ -53,7 +53,7 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
                   });
                   clearAuth();
                   clearLocation();
-                  router.push("/");
+                  router.replace("/");
                 }}
                 className="bg-green-700"
               >

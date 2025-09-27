@@ -1,4 +1,9 @@
-import { Product, Transaction, TransactionProduct } from "../transaction/transactionTypes";
+import {
+  PaginatedTransactions,
+  Product,
+  Transaction,
+  TransactionProduct,
+} from "../transaction/transactionTypes";
 
 // Dummy Products
 export const dummyProduct1: Product = {
@@ -73,7 +78,7 @@ export const dummyTransaction: Transaction = {
   id: "trx-001",
   userId: "user-123",
   storeId: "store-456",
-  status: "waiting_payment",
+  status: "shipped",
 
   totalProductPrice:
     dummyProduct1.price * dummyTransactionProduct1.quantity +
@@ -119,4 +124,15 @@ export const dummyTransaction: Transaction = {
   deletedAt: null,
 
   productsTransaction: [dummyTransactionProduct1, dummyTransactionProduct2],
+};
+
+export const dummyListTransaction: PaginatedTransactions = {
+  data: [dummyTransaction],
+  meta: {
+    total: 2,
+    page: 1,
+    pageSize: 5,
+    totalPages: 1,
+    hasNext: false,
+  },
 };

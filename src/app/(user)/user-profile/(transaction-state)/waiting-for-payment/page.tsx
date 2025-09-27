@@ -1,5 +1,6 @@
 "use client";
 import SearchTransaction from "@/components/ListTransaction/SearchTransaction";
+import UserTransactionList from "@/components/ListTransaction/UserTransactionList";
 import LeftNavUserProfile from "@/components/userProfile/LeftNavUserProfile";
 import { useUserTransactionsQuery } from "@/hooks/transaction/useTransaction";
 import Image from "next/image";
@@ -56,17 +57,11 @@ const WaitingForPaymentPage = () => {
           ) : isError ? (
             <p className="text-red-500">Failed to load transactions.</p>
           ) : data && data.data.length > 0 ? (
-            <ul className="mt-4 space-y-4">
+            <div className="mt-4 space-y-4">
               {data.data.map((tx) => (
-                <li
-                  key={tx.id}
-                  className="rounded-md border p-4 shadow-sm hover:shadow-md"
-                >
-                  <p className="font-semibold">Order ID: {tx.id}</p>
-                  <p>Status: {tx.status}</p>
-                </li>
+                <UserTransactionList key={tx.id} transaction={tx} />
               ))}
-            </ul>
+            </div>
           ) : (
             <div className="mt-6 flex flex-col items-center justify-center text-center">
               <Image

@@ -1,5 +1,6 @@
 import { CartItemWithPromo } from "@/types/cart/getUserCart";
 import formatCurrency from "@/utils/FormatCurrency";
+import Image from "next/image";
 import React from "react";
 
 function CartUser({ item }: { item: CartItemWithPromo }) {
@@ -12,7 +13,7 @@ function CartUser({ item }: { item: CartItemWithPromo }) {
         <div className="flex w-5/12 items-center gap-6">
           <div className="avatar">
             <div className="mask mask-squircle h-16 w-16">
-              <img
+              <Image
                 src={
                   product.picture1 ||
                   "https://placehold.co/100x100/e2e8f0/adb5bd?text=Produk"
@@ -52,7 +53,7 @@ function CartUser({ item }: { item: CartItemWithPromo }) {
         <div className="flex items-start gap-4 px-1 pt-1 pb-2">
           <div className="avatar">
             <div className="mask mask-squircle h-14 w-14">
-              <img
+              <Image
                 src={
                   product.picture1 ||
                   "https://placehold.co/100x100/e2e8f0/adb5bd?text=Produk"

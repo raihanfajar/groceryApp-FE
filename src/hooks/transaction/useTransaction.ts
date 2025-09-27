@@ -42,10 +42,10 @@ export function useTransactionDetailsQuery(transactionId: string) {
 // Complete User Transaction
 export function useCompleteTransaction(transactionId: string) {
   const { accessToken } = useUserAuthStore();
-  return useQuery({
-    queryKey: ["completeTransaction", transactionId],
-    queryFn: async () => {
-      if (!transactionId) return null;
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
       const response = await axiosInstance.put<
         ApiResponse<{ transaction: Transaction }>
       >(
@@ -55,9 +55,23 @@ export function useCompleteTransaction(transactionId: string) {
           headers: { Authorization: `Bearer ${accessToken}` },
         },
       );
-      return response.data.data.transaction;
+      return response.data;
     },
-    enabled: !!transactionId,
+    onSuccess: (data) => {
+      toast.success(data?.message ?? "Transaction completed");
+      queryClient.invalidateQueries({
+        queryKey: ["transactionDetails", transactionId],
+        exact: true,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["userTransactions"],
+      });
+    },
+    onError: (err: any) => {
+      const msg =
+        err?.response?.data?.message || err?.message || "Complete failed";
+      toast.error(msg);
+    },
   });
 }
 

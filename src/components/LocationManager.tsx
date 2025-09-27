@@ -42,56 +42,48 @@ export default function LocationManager() {
 
   // !watchPosition to keep coordinates updated FOR DYNAMIC LOCATION
   useEffect(() => {
-    console.log(`Actual: ${actualLat}, ${actualLon}`);
-    console.log(`Dynamic: ${dynamicLat}, ${dynamicLon}`);
+    if (!isClient || typeof navigator === "undefined" || defaultLocation)
+      return;
 
-    if (!isClient || typeof navigator === "undefined") return;
-    if (defaultLocation) return;
-
-    if (!actualLat || !actualLon) {
-      const watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          setDynamicLocation(pos.coords.latitude, pos.coords.longitude);
-        },
-        (err) => console.error("Error getting location:", err),
-        { enableHighAccuracy: true },
-      );
-
-      navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        setPermission(result.state as "granted" | "prompt" | "denied");
-
-        if (result.state !== "granted") {
-          toast.error(
-            "Can't access location. Please allow browser location access.",
-            { autoClose: false },
-          );
-        }
-
-        result.onchange = () => {
-          setPermission(result.state as "granted" | "prompt" | "denied");
-          if (result.state === "granted") {
-            navigator.geolocation.getCurrentPosition((pos) =>
-              setDynamicLocation(pos.coords.latitude, pos.coords.longitude),
-            );
-          }
-          window.location.reload();
-        };
-      });
-
-      return () => navigator.geolocation.clearWatch(watchId);
-    } else {
+    // nothing to do if we already have coords
+    if (actualLat && actualLon) {
       setActualLocation(actualLat, actualLon);
+      return;
     }
+
+    let watchId: number | null = null;
+
+    // 1. ask permission first
+    navigator.permissions.query({ name: "geolocation" }).then((res) => {
+      setPermission(res.state as PermissionState);
+      if (res.state === "denied") {
+        toast.error(
+          "Can't access location. Please allow browser location access.",
+          {
+            autoClose: false,
+          },
+        );
+      }
+    });
+
+    // 2. start watching once
+    watchId = navigator.geolocation.watchPosition(
+      (pos) => setDynamicLocation(pos.coords.latitude, pos.coords.longitude),
+      (err) => console.error("Geo error:", err),
+      { enableHighAccuracy: true },
+    );
+
+    return () => {
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    };
   }, [
+    isClient,
     defaultLocation,
     actualLat,
     actualLon,
-    dynamicLat,
-    dynamicLon,
     setActualLocation,
     setDynamicLocation,
     setPermission,
-    isClient,
   ]);
 
   // !WHERE THE REVERSE GEOCODE HOOK RUN

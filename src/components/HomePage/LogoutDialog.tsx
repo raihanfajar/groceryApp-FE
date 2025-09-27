@@ -1,4 +1,8 @@
+import { useActualLocationStore } from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,12 +13,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
-import { useActualLocationStore } from "@/store/useLocationStore";
-import { useQueryClient } from "@tanstack/react-query";
 
-const LogoutDialog = () => {
+const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
   const queryClient = useQueryClient();
   const { clearAuth } = useUserAuthStore();
   const { clearLocation } = useActualLocationStore();
@@ -23,7 +23,13 @@ const LogoutDialog = () => {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <p className="cursor-pointer">Logout</p>
+          {isDesktop ? (
+            <p className="cursor-pointer">Logout</p>
+          ) : (
+            <button className="w-full cursor-pointer rounded-md bg-green-700 py-2 text-white hover:bg-black">
+              Logout
+            </button>
+          )}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -42,9 +48,12 @@ const LogoutDialog = () => {
                   queryClient.invalidateQueries({
                     queryKey: ["userAddressInfo"],
                   });
+                  queryClient.invalidateQueries({
+                    queryKey: ["userProfileInfo"],
+                  });
                   clearAuth();
                   clearLocation();
-                  router.push("/");
+                  router.replace("/");
                 }}
                 className="bg-green-700"
               >

@@ -37,7 +37,11 @@ export default function AddNewAddressDialogFormField<T>({
         id={name as string}
         placeholder={placeholder}
         maxLength={maxLength}
-        className={cn(baseCn, error && "border-red-500")}
+        className={cn(
+          baseCn,
+          error && "border-red-500",
+          "text-xs sm:text-base",
+        )}
       />
       <div className="flex text-xs text-gray-500">
         <p id="goodOrBad" className={cn(error && "text-red-500")}>

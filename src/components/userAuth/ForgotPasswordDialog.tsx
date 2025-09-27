@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserForgotPassword } from "@/hooks/userAuth/useForgotPassword";
+import { useRef } from "react";
 
 const ForgotPasswordDialog = () => {
   const emailRef = useRef<HTMLInputElement>(null);

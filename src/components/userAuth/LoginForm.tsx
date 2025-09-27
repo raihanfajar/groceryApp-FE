@@ -10,8 +10,8 @@ import { FormField } from "./FormField";
 import { PasswordField } from "./PasswordField";
 import { baseError, LoginFormValues } from "./typesAndInterfaces";
 
-const UserLoginForm = () => {
-  const { mutateAsync, isPending, error } = useUserLogin();
+const UserLoginForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const { mutateAsync, isPending, error } = useUserLogin({ onSuccess });
   const { mutateAsync: resendVerification } = useResendVerification();
 
   const formik = useFormik<LoginFormValues>({

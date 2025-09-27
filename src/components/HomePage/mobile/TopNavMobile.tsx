@@ -10,9 +10,10 @@ import MenuDrawer from "./MenuDrawer";
 
 type cartCountProps = {
   cartCount: number;
+  onClick: () => void;
 };
 
-export default function TopNavMobile({ cartCount }: cartCountProps) {
+export default function TopNavMobile({ cartCount, onClick }: cartCountProps) {
   const { name } = useUserAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
@@ -54,7 +55,7 @@ export default function TopNavMobile({ cartCount }: cartCountProps) {
       </div>
 
       {/* MENU DRAWER */}
-      <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <MenuDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} onClick={onClick} />
     </>
   );
 }

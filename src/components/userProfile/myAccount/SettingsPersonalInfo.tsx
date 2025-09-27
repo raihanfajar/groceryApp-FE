@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useResendVerification } from "@/hooks/userAuth/useResendVerification";
 import { useGetUserProfileInfo } from "@/hooks/userProfile/useGetUserProfileInfo";
 import { useUpdateUserProfileInfo } from "@/hooks/userProfile/useUpdateUserProfileInfo";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ const SettingsPersonalInfo = () => {
   const { data: userData, isLoading } = useGetUserProfileInfo(accessToken);
   const { mutateAsync, isPending: isUpdatingUser } =
     useUpdateUserProfileInfo(accessToken);
+  const { mutateAsync: resendVerification } = useResendVerification();
 
   const [editingField, setEditingField] = useState<
     "name" | "phone" | "email" | null
@@ -92,8 +94,26 @@ const SettingsPersonalInfo = () => {
 
                     {/* Content */}
                     <div className="flex-1">
-                      <label className="mb-1 block text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                        {label}
+                      <label className="mb-1 block text-xs font-semibold tracking-wide text-gray-500">
+                        <span className="uppercase">{label}</span>
+                        {field === "email" && userData.isVerified && (
+                          <span className="ml-2 text-xs text-green-400">
+                            (Verified)
+                          </span>
+                        )}
+                        {field === "email" && !userData.isVerified && (
+                          <>
+                            <span className="ml-2 text-xs text-red-400">
+                              (Unverified)
+                            </span>
+                            <span
+                              className="ml-2 cursor-pointer text-xs text-blue-600 underline"
+                              onClick={() => resendVerification(userData.email)}
+                            >
+                              Send verification email
+                            </span>
+                          </>
+                        )}
                       </label>
 
                       {editingField === field ? (
@@ -148,6 +168,7 @@ const SettingsPersonalInfo = () => {
                               setEditingField(field);
                               setFieldTouched(field, true, false);
                             }}
+                            disabled={userData.provider !== null}
                             className="rounded-lg p-1.5 hover:bg-white"
                           >
                             <Pencil className="h-4 w-4 text-gray-400 hover:text-green-600" />

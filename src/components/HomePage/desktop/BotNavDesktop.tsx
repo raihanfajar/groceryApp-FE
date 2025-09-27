@@ -108,7 +108,7 @@ export default function BotNavDesktop({ cartCount, onClick }: cartCountProps) {
         {name ? (
           <>
             <ProfileDropDown />
-            <LogoutDialog />
+            <LogoutDialog isDesktop={true} />
           </>
         ) : (
           <>

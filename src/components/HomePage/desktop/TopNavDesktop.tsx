@@ -3,10 +3,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  useHydratedAdminAuth,
-  useHydratedUserAuth,
-} from "@/hooks/useHydratedAuth";
+import { useHydratedAdminAuth } from "@/hooks/useHydratedAuth";
+import { useGetUserProfileInfo } from "@/hooks/userProfile/useGetUserProfileInfo";
 import {
   useActualLocationStore,
   useDynamicLocationStore,
@@ -23,11 +21,11 @@ import { CustomerServiceDropDown, DiscoverDropDown } from "./DropDown";
 
 export default function TopNavDesktop() {
   const { accessToken } = useUserAuthStore();
-  const { email } = useHydratedUserAuth();
   const { isAuthenticated: isAdminAuthenticated, isHydrated } =
     useHydratedAdminAuth();
   const { actualDisplayName, label } = useActualLocationStore();
   const { dynamicDisplayName } = useDynamicLocationStore();
+  const { data: userProfileInfo } = useGetUserProfileInfo(accessToken);
 
   const displayName = actualDisplayName || dynamicDisplayName;
   const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
@@ -57,8 +55,8 @@ export default function TopNavDesktop() {
         )}
 
         {/* EMAIL DISPLAY */}
-        {email ? (
-          <span className="ml-1.5">[{email}]</span>
+        {userProfileInfo?.isVerified ? (
+          <span className="ml-1.5">[{userProfileInfo.email}]</span>
         ) : (
           <span className="ml-1.5 cursor-pointer">
             {!displayName && "Please allow location access"}

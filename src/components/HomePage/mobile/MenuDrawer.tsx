@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import * as MdIcons from "react-icons/md";
 import { MdOutlineClose } from "react-icons/md";
+import LogoutDialog from "../LogoutDialog";
 
 export default function MenuDrawer({
   isOpen,
@@ -19,7 +20,7 @@ export default function MenuDrawer({
   onClose: () => void;
   onClick: () => void;
 }) {
-  const { name, clearAuth } = useHydratedUserAuth();
+  const { name } = useHydratedUserAuth();
   const { isAuthenticated: isAdminAuthenticated, isHydrated } =
     useHydratedAdminAuth();
 
@@ -50,18 +51,7 @@ export default function MenuDrawer({
           <div className="flex gap-3 font-bold">
             {name ? (
               <>
-                <Link
-                  onClick={() => {
-                    clearAuth();
-                    onClose();
-                  }}
-                  href="/"
-                  className="w-full"
-                >
-                  <button className="w-full cursor-pointer rounded-md bg-green-700 py-2 text-white hover:bg-black">
-                    Logout
-                  </button>
-                </Link>
+                <LogoutDialog isDesktop={false} />
               </>
             ) : (
               <>

@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAddNewAddress } from "@/hooks/home/useAddNewAddress";
+import { useActualLocationStore } from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { addNewAddressSchema } from "@/validation/addNewAddressVS";
 import { useFormik } from "formik";
@@ -18,7 +19,7 @@ import { Checkbox } from "../../ui/checkbox";
 import { Label } from "../../ui/label";
 import { AddNewAddressDialogFormValues } from "../typesAndInterfaces";
 import AddNewAddressDialogFormField from "./AddNewAddressDialogFormField";
-import { useActualLocationStore } from "@/store/useLocationStore";
+import { useState } from "react";
 
 const MapLeaflet = dynamic(() => import("./MapLeaflet"), { ssr: false });
 // declare typed global for leaflet map
@@ -31,10 +32,12 @@ const inputBaseCn =
   "focus:outline-none focus-visible:border-green-500 focus-visible:ring-0 focus-visible:ring-offset-0";
 
 const AddNewAddressDialog = () => {
+  const [dialogKey, setDialogKey] = useState(0);
   const { accessToken } = useUserAuthStore();
   const { setLocation: setActualLocation } = useActualLocationStore();
   const { mutateAsync: addNewAddress, isPending } =
     useAddNewAddress(accessToken);
+
   const formik = useFormik<AddNewAddressDialogFormValues>({
     initialValues: {
       addressLabel: "",
@@ -50,15 +53,18 @@ const AddNewAddressDialog = () => {
       if (values.isDefault) {
         setActualLocation(values.latLon.lat, values.latLon.lon);
       }
-      addNewAddress({
-        addressLabel: values.addressLabel,
-        receiverName: values.receiverName,
-        receiverPhoneNumber: values.receiverPhoneNumber,
-        lat: values.latLon.lat,
-        lon: values.latLon.lon,
-        addressDetails: values.addressDetails,
-        isDefault: values.isDefault,
-      });
+      addNewAddress(
+        {
+          addressLabel: values.addressLabel,
+          receiverName: values.receiverName,
+          receiverPhoneNumber: values.receiverPhoneNumber,
+          lat: values.latLon.lat,
+          lon: values.latLon.lon,
+          addressDetails: values.addressDetails,
+          isDefault: values.isDefault,
+        },
+        { onSuccess: () => setDialogKey((k) => k + 1) },
+      );
     },
   });
   // ✅ helper for checkbox fields
@@ -69,6 +75,7 @@ const AddNewAddressDialog = () => {
 
   return (
     <Dialog
+      key={dialogKey}
       onOpenChange={(open) => {
         if (open) {
           setTimeout(() => {
@@ -113,7 +120,7 @@ const AddNewAddressDialog = () => {
               />
 
               {/* Receiver Name + Phone */}
-              <div className="flex w-full space-x-2">
+              <div className="flex w-full flex-col space-y-6 space-x-2 sm:flex-row sm:space-y-0">
                 <div className="w-full">
                   <AddNewAddressDialogFormField
                     formik={formik}
@@ -159,7 +166,7 @@ const AddNewAddressDialog = () => {
                 placeholder="Details like house number/floor number/etc."
                 maxLength={100}
                 baseCn={inputBaseCn}
-                hint="Perumahan Rumah Selingkuhan Blok A No. 1"
+                hint="Perumahan Rumah Blok A No. 1"
               />
 
               {/* IS DEFAULT? */}
@@ -173,7 +180,7 @@ const AddNewAddressDialog = () => {
                       className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
                     />
                     <div className="grid gap-1.5 font-normal">
-                      <p className="text-sm leading-none font-medium">
+                      <p className="text-xs leading-none font-medium sm:text-sm">
                         Target this location as my default address
                       </p>
                     </div>

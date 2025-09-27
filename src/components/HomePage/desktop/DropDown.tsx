@@ -72,12 +72,12 @@ export const ProfileDropDown = () => {
       <DropdownMenuTrigger asChild>
         {/* a circle icon for profile picture */}
         <Image
-          src="/profile.png"
+          src="/profile.jpg"
           alt="profile"
           width={40}
           height={40}
-          className="cursor-pointer rounded-full border border-black"
-        ></Image>
+          className="cursor-pointer rounded-full border-2 border-gray-300 object-contain"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="z-[99] w-fit border-black p-0 shadow-md shadow-gray-400">
         <DropdownMenuLabel className="bg-green-400">

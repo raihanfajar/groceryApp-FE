@@ -1,5 +1,5 @@
 "use client";
-import { FaFacebookF, FaGithub, FaGoogle, FaTwitter } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import { Button } from "../ui/button";
 
 const SocialLogin = () => {
@@ -11,13 +11,12 @@ const SocialLogin = () => {
           onClick={() =>
             (window.location.href = "http://localhost:8000/user/google-auth")
           }
-          variant="outline"
-          size="icon"
-          className="hover:bg-gray-100"
+          variant="ghost"
+          className="hover:bg-gray-100 cursor-pointer"
         >
-          <FaGoogle />
+          <FaGoogle /> Login with google
         </Button>
-        <Button variant="outline" size="icon" className="hover:bg-gray-100">
+        {/* <Button variant="outline" size="icon" className="hover:bg-gray-100">
           <FaFacebookF />
         </Button>
         <Button variant="outline" size="icon" className="hover:bg-gray-100">
@@ -25,7 +24,7 @@ const SocialLogin = () => {
         </Button>
         <Button variant="outline" size="icon" className="hover:bg-gray-100">
           <FaGithub />
-        </Button>
+        </Button> */}
       </div>
     </>
   );

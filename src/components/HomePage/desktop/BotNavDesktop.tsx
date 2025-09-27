@@ -2,7 +2,6 @@
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineGridView, MdShoppingCart } from "react-icons/md";
@@ -12,12 +11,14 @@ import { Separator } from "../../ui/separator";
 import LogoutDialog from "../LogoutDialog";
 import { ProfileDropDown } from "./DropDown";
 import MegaMenu from "./MegaMenu";
+import { useRouter } from "next/navigation";
 
 type cartCountProps = {
   cartCount: number;
+  onClick: () => void;
 };
 
-export default function BotNavDesktop({ cartCount }: cartCountProps) {
+export default function BotNavDesktop({ cartCount, onClick }: cartCountProps) {
   const { name } = useUserAuthStore();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -111,7 +112,9 @@ export default function BotNavDesktop({ cartCount }: cartCountProps) {
           </>
         ) : (
           <>
-            <Link href="/user-login">Login</Link>
+            <button className="cursor-pointer" onClick={onClick}>
+              Login
+            </button>
             <Link href="/user-register">Register</Link>
           </>
         )}

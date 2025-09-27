@@ -1,21 +1,23 @@
 "use client";
+import CustomBorder from "@/components/HomePage/CustomBorder";
+import { menuSections } from "@/components/HomePage/mapData";
+import {
+  useHydratedAdminAuth,
+  useHydratedUserAuth,
+} from "@/hooks/useHydratedAuth";
 import Link from "next/link";
 import { useEffect } from "react";
-import { MdOutlineClose } from "react-icons/md";
 import * as MdIcons from "react-icons/md";
-import {
-  useHydratedUserAuth,
-  useHydratedAdminAuth,
-} from "@/hooks/useHydratedAuth";
-import { menuSections } from "@/components/HomePage/mapData";
-import CustomBorder from "@/components/HomePage/CustomBorder";
+import { MdOutlineClose } from "react-icons/md";
 
 export default function MenuDrawer({
   isOpen,
   onClose,
+  onClick,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onClick: () => void;
 }) {
   const { name, clearAuth } = useHydratedUserAuth();
   const { isAuthenticated: isAdminAuthenticated, isHydrated } =
@@ -63,18 +65,22 @@ export default function MenuDrawer({
               </>
             ) : (
               <>
-                <Link onClick={onClose} href="/user-login" className="w-full">
-                  <button className="w-full cursor-pointer rounded-md bg-green-700 py-2 text-white hover:bg-black">
-                    Login (dev)
-                  </button>
-                </Link>
+                <button
+                  onClick={() => {
+                    onClick();
+                    onClose();
+                  }}
+                  className="w-full cursor-pointer rounded-md bg-green-700 py-2 text-white hover:bg-black"
+                >
+                  Login
+                </button>
                 <Link
                   onClick={onClose}
                   href="/user-register"
                   className="w-full"
                 >
                   <button className="w-full cursor-pointer rounded-md border border-green-700 py-2 text-black hover:bg-black hover:text-white">
-                    Register (dev)
+                    Register
                   </button>
                 </Link>
               </>

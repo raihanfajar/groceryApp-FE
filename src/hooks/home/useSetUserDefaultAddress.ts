@@ -13,7 +13,7 @@ export const useSetUserDefaultAddress = (accessToken: string) => {
         },
         onSuccess: (data: { status: string, message: string }) => {
             console.log(data); // !Delete on production
-            toast.success(data.message);
+            toast.info("Address targeted");
 
             queryClient.invalidateQueries({ queryKey: ["userAddressInfo"] });
             queryClient.invalidateQueries({ queryKey: ["nearestStore"] });

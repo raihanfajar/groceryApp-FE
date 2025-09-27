@@ -2,6 +2,8 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { usePathname } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import FullPageLoader from "./FullPageLoader";
 
 export default function LayoutWrapper({
   children,
@@ -9,6 +11,20 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [showLoader, setShowLoader] = useState(true);
+  const [canHide, setCanHide] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setCanHide(true); // allow fade-out after 2s
+    }, 2000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // fade-out only when BOTH timer elapsed AND Suspense finished
+  useEffect(() => {
+    if (canHide) setShowLoader(false);
+  }, [canHide]);
 
   //! HIDE NAV PADA ROUTE DAN LANJUTAN-NYA
   const hideLayoutNavOn = [
@@ -36,9 +52,21 @@ export default function LayoutWrapper({
 
   return (
     <>
-      {!shouldHideNav && <Navbar />}
-      {children}
-      {!shouldHideFoot && <Footer />}
+      {/* always mounted, fades when told */}
+      <FullPageLoader
+        show={showLoader}
+        onFadeDone={() => {
+          /* optional cleanup */
+        }}
+      />
+
+      <Suspense fallback={null}>
+        {" "}
+        {/* no extra DOM, we already show loader above */}
+        {!shouldHideNav && <Navbar />}
+        {children}
+        {!shouldHideFoot && <Footer />}
+      </Suspense>
     </>
   );
 }

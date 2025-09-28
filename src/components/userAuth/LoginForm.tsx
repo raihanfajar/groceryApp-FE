@@ -80,14 +80,20 @@ const UserLoginForm = () => {
       </form>
 
       {/* Development Helper for Admin Credentials */}
-      {process.env.NODE_ENV === 'development' && (
+      {process.env.NODE_ENV === "development" && (
         <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
-          <p className="text-xs font-semibold text-gray-700 mb-2">
+          <p className="mb-2 text-xs font-semibold text-gray-700">
             🛠️ Development Admin Credentials:
           </p>
           <div className="space-y-1 text-xs text-gray-600">
-            <p><strong>Super Admin:</strong> superadmin@groceryapp.com / superadmin123</p>
-            <p><strong>Store Admin:</strong> jakarta@groceryapp.com / storeadmin123</p>
+            <p>
+              <strong>Super Admin:</strong> superadmin@groceryapp.com /
+              superadmin123
+            </p>
+            <p>
+              <strong>Store Admin:</strong> jakarta@groceryapp.com /
+              storeadmin123
+            </p>
           </div>
         </div>
       )}

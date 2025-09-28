@@ -54,6 +54,9 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
                   queryClient.invalidateQueries({
                     queryKey: ["userProfileInfo"],
                   });
+                  queryClient.invalidateQueries({
+                    queryKey: ["targetStoreProductsInfo"],
+                  });
                   // Clear both user and admin auth
                   clearAuth();
                   adminLogout();

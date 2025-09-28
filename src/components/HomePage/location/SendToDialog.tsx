@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useGetUserAddressInfo } from "@/hooks/home/useGetUserAddress";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import Image from "next/image";
 import AddNewAddressDialog from "./AddNewAddressDialog";
 import { AddressCard } from "./AddressCard";
 // import { useActualLocationStore } from "@/store/useLocationStore";
@@ -83,7 +84,13 @@ const SendToDialog = ({
                 ))}
             </div>
           ) : (
-            <div className="flex h-full items-center justify-center">
+            <div className="flex flex-col h-full items-center justify-center">
+              <Image
+                src="/no-location-found.jpg"
+                alt="no location found illustration"
+                width={300}
+                height={300}
+              />
               <p className="text-gray-500">No Address Found</p>
             </div>
           )}
@@ -97,54 +104,3 @@ const SendToDialog = ({
 };
 
 export default SendToDialog;
-
-// [
-//     {
-//         "addressLabel": "testing",
-//         "receiverName": "testing",
-//         "receiverPhoneNumber": "081380424685",
-//         "addressDisplayName": "BSD City, Serpong, Tangerang Selatan, Banten, Jawa, 15321, Indonesia",
-//         "addressDetails": "testing",
-//         "lat": "-6.301577",
-//         "lon": "106.687506",
-//         "isDefault": false,
-//         "provinceId": 1,
-//         "province": "BANTEN",
-//         "cityId": 1,
-//         "city": "TANGERANG SELATAN",
-//         "district": "SERPONG",
-//         "districtId": 1
-//     },
-//     {
-//         "addressLabel": "testong",
-//         "receiverName": "testong",
-//         "receiverPhoneNumber": "081389273829",
-//         "addressDisplayName": "BSD City, Serpong, Tangerang Selatan, Banten, Jawa, 15321, Indonesia",
-//         "addressDetails": "testong",
-//         "lat": "-6.301577",
-//         "lon": "106.687506",
-//         "isDefault": false,
-//         "provinceId": 1,
-//         "province": "BANTEN",
-//         "cityId": 1,
-//         "city": "TANGERANG SELATAN",
-//         "district": "SERPONG",
-//         "districtId": 1
-//     },
-//     {
-//         "addressLabel": "ANOTHER ONE",
-//         "receiverName": "ANOTHER ONE",
-//         "receiverPhoneNumber": "081389273829",
-//         "addressDisplayName": "BSD City, Serpong, Tangerang Selatan, Banten, Jawa, 15321, Indonesia",
-//         "addressDetails": "ANOTHER ONE",
-//         "lat": "-6.301577",
-//         "lon": "106.687506",
-//         "isDefault": true,
-//         "provinceId": 1,
-//         "province": "BANTEN",
-//         "cityId": 1,
-//         "city": "TANGERANG SELATAN",
-//         "district": "SERPONG",
-//         "districtId": 1
-//     }
-// ]

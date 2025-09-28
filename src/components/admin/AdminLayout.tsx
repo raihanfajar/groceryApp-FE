@@ -3,11 +3,8 @@
 import { ReactNode } from "react";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  LogOut,
-  Shield,
   LayoutDashboard,
   Package,
   FolderTree,
@@ -16,7 +13,7 @@ import {
   Archive,
   CreditCard,
 } from "lucide-react";
-import { toast } from "react-toastify";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -25,15 +22,9 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { admin, logout, isAuthenticated } = useAdminAuthStore();
+  const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
   const pathname = usePathname();
-
-  const handleLogout = () => {
-    logout();
-    toast.success("Logged out successfully");
-    router.push("/admin-login");
-  };
 
   if (!isAuthenticated() || !admin) {
     router.push("/admin-login");
@@ -84,57 +75,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin/users",
       icon: Users,
       current: pathname.startsWith("/admin/users"),
-      disabled: true,
+      disabled: !admin?.isSuper, // Only enable for super admins
+      superAdminOnly: true,
     },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="border-b bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <div className="rounded-lg bg-blue-600 p-2">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-4">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  FreshNear Admin
-                </h1>
-                <p className="text-sm text-gray-500">Management Dashboard</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">
-                  {admin.name}
-                </p>
-                <div className="flex items-center space-x-2">
-                  <Badge variant={admin.isSuper ? "default" : "secondary"}>
-                    {admin.isSuper ? "Super Admin" : "Store Admin"}
-                  </Badge>
-                  {admin.store && (
-                    <Badge variant="outline" className="text-xs">
-                      {admin.store.name}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="flex items-center space-x-2"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="flex">
         {/* Sidebar */}
         <aside className="w-64 bg-white shadow-sm">
@@ -149,7 +96,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         <Icon className="mr-3 h-6 w-6" />
                         {item.name}
                         <Badge variant="outline" className="ml-auto text-xs">
-                          Soon
+                          {item.superAdminOnly && !admin?.isSuper
+                            ? "Super Admin Only"
+                            : "Soon"}
                         </Badge>
                       </div>
                     ) : (

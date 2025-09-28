@@ -1,8 +1,11 @@
 "use client";
+import { useGetUserProfileInfo } from "@/hooks/userProfile/useGetUserProfileInfo";
 import { cn } from "@/lib/utils";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Card, CardContent } from "../ui/card";
+import Image from "next/image";
 
 const transactionMapItems = [
   { name: "Created", href: "/user-profile/created" },
@@ -18,7 +21,9 @@ const myAccountMapItems = [
 ];
 
 const LeftNavUserProfile = () => {
+  const { accessToken } = useUserAuthStore();
   const pathname = usePathname();
+  const { data: userProfileInfo } = useGetUserProfileInfo(accessToken);
 
   return (
     <>
@@ -26,9 +31,17 @@ const LeftNavUserProfile = () => {
         <CardContent className="space-y-4 p-4">
           {/* Profile name */}
           <div className="text-center">
-            <div className="mx-auto mb-2 h-16 w-16 rounded-full bg-gray-300"></div>
+            <div className="mx-auto mb-2 h-16 w-16 rounded-full bg-gray-300">
+              <Image
+                src="/profile.jpg"
+                alt="profile"
+                width={100}
+                height={100}
+                className="rounded-full border-2 border-gray-300 object-contain"
+              />
+            </div>
             <h2 className="text-lg font-semibold text-gray-800">
-              Ghazi Anshari
+              {userProfileInfo?.name}
             </h2>
           </div>
 

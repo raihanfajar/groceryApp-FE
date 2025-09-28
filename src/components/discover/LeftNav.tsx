@@ -13,7 +13,7 @@ export default function LeftNav() {
   const pathname = usePathname();
 
   return (
-    <div className="w-full rounded-lg border bg-white p-4 text-sm shadow-sm">
+    <div className="hidden sm:block w-full rounded-lg border bg-white p-4 text-sm shadow-sm">
       <ul className="space-y-2">
         {navItems.map((item) => (
           <li key={item.href}>

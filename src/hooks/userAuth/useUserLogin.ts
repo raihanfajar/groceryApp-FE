@@ -2,12 +2,11 @@ import { baseError, baseUserResponse, LoginFormValues } from "@/components/userA
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 
-export const useUserLogin = () => {
-    const router = useRouter();
+export const useUserLogin = (options?: { onSuccess?: () => void }) => {
+    // const router = useRouter();
     const setUserAuth = useUserAuthStore((state) => state.setAuth);
 
     return useMutation({
@@ -25,7 +24,8 @@ export const useUserLogin = () => {
                 email: data.data.email,
                 accessToken: data.data.accessToken,
             });
-            router.push("/");
+            // router.push("/");
+            options?.onSuccess?.();
         },
         onError: (error: baseError) => {
             console.log(error); //! Delete on production

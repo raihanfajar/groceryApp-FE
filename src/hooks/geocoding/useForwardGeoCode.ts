@@ -16,11 +16,12 @@ const fetchForwardGeoInfo = async (q: string, limit: number = 5) => {
  */
 export const useForwardGeocode = (q: string | null, limit = 5) => {
     return useQuery({
-        queryKey: ["forwardGeoInfo", q, limit],
+        queryKey: ['forwardGeoInfo', q, limit],
         queryFn: () => fetchForwardGeoInfo(q!, limit),
-        enabled: !!q && q.trim().length > 0, // run only if q exists
-        staleTime: 5 * 60 * 1000,
+        enabled: !!q?.trim(),
+        staleTime: 0,        // 0 s – data are never considered fresh
+        gcTime: 5 * 60 * 1000,
         retry: 1,
-        placeholderData: (previous) => previous,
+        // placeholderData removed  <--  NEW
     });
 };

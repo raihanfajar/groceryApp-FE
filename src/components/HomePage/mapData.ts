@@ -134,6 +134,7 @@ export const dummyRecommendedProducts: Product[] = [
     category: "Mom & Baby Essentials",
     price: 4400,
     discount: 0.15,
+    slug: "anti error"
   },
   {
     id: 2,
@@ -142,6 +143,7 @@ export const dummyRecommendedProducts: Product[] = [
     category: "Teh Botol",
     price: 4400,
     discount: 0.09,
+    slug: "anti error"
   },
   {
     id: 3,
@@ -149,6 +151,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Nestle Pure Life Air Mineral Botol 600 ml",
     category: "Air Mineral",
     price: 3900,
+    slug: "anti error"
   },
   {
     id: 4,
@@ -156,6 +159,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Fruit Tea Minuman Teh Blackcurrant 350 ml",
     category: "Minuman Teh",
     price: 4400,
+    slug: "anti error"
   },
   {
     id: 5,
@@ -163,6 +167,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Nestle Pure Life Air Mineral Botol 1.5 L",
     category: "Air Mineral",
     price: 6900,
+    slug: "anti error"
   },
   {
     id: 6,
@@ -170,6 +175,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Happy Tos Keripik Tortilla Merah 140 g",
     category: "Keripik Tortilla",
     price: 11400,
+    slug: "anti error"
   },
   {
     id: 7,
@@ -177,6 +183,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 8,
@@ -184,6 +191,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 9,
@@ -191,6 +199,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 10,
@@ -198,6 +207,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 11,
@@ -205,6 +215,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 12,
@@ -212,6 +223,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 13,
@@ -219,6 +231,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 14,
@@ -226,6 +239,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1 Ada Dua Line Karena Panjang Sekali Sampe Line-clamped",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 15,
@@ -233,6 +247,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 16,
@@ -240,6 +255,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1 Ada Dua Line Karena Panjang Sekali Sampe Line-clamped",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 17,
@@ -247,6 +263,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1 Ada Dua Line Karena Panjang Sekali Sampe Line-clamped",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
   {
     id: 18,
@@ -254,6 +271,7 @@ export const dummyRecommendedProducts: Product[] = [
     name: "Extra Item Contoh 1 Ada Dua Line Karena Panjang Sekali Sampe Line-clamped",
     category: "Snack",
     price: 8500,
+    slug: "anti error"
   },
 ];
 

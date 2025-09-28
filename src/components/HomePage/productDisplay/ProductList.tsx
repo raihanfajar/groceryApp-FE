@@ -15,7 +15,7 @@ export function ProductList({ items, name }: ProductProps) {
       <div className="rounded-xl bg-gray-50 p-4">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {visible.map((p) => (
-            <ProductCard key={p.id} {...p} stock={p.stock} />
+            <ProductCard key={p.id} {...p} stock={p.stock} slug={p.slug} />
           ))}
         </div>
 

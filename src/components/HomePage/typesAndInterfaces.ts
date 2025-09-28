@@ -51,6 +51,7 @@ export interface Product {
     price: number;
     discount?: number;
     stock?: number;
+    slug: string;
 }
 
 // Props for Product List Component

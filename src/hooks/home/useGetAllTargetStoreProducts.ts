@@ -34,7 +34,7 @@ const fetchAllTargetStoreProducts = async (storeId: string | null | undefined) =
 
 export const useGetAllTargetStoreProducts = (storeId: string | null | undefined) => {
     return useQuery({
-        queryKey: ["targetStoreProductsInfo"],
+        queryKey: ["targetStoreProductsInfo", storeId],
         queryFn: () => fetchAllTargetStoreProducts(storeId),
         enabled: !!storeId, // don’t run until store id exist
         staleTime: 5 * 60 * 1000, // optional caching

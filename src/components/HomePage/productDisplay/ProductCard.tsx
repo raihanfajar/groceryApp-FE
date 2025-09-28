@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Truck } from "lucide-react";
 import Image from "next/image";
 import { ProductCardProps } from "../typesAndInterfaces";
+import { useRouter } from "next/navigation";
 
 export function ProductCard({
   image,
@@ -14,7 +15,9 @@ export function ProductCard({
   price,
   discount,
   stock = 0,
-}: ProductCardProps & { stock?: number }) {
+  slug,
+}: ProductCardProps & { stock?: number } & { slug: string }) {
+  const router = useRouter();
   const isOut = stock === 0;
   const displayedPrice = discount ? Math.round(price * (1 - discount)) : price;
 
@@ -32,7 +35,10 @@ export function ProductCard({
       )}
 
       {/* image */}
-      <div className="relative flex h-40 w-full items-center justify-center rounded-md bg-white">
+      <div
+        onClick={() => router.push(`/products/${slug}`)}
+        className="relative flex h-40 w-full cursor-pointer items-center justify-center rounded-md bg-white"
+      >
         <Image
           src={image || "/img-placeholder.svg"}
           alt={name}

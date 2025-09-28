@@ -46,7 +46,7 @@ export const useGetNearestStore = (accessToken: string) => {
     }
 
     return useQuery({
-        queryKey: ["nearestStore"],
+        queryKey: ["nearestStore", accessToken, actualLatitude, actualLongitude],
         queryFn: () => fetchNearestStore(accessToken),
         enabled: !!accessToken && !!actualLatitude && !!actualLongitude, // don't run until three of them exist
         staleTime: 5 * 60 * 1000, // optional caching

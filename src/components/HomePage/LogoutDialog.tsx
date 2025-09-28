@@ -51,6 +51,9 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
                   queryClient.invalidateQueries({
                     queryKey: ["userProfileInfo"],
                   });
+                  queryClient.invalidateQueries({
+                    queryKey: ["targetStoreProductsInfo"],
+                  });
                   clearAuth();
                   clearLocation();
                   router.replace("/");

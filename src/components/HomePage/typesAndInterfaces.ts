@@ -44,12 +44,13 @@ export interface NavButtonProps {
 
 // Product Model
 export interface Product {
-    id: number;
+    id: string | number;
     image: string;
     name: string;
     category: string;
     price: number;
     discount?: number;
+    stock?: number;
 }
 
 // Props for Product List Component

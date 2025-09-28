@@ -6,39 +6,31 @@ import { ProductCard } from "./ProductCard";
 import { ProductProps } from "../typesAndInterfaces";
 
 export function ProductList({ items, name }: ProductProps) {
-  const [visibleCount, setVisibleCount] = useState(12); // initial products shown
-  const visibleProducts = items.slice(0, visibleCount);
-
-  const handleShowMore = () => {
-    setVisibleCount((prev) => prev + 6); // show 5 more each click
-  };
+  const [visibleCount, setVisibleCount] = useState(12);
+  const visible = items.slice(0, visibleCount);
 
   return (
-    <div className="scaledown mx-auto flex max-w-[1280px] flex-col justify-center py-8">
-      <h2 className="mb-4 self-start text-xl font-semibold">{name}</h2>
-      <div className="flex flex-col rounded-lg bg-[#d8d8d845] p-2.5 md:p-8 md:pb-2">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-          {visibleProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              image={product.image}
-              name={product.name}
-              category={product.category}
-              price={product.price}
-              discount={product.discount}
-            />
+    <section className="mx-auto max-w-[1280px] px-4 py-8">
+      <h2 className="mb-4 text-lg font-semibold text-gray-800">{name}</h2>
+      <div className="rounded-xl bg-gray-50 p-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          {visible.map((p) => (
+            <ProductCard key={p.id} {...p} stock={p.stock} />
           ))}
         </div>
+
         {visibleCount < items.length && (
-          <Button
-            variant="link"
-            onClick={handleShowMore}
-            className="mx-auto mt-2 cursor-pointer text-blue-600 hover:underline"
-          >
-            Show more...
-          </Button>
+          <div className="mt-6 text-center">
+            <Button
+              variant="outline"
+              onClick={() => setVisibleCount((v) => v + 6)}
+              className="rounded-full px-6"
+            >
+              Show more
+            </Button>
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }

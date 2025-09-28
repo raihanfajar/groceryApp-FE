@@ -17,6 +17,7 @@ export const useSetUserDefaultAddress = (accessToken: string) => {
 
             queryClient.invalidateQueries({ queryKey: ["userAddressInfo"] });
             queryClient.invalidateQueries({ queryKey: ["nearestStore"] });
+            queryClient.invalidateQueries({ queryKey: ["targetStoreProductsInfo"] });
         },
         onError: (error: baseError) => {
             console.log(error); // !Delete on production

@@ -1,5 +1,6 @@
 import { useActualLocationStore } from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
@@ -17,6 +18,7 @@ import {
 const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
   const queryClient = useQueryClient();
   const { clearAuth } = useUserAuthStore();
+  const { logout: adminLogout } = useAdminAuthStore();
   const { clearLocation } = useActualLocationStore();
   const router = useRouter();
   return (
@@ -51,7 +53,9 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
                   queryClient.invalidateQueries({
                     queryKey: ["userProfileInfo"],
                   });
+                  // Clear both user and admin auth
                   clearAuth();
+                  adminLogout();
                   clearLocation();
                   router.replace("/");
                 }}

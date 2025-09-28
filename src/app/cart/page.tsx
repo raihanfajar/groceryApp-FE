@@ -3,52 +3,53 @@
 import React from "react";
 import CartTable from "./components/CartTable";
 import CartSumary from "./features/CartSumary";
-import { CART_QUERY_KEY } from "@/hooks/cart/getUserCart";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
-import { useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/utils/axiosInstance";
 import EmptyCart from "./components/EmptyCart";
+import UserAuthGuard from "@/providers/UserAuthGuard";
+import { useUserCart } from "@/hooks/cart/getUserCart";
 
-type CartCountResponse = {
-  message: string;
-  data: {
-    count: number;
-  };
-};
+export default function Cart() {
+  const { data: cart, isLoading, isError } = useUserCart();
 
-function Cart() {
-  const { accessToken } = useUserAuthStore();
+  const items = cart?.items ?? [];
 
-  const { data: cartData } = useQuery<CartCountResponse | null>({
-    queryKey: [...CART_QUERY_KEY, "count"],
-    queryFn: async () => {
-      if (!accessToken) return null;
-      const response = await axiosInstance.get<CartCountResponse>(
-        "/cart/count",
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
-      return response.data;
-    },
-    enabled: !!accessToken,
-  });
+  const hasItems = Array.isArray(items) && items.length > 0;
 
-  const cartItemCount = cartData?.data?.count || 0;
+  if (isLoading) {
+    return (
+      <UserAuthGuard>
+        <section className="container mx-auto min-h-screen px-4 pt-14">
+          <div className="text-primary mb-5 text-3xl font-medium">CART</div>
+          <div className="mt-20 flex items-center justify-center">Loading cart…</div>
+        </section>
+      </UserAuthGuard>
+    );
+  }
+
+  if (isError) {
+    return (
+      <UserAuthGuard>
+        <section className="container mx-auto min-h-screen px-4 pt-14">
+          <div className="text-primary mb-5 text-3xl font-medium">CART</div>
+          <div className="mt-8 text-center text-red-500">Failed to load cart. Please try again.</div>
+        </section>
+      </UserAuthGuard>
+    );
+  }
 
   return (
-    <section className="container mx-auto min-h-screen px-4 pt-14">
-      <div className="text-primary mb-5 text-3xl font-medium">CART</div>
-      {cartItemCount > 0 ? (
-        <>
-          <CartTable />
-          <CartSumary />
-        </>
-      ) : (
-        <EmptyCart />
-      )}
-    </section>
+    <UserAuthGuard>
+      <section className="container mx-auto min-h-screen px-4 pt-14">
+        <div className="text-primary mb-5 text-3xl font-medium">CART</div>
+
+        {hasItems ? (
+          <>
+            <CartTable />
+            <CartSumary />
+          </>
+        ) : (
+          <EmptyCart />
+        )}
+      </section>
+    </UserAuthGuard>
   );
 }
-
-export default Cart;

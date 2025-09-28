@@ -79,17 +79,20 @@ const CartTable = () => {
               <div className="w-[64%]">Items</div>
             </div>
           </div>
-          {cart.items.map((item) => (
-            <CartRow
-              key={item.id}
-              item={item}
-              isUpdating={isUpdating}
-              onUpdateQuantity={(productId, storeId, quantity) => {
-                updateQuantity({ productId, storeId, quantity });
-              }}
-              onPromptDelete={handlePromptDelete} 
-            />
-          ))}
+          {cart.items.map((item) => {
+            console.log("Parent passing item:", item); // <-- lihat ini buat tiap item
+            return (
+              <CartRow
+                key={item.id}
+                item={item}
+                isUpdating={isUpdating}
+                onUpdateQuantity={(productId, storeId, quantity) => {
+                  updateQuantity({ productId, storeId, quantity });
+                }}
+                onPromptDelete={handlePromptDelete}
+              />
+            );
+          })}
         </div>
       </div>
       <ConfirmationModal

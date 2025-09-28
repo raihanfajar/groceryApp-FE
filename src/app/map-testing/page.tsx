@@ -2,9 +2,12 @@
 
 import dynamic from "next/dynamic";
 
-const MapLeaflet = dynamic(() => import("../../components/HomePage/location/MapLeaflet"), {
-  ssr: false,
-});
+const MapLeaflet = dynamic(
+  () => import("../../components/homePage/location/MapLeaflet"),
+  {
+    ssr: false,
+  },
+);
 
 export default function MapPage() {
   return (

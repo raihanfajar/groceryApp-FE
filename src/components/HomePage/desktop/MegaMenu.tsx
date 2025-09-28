@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useCategories } from "@/hooks/product/useProducts";
-import { MegaMenuProps } from "../../HomePage/typesAndInterfaces";
+import { MegaMenuProps } from "../typesAndInterfaces";
 import { getCategorySlug } from "@/utils/slug";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 

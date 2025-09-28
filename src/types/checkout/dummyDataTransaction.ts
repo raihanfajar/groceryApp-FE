@@ -78,7 +78,7 @@ export const dummyTransaction: Transaction = {
   id: "trx-001",
   userId: "user-123",
   storeId: "store-456",
-  status: "shipped",
+  status: "waiting_payment",
 
   totalProductPrice:
     dummyProduct1.price * dummyTransactionProduct1.quantity +
@@ -127,7 +127,10 @@ export const dummyTransaction: Transaction = {
 };
 
 export const dummyListTransaction: PaginatedTransactions = {
-  data: [dummyTransaction],
+  data: [
+    dummyTransaction,
+
+  ],
   meta: {
     total: 2,
     page: 1,

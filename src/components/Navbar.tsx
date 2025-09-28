@@ -27,13 +27,15 @@ const Navbar = () => {
       pathname + (searchParams.toString() ? `?${searchParams}` : "");
     router.push(`/user-login?returnUrl=${encodeURIComponent(returnUrl)}`);
   };
+  const { targetStore } = useUserAuthStore();
+  const storeId = targetStore?.id;
 
   const { data: cartData } = useQuery<CartCountResponse | null>({
     queryKey: [...CART_QUERY_KEY, "count"],
     queryFn: async () => {
       if (!accessToken) return null;
       const response = await axiosInstance.get<CartCountResponse>(
-        "/cart/count",
+        `/cart/count?storeId=${storeId}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         },

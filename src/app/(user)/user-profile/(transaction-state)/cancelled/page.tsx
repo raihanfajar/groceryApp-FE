@@ -19,6 +19,21 @@ const CancelledPage = () => {
   // 🔹 call hook
   const { data, isLoading, isError } = useUserTransactionsQuery(params);
 
+  const page = params.page;
+  const pageSize = params.pageSize;
+  const total = data?.meta?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const goPrev = () => {
+    if (page <= 1) return;
+    setParams((p) => ({ ...p, page: p.page - 1 }));
+  };
+
+  const goNext = () => {
+    if (page >= totalPages) return;
+    setParams((p) => ({ ...p, page: p.page + 1 }));
+  };
+
   return (
     <main className="mx-auto min-h-[calc(100vh-100px)] bg-[#f9fafb] md:px-8 lg:px-16">
       <div className="flex flex-col gap-6 p-4 md:flex-row">
@@ -47,20 +62,41 @@ const CancelledPage = () => {
 
           {/* 🔹 Render content */}
           {isLoading ? (
-            <div className="mt-20 flex items-center justify-center text-center">
-              <span className="loading loading-ring loading-xs"></span>
-              <span className="loading loading-ring loading-sm"></span>
-              <span className="loading loading-ring loading-md"></span>
-              <span className="loading loading-ring loading-lg"></span>
-              <span className="loading loading-ring loading-xl"></span>
+            <div className="mt-20 flex items-center justify-center">
+              Loading...
             </div>
           ) : isError ? (
             <p className="text-red-500">Failed to load transactions.</p>
-          ) : data && data.data.length > 0 ? (
+          ) : data && data.data && data.data.length > 0 ? (
             <div className="mt-4 space-y-4">
-              {data.data.map((tx) => (
+              {data.data.map((tx: any) => (
                 <UserTransactionList key={tx.id} transaction={tx} />
               ))}
+
+              {/* Simple pagination: Prev / Current / Next */}
+              <div className="mt-4 flex items-center justify-center gap-3">
+                <button
+                  className="btn"
+                  onClick={goPrev}
+                  disabled={page === 1}
+                  aria-label="Previous page"
+                >
+                  Previous
+                </button>
+
+                <div className="text-sm text-gray-600">
+                  Page <strong>{page}</strong> of <strong>{totalPages}</strong>
+                </div>
+
+                <button
+                  className="btn"
+                  onClick={goNext}
+                  disabled={page === totalPages}
+                  aria-label="Next page"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           ) : (
             <div className="mt-6 flex flex-col items-center justify-center text-center">

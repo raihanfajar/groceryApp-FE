@@ -25,7 +25,7 @@ export type BogoInfo = {
 };
 
 export type Availability = {
-  status: "AVAILABLE" | "OUT_OF_STOCK";
+  status: "AVAILABLE" | "OUT_OF_STOCK" | "NOT_AVAILABLE";
   currentStock: number;
 };
 

@@ -5,12 +5,14 @@ import { useCountdown } from "@/utils/useCountdown";
 import ListTransactionPaymentActions from "./ListTransactionActionPayment";
 import CompleteTransactionAction from "./CompleteTransactionAction";
 import formatCurrency from "@/utils/FormatCurrency";
+import { useRouter } from "next/navigation";
 
 type UserTransactionListProps = {
   transaction: Transaction;
 };
 
 function UserTransactionList({ transaction }: UserTransactionListProps) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const products = transaction.productsTransaction ?? [];
   const visibleProducts = expanded ? products : products.slice(0, 1);
@@ -25,12 +27,20 @@ function UserTransactionList({ transaction }: UserTransactionListProps) {
     <>
       <div className="mt-2 h-auto w-full rounded-md border border-gray-600">
         <div className="p-4">
-          {visibleProducts.map((item) => (
-            <ProductTransactionList key={item.id} item={item} />
-          ))}
+          <div
+            className="cursor-pointer"
+            onClick={() => router.push(`/transaction/${transaction.id}`)}
+          >
+            {visibleProducts.map((item) => (
+              <ProductTransactionList key={item.id} item={item} />
+            ))}
+          </div>
           {products.length > 1 && (
             <button
-              onClick={() => setExpanded((prev) => !prev)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpanded((prev) => !prev);
+              }}
               className="mt-3 flex w-full cursor-pointer items-center justify-center text-sm text-gray-600 hover:underline"
             >
               {expanded
@@ -40,8 +50,8 @@ function UserTransactionList({ transaction }: UserTransactionListProps) {
                   })`}
             </button>
           )}
-          <div className="ml-auto mt-3 flex justify-end items-center font-semibold text-base">
-            <p>Total : { formatCurrency(transaction.totalPrice)}</p>
+          <div className="mt-3 ml-auto flex items-center justify-end text-base font-semibold">
+            <p>Total : {formatCurrency(transaction.totalPrice)}</p>
           </div>
           {/* Timer Countdown */}
           {countdown && (
@@ -56,7 +66,7 @@ function UserTransactionList({ transaction }: UserTransactionListProps) {
             </div>
           )}
           {completed && (
-            <div className="w-full lg:w-3/12 lg:ml-auto">
+            <div className="w-full lg:ml-auto lg:w-3/12">
               <CompleteTransactionAction transaction={transaction} />
             </div>
           )}

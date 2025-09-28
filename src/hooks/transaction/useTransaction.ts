@@ -187,7 +187,6 @@ export function useUserTransactionsQuery(params?: {
       if (params?.startDate) qs.set("startDate", params.startDate);
       if (params?.endDate) qs.set("endDate", params.endDate);
 
-      // remove empty values (in case some empty strings added)
       for (const [k, v] of Array.from(qs.entries())) {
         if (!v) qs.delete(k);
       }

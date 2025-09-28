@@ -3,6 +3,7 @@ import {
   useCreateTransactionMutation,
   useShippingPriceQuery,
 } from "@/hooks/checkout/getCheckoutData";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { CheckoutSummaryProps } from "@/types/checkout/checkoutTypes";
 import formatCurrency from "@/utils/FormatCurrency";
 import { useRouter } from "next/navigation";
@@ -48,10 +49,11 @@ function CheckoutSummary({
 
   // Fungsi untuk buat transaksi
   const createTransaction = useCallback(async () => {
+    const { targetStore } = useUserAuthStore();
     try {
       const input = {
         userAddressId: userAddress?.id ?? "",
-        storeId: "dummystoreID",
+        storeId: targetStore!.id,
         shippingPrice: shippingprice ?? 0,
         paymentMethod,
         voucherProductCode: productVoucher?.code ?? null,

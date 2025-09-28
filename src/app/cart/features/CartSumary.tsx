@@ -6,7 +6,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { getProductVoucher } from "@/hooks/voucher/getVoucher";
 import { useUserCart } from "@/hooks/cart/getUserCart";
 import formatCurrency from "@/utils/FormatCurrency";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 function CartSummary() {
   const [voucherCode, setVoucherCode] = useState("");
@@ -26,16 +26,23 @@ function CartSummary() {
 
   const { data: cart } = useUserCart();
 
-  const subtotal =
-    cart?.items.reduce(
-      (total, item) => total + item.activePrice * item.quantity,
-      0,
-    ) || 0;
+  const validItems =
+    cart?.items?.filter(
+      (item) =>
+        item.availability?.status === "AVAILABLE" &&
+        item.availability?.currentStock > 0,
+    ) ?? [];
+
+  const subtotal = validItems.reduce(
+    (total, item) => total + item.activePrice * item.quantity,
+    0,
+  );
 
   let appliedDiscount = 0;
-  if (voucherCode && voucherData && isSuccess) {
+  if (voucherCode && voucherData && isSuccess && validItems.length > 0) {
     appliedDiscount = voucherData.discount || 0;
   }
+
   const grandTotal = Math.max(0, subtotal - appliedDiscount);
 
   return (
@@ -52,13 +59,13 @@ function CartSummary() {
         />
         {voucherCode ? (
           <>
-            {isSuccess && voucherData && (
+            {isSuccess && voucherData && validItems.length > 0 && (
               <div className="mt-2 text-green-600">
-                Voucher berhasil diterapkan!
+                Voucher successfully applied!
               </div>
             )}
             {!isFetching && (isError || !voucherData) && (
-              <div className="mt-2 text-red-500">Voucher tidak ditemukan</div>
+              <div className="mt-2 text-red-500">Voucher not found</div>
             )}
           </>
         ) : null}
@@ -88,10 +95,12 @@ function CartSummary() {
             {formatCurrency(grandTotal)}
           </div>
         </div>
-        <button 
-        type="button"
-        className="mt-7 w-full rounded-md bg-[#00a63e] p-2 font-medium text-white"
-        onClick={() => router.push("/checkout")}>
+        <button
+          type="button"
+          className="mt-7 w-full rounded-md bg-[#00a63e] p-2 font-medium text-white"
+          onClick={() => router.push("/checkout")}
+          disabled={validItems.length === 0} 
+        >
           Proceed to Checkout
         </button>
       </div>

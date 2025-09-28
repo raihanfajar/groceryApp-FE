@@ -3,7 +3,6 @@ import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
 import {
   Dialog,
   DialogClose,
@@ -41,11 +40,13 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <DialogClose>
-              <Button variant="outline">Cancel</Button>
+            <DialogClose asChild>
+              <button className="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Cancel
+              </button>
             </DialogClose>
-            <DialogClose>
-              <Button
+            <DialogClose asChild>
+              <button
                 onClick={() => {
                   queryClient.invalidateQueries({
                     queryKey: ["userAddressInfo"],
@@ -59,10 +60,10 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
                   clearLocation();
                   router.replace("/");
                 }}
-                className="bg-green-700"
+                className="px-4 py-2 rounded-md bg-green-700 text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 Continue
-              </Button>
+              </button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

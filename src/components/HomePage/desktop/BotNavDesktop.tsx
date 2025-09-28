@@ -21,7 +21,8 @@ type cartCountProps = {
 
 export default function BotNavDesktop({ cartCount, onClick }: cartCountProps) {
   const { name } = useUserAuthStore();
-  const { isAuthenticated: isAdminAuthenticated, isHydrated } = useHydratedAdminAuth();
+  const { isAuthenticated: isAdminAuthenticated, isHydrated } =
+    useHydratedAdminAuth();
   const router = useRouter();
 
   // Check if either user or admin is authenticated

@@ -1,5 +1,6 @@
 "use client";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useHydratedAdminAuth } from "@/hooks/useHydratedAuth";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -20,7 +21,12 @@ type cartCountProps = {
 
 export default function BotNavDesktop({ cartCount, onClick }: cartCountProps) {
   const { name } = useUserAuthStore();
+  const { isAuthenticated: isAdminAuthenticated, isHydrated } =
+    useHydratedAdminAuth();
   const router = useRouter();
+
+  // Check if either user or admin is authenticated
+  const isLoggedIn = name || (isHydrated && isAdminAuthenticated());
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -105,9 +111,9 @@ export default function BotNavDesktop({ cartCount, onClick }: cartCountProps) {
           </Link>
         )}
         <Separator orientation="vertical" className="max-h-[60%] bg-black" />
-        {name ? (
+        {isLoggedIn ? (
           <>
-            <ProfileDropDown />
+            {name && <ProfileDropDown />}
             <LogoutDialog isDesktop={true} />
           </>
         ) : (

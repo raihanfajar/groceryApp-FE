@@ -1,4 +1,4 @@
-import { AddNewAddressDialogRequest } from "@/components/HomePage/typesAndInterfaces"
+import { AddNewAddressDialogRequest } from "@/components/homePage/typesAndInterfaces"
 import { baseError } from "@/components/userAuth/typesAndInterfaces"
 import { axiosInstance } from "@/utils/axiosInstance"
 import { useMutation, useQueryClient } from "@tanstack/react-query"

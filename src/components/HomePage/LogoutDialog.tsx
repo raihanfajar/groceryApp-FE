@@ -41,7 +41,7 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <button className="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none">
                 Cancel
               </button>
             </DialogClose>
@@ -60,7 +60,7 @@ const LogoutDialog = ({ isDesktop }: { isDesktop: boolean }) => {
                   clearLocation();
                   router.replace("/");
                 }}
-                className="px-4 py-2 rounded-md bg-green-700 text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                className="rounded-md bg-green-700 px-4 py-2 text-white hover:bg-green-800 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
               >
                 Continue
               </button>

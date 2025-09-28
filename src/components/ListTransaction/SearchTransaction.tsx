@@ -38,7 +38,7 @@ export default function SearchTransaction({
       startDate: debouncedStartDate?.trim() ? debouncedStartDate : undefined,
       endDate: debouncedEndDate?.trim() ? debouncedEndDate : undefined,
     });
-  }, [debouncedOrderId, debouncedStartDate, debouncedEndDate]);
+  }, [debouncedOrderId, debouncedStartDate, debouncedEndDate, onChange]);
 
   return (
     <div className="w-full">

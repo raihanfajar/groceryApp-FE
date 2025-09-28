@@ -1,18 +1,9 @@
-<<<<<<< HEAD
-import { baseError } from "@/components/userAuth/typesAndInterfaces"
-import { axiosInstance } from "@/utils/axiosInstance"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "react-toastify"
-import { baseGeoResponse } from "../geocoding/typesAndInterfaces"
-import { AddNewAddressDialogRequest } from "@/components/homePage/typesAndInterfaces"
-=======
 import { AddNewAddressDialogRequest } from "@/components/homePage/typesAndInterfaces";
 import { baseError } from "@/components/userAuth/typesAndInterfaces";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { baseGeoResponse } from "../geocoding/typesAndInterfaces";
->>>>>>> main
 
 export const useAddNewAddress = (accessToken: string) => {
   const queryClient = useQueryClient();

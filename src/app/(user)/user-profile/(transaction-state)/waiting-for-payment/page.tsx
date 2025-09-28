@@ -3,7 +3,6 @@ import SearchTransaction from "@/components/ListTransaction/SearchTransaction";
 import UserTransactionList from "@/components/ListTransaction/UserTransactionList";
 import LeftNavUserProfile from "@/components/userProfile/LeftNavUserProfile";
 import { useUserTransactionsQuery } from "@/hooks/transaction/useTransaction";
-import { dummyListTransaction } from "@/types/checkout/dummyDataTransaction";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -70,7 +69,7 @@ const WaitingForPaymentPage = () => {
             <p className="text-red-500">Failed to load transactions.</p>
           ) : data && data.data && data.data.length > 0 ? (
             <div className="mt-4 space-y-4">
-              {data.data.map((tx: any) => (
+              {data.data.map((tx) => (
                 <UserTransactionList key={tx.id} transaction={tx} />
               ))}
 

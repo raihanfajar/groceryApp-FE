@@ -9,7 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useTransactionDetailsQuery } from "@/hooks/transaction/useTransaction";
 import UserAuthGuard from "@/providers/UserAuthGuard";
 
-function page() {
+function Page() {
   const router = useRouter();
   const transactionId = useParams<{ transactionId: string }>();
   const { data: transaction, isLoading } = useTransactionDetailsQuery(
@@ -60,4 +60,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

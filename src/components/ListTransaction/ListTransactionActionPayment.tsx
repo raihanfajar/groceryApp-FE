@@ -30,8 +30,8 @@ export default function ListTransactionPaymentActions({
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const midtransUrl =
-    transaction?.snapRedirectUrl ?? (transaction as any)?.paymentLink ?? null;
+  const midtransUrl = transaction?.snapRedirectUrl;
+
 
   const handlePaymentButton = createPaymentActionHandler({
     transaction,

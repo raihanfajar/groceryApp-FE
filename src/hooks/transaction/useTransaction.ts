@@ -67,10 +67,11 @@ export function useCompleteTransaction(transactionId: string) {
         queryKey: ["userTransactions"],
       });
     },
-    onError: (err: any) => {
-      const msg =
-        err?.response?.data?.message || err?.message || "Complete failed";
-      toast.error(msg);
+    onError: (err: unknown) => {
+      const customError = err as baseError;
+      const errorMessage =
+        customError.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage);
     },
   });
 }
@@ -104,10 +105,11 @@ export function useCancelTransaction(transactionId?: string) {
         exact: true,
       });
     },
-    onError: (err: any) => {
-      const msg =
-        err?.response?.data?.message || err?.message || "Cancel failed";
-      toast.error(msg);
+    onError: (err: unknown) => {
+      const customError = err as baseError;
+      const errorMessage =
+        customError.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage);
     },
   });
 }
@@ -148,11 +150,10 @@ export function useUploadProofOfPayment() {
         queryKey: ["transactionDetails", response.data.paymentProof.id],
       });
     },
-    onError: (err: baseError) => {
+    onError: (err: unknown) => {
+      const customError = err as baseError;
       const errorMessage =
-        (err as any)?.response?.data?.message ||
-        (err as any)?.message ||
-        "Something went wrong";
+        customError.response?.data?.message || "Something went wrong";
       toast.error(errorMessage);
     },
   });

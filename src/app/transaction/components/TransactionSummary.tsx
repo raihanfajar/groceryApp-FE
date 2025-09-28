@@ -76,7 +76,7 @@ function TransactionSummary({ transaction }: { transaction: Transaction }) {
 
         <PaymentActions
           transaction={transaction}
-          openMidtransPopup={(url) => {}}
+          openMidtransPopup={() => {}}
         />
       </div>
     </>

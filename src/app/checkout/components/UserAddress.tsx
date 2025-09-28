@@ -2,7 +2,6 @@
 
 import AddNewAddressDialog from "@/components/homePage/location/AddNewAddressDialog";
 import { UserAddressInterface } from "@/types/checkout/checkoutTypes";
-import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import { IoLocationSharp } from "react-icons/io5";
 
@@ -37,10 +36,6 @@ const UserAddress = ({
     modalRef.current?.close();
   };
 
-  // const addNewAddress = () => {
-  //   <AddNewAddressDialog />
-  // };
-
   const handleConfirmSelection = () => {
     const newSelectedAddress = addresses.find(
       (addr) => addr.id === tempSelectedId,
@@ -51,7 +46,6 @@ const UserAddress = ({
     closeModal();
   };
 
-  const router = useRouter();
 
   if (!addresses || addresses.length === 0) {
     return (

@@ -69,7 +69,7 @@ const ProcessedPage = () => {
             <p className="text-red-500">Failed to load transactions.</p>
           ) : data && data.data && data.data.length > 0 ? (
             <div className="mt-4 space-y-4">
-              {data.data.map((tx: any) => (
+              {data.data.map((tx) => (
                 <UserTransactionList key={tx.id} transaction={tx} />
               ))}
 

@@ -95,11 +95,14 @@ export function useCreateTransactionMutation() {
           },
         );
         return response.data;
-      } catch (error: any) {
-        throw {
-          message:
-            error.response?.data?.message || "An unexpected error occurred.",
-        };
+      } catch (error: unknown) {
+        const customError = error as baseError;
+
+        const errorMessage =
+          customError.response?.data?.message ||
+          "An unexpected error occurred.";
+
+        throw new Error(errorMessage);
       }
     },
     onSuccess: (response) => {

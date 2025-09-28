@@ -1,4 +1,5 @@
 "use client";
+import { baseError } from "@/components/userAuth/typesAndInterfaces";
 import {
   useCreateTransactionMutation,
   useShippingPriceQuery,
@@ -47,9 +48,13 @@ function CheckoutSummary({
   // Hook mutation
   const { mutateAsync, isPending } = useCreateTransactionMutation();
 
+  const { targetStore } = useUserAuthStore();
   // Fungsi untuk buat transaksi
   const createTransaction = useCallback(async () => {
-    const { targetStore } = useUserAuthStore();
+    if (!targetStore?.id) {
+      toast.error("Store is not available.");
+      return;
+    }
     try {
       const input = {
         userAddressId: userAddress?.id ?? "",
@@ -66,14 +71,25 @@ function CheckoutSummary({
 
       if (transactionId) {
         router.push(`/transaction/${transactionId}`);
-      } else {
-        toast.error("Transaction created but slug not found.");
       }
-    } catch (err: any) {
-      console.error("Create transaction failed:", err);
-      toast.error(err?.message || "Failed to create transaction");
+    } catch (error: unknown) {
+      const customError = error as baseError;
+
+      if (customError?.response?.data?.message) {
+        toast.error(customError.response.data.message);
+        return;
+      }
     }
-  }, [mutateAsync, paymentMethod, product, router, userAddress?.id]);
+  }, [
+    mutateAsync,
+    paymentMethod,
+    router,
+    userAddress?.id,
+    targetStore,
+    shippingprice,
+    productVoucher,
+    deliveryVoucher,
+  ]);
 
   return (
     <div className="mt-2 w-full gap-y-10 md:flex-row md:gap-x-10 md:[&>*+*]:ml-0">

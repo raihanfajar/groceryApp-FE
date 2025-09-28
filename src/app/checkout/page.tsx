@@ -16,7 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-const page = () => {
+const Page = () => {
   const [productVoucher, setProductVoucher] = useState<Voucher | null>(null);
   const [deliveryVoucher, setDeliveryVoucher] = useState<Voucher | null>(null);
   const [selectedAddress, setSelectedAddress] =
@@ -120,4 +120,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

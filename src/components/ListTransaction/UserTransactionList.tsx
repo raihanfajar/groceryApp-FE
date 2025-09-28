@@ -61,7 +61,7 @@ function UserTransactionList({ transaction }: UserTransactionListProps) {
               </p>
               <ListTransactionPaymentActions
                 transaction={transaction}
-                openMidtransPopup={(url) => {}}
+                openMidtransPopup={() => {}}
               />
             </div>
           )}

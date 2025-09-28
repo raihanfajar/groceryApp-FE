@@ -1,12 +1,12 @@
 "use client";
-import BenefitBanner from "@/components/HomePage/benefitBanner/BenefitBanner";
-import CategoryCarousel from "@/components/HomePage/categoryCarousel/CategoryCarousel";
-import { ProductList } from "@/components/HomePage/productDisplay/ProductList";
-import PromoCarousel from "@/components/HomePage/promoCarousel/PromoCarousel";
+import BenefitBanner from "@/components/homePage/benefitBanner/BenefitBanner";
+import CategoryCarousel from "@/components/homePage/categoryCarousel/CategoryCarousel";
+import { ProductList } from "@/components/homePage/productDisplay/ProductList";
+import PromoCarousel from "@/components/homePage/promoCarousel/PromoCarousel";
 
 // Import data dengan path yang sudah dikoreksi
-import CustomBorder from "@/components/HomePage/CustomBorder";
-import { carouselItems } from "@/components/HomePage/mapData";
+import CustomBorder from "@/components/homePage/CustomBorder";
+import { carouselItems } from "@/components/homePage/mapData";
 import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 

@@ -67,7 +67,7 @@ export function useUpdateCartQuantity() {
       if (previousCart) {
         let updatedItems = previousCart.items.map((item) =>
           item.productId === newItem.productId &&
-            item.storeId === newItem.storeId
+          item.storeId === newItem.storeId
             ? { ...item, quantity: newItem.quantity }
             : item,
         );
@@ -92,7 +92,8 @@ export function useUpdateCartQuantity() {
       }
 
       // Ambil pesan error dari respons backend
-      const errorMessage = err?.response?.data?.message || "Something went wrong";
+      const errorMessage =
+        err?.response?.data?.message || "Something went wrong";
 
       // Tampilkan notifikasi toast error
       toast.error(errorMessage);

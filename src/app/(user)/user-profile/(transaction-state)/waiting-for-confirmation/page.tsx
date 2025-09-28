@@ -6,11 +6,11 @@ import { useUserTransactionsQuery } from "@/hooks/transaction/useTransaction";
 import Image from "next/image";
 import { useState } from "react";
 
-const WaitingForPaymentPage = () => {
+const WaitingForConfirmationPage = () => {
   const [params, setParams] = useState({
     page: 1,
     pageSize: 5,
-    status: "waiting_payment",
+    status: "waiting_confirmation",
     orderId: "",
     startDate: "",
     endDate: "",
@@ -115,4 +115,4 @@ const WaitingForPaymentPage = () => {
   );
 };
 
-export default WaitingForPaymentPage;
+export default WaitingForConfirmationPage;

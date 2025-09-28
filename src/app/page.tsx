@@ -5,10 +5,11 @@ import { ProductList } from "@/components/homePage/productDisplay/ProductList";
 import PromoCarousel from "@/components/homePage/promoCarousel/PromoCarousel";
 
 // Import data dengan path yang sudah dikoreksi
-import CustomBorder from "@/components/homePage/CustomBorder";
-import { carouselItems } from "@/components/homePage/mapData";
-import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
+
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
+import { carouselItems } from "@/components/homePage/mapData";
+import CustomBorder from "@/components/homePage/CustomBorder";
 
 export default function HomePage() {
   const { targetStore } = useUserAuthStore();

@@ -8,8 +8,11 @@ import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 
 const transactionMapItems = [
-  { name: "Created", href: "/user-profile/created" },
   { name: "Waiting for payment", href: "/user-profile/waiting-for-payment" },
+  {
+    name: "Waiting for confirmation",
+    href: "/user-profile/waiting-for-confirmation",
+  },
   { name: "Processed", href: "/user-profile/processed" },
   { name: "Sent", href: "/user-profile/sent" },
   { name: "Done", href: "/user-profile/done" },

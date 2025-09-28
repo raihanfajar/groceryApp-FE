@@ -84,9 +84,6 @@ export const ProfileDropDown = () => {
           Transactions
         </DropdownMenuLabel>
         <DropdownMenuGroup className="p-1">
-          <Link href={"/user-profile/created"}>
-            <DropdownMenuItem>Created</DropdownMenuItem>
-          </Link>
           <Link href={"/user-profile/waiting-for-payment"}>
             <DropdownMenuItem>Waiting for Payment</DropdownMenuItem>
           </Link>

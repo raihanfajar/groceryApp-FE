@@ -1,7 +1,6 @@
 export type DiscountType = "MANUAL" | "MINIMUM_PURCHASE" | "BOGO" | "AUTOMATIC";
 export type DiscountValueType = "PERCENTAGE" | "NOMINAL";
 
-// Tipe untuk 'Product'
 export type Product = {
   id: string;
   name: string;
@@ -9,7 +8,6 @@ export type Product = {
   picture1: string;
 };
 
-// Tipe untuk informasi diskon yang diaplikasikan
 export type AppliedDiscount = {
   id: string;
   name: string;
@@ -19,7 +17,6 @@ export type AppliedDiscount = {
   maxDiscountAmount: number | null;
 };
 
-// Tipe untuk informasi promo BOGO
 export type BogoInfo = {
   buyQuantity: number;
   getQuantity: number;
@@ -27,27 +24,30 @@ export type BogoInfo = {
   maxBogoSets: number | null;
 };
 
-// Tipe untuk item di keranjang (output dari service getUserCart)
+export type Availability = {
+  status: "AVAILABLE" | "OUT_OF_STOCK" | "NOT_AVAILABLE";
+  currentStock: number;
+};
+
 export type CartItemWithPromo = {
-  id: string; // id dari CartProduct
+  id: string; 
   productId: string;
   storeId: string;
   quantity: number;
-  product: Product; // Objek produk lengkap
-  activePrice: number; // Harga final per item setelah diskon
-  discountAmount: number; // Jumlah potongan harga per item
+  product: Product; 
+  activePrice: number; 
+  discountAmount: number; 
   appliedDiscount: AppliedDiscount | null;
   bogo: BogoInfo | null;
+  availability: Availability; 
 };
 
-// Tipe untuk keseluruhan objek keranjang
 export type Cart = {
   id: string;
   userId: string;
   items: CartItemWithPromo[];
 };
 
-// Tipe untuk payload saat update kuantitas
 export type UpdateQuantityPayload = {
   storeId: string;
   productId: string;

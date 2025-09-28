@@ -8,7 +8,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiLoader } from "react-icons/fi";
 import { Input } from "../../ui/input";
 
 L.Icon.Default.mergeOptions({
@@ -52,10 +52,12 @@ export default function MapLeaflet({ onLocationChange }: MapLeafletProps) {
     isPending,
     isError,
   } = useReverseGeocode(position?.lat ?? null, position?.lng ?? null);
-  const { data: suggestions } = useForwardGeocode(search, 5);
+  const { data: suggestions, isPending: isPendingSuggestions } =
+    useForwardGeocode(search, 5);
 
   // safely cast suggestions to the typed array (hooks likely return similar shape)
   const suggestionsTyped = (suggestions as Suggestion[] | undefined) ?? [];
+  const showDropdown = Boolean(search.trim());
 
   const handleSelectSuggestion = (lat: string, lon: string) => {
     const latNum = parseFloat(lat);
@@ -142,17 +144,26 @@ export default function MapLeaflet({ onLocationChange }: MapLeafletProps) {
         </div>
 
         {/* Suggestions dropdown */}
-        {search && suggestionsTyped.length > 0 && (
+        {showDropdown && (
           <ul className="absolute top-[34px] z-20 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow">
-            {suggestionsTyped.map((s) => (
-              <li
-                key={s.place_id}
-                className="cursor-pointer px-3 py-2 hover:bg-gray-100"
-                onClick={() => handleSelectSuggestion(s.lat, s.lon)}
-              >
-                {s.display_name}
+            {isPendingSuggestions ? ( //  <-- LOADING STATE
+              <li className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500">
+                <FiLoader className="animate-spin" />
+                <span>Searching…</span>
               </li>
-            ))}
+            ) : suggestionsTyped.length === 0 ? ( //  <-- EMPTY STATE
+              <li className="px-3 py-2 text-sm text-gray-500">No results</li>
+            ) : (
+              suggestionsTyped.map((s) => (
+                <li
+                  key={s.place_id}
+                  className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+                  onClick={() => handleSelectSuggestion(s.lat, s.lon)}
+                >
+                  {s.display_name}
+                </li>
+              ))
+            )}
           </ul>
         )}
       </div>

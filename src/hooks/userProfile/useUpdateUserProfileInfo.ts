@@ -3,6 +3,7 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { UpdateProfilePayload, UpdateUserInfoResponse } from "./typesAndInterfaces";
+import { baseError } from "@/components/userAuth/typesAndInterfaces";
 
 export const useUpdateUserProfileInfo = (accessToken: string) => {
     const queryClient = useQueryClient();
@@ -26,6 +27,9 @@ export const useUpdateUserProfileInfo = (accessToken: string) => {
             } else {
                 toast.success(data.message);
             }
+        },
+        onError: (error: baseError) => {
+            toast.error(`${error.response.status} | ${error.response.data.message}`);
         },
     });
 };

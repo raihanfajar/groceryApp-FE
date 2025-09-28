@@ -1,6 +1,6 @@
 "use client";
-import CustomBorder from "@/components/HomePage/CustomBorder";
-import { menuSections } from "@/components/HomePage/mapData";
+import CustomBorder from "@/components/homePage/CustomBorder";
+import { menuSections } from "@/components/homePage/mapData";
 import {
   useHydratedAdminAuth,
   useHydratedUserAuth,

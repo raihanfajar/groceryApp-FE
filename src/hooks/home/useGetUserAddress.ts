@@ -11,7 +11,7 @@ const fetchUserAddress = async (accessToken: string) => {
 
 export const useGetUserAddressInfo = (accessToken: string) => {
     return useQuery({
-        queryKey: ["userAddressInfo"],
+        queryKey: ["userAddressInfo", accessToken],
         queryFn: () => fetchUserAddress(accessToken),
         enabled: !!accessToken, // don’t run until both exist
         staleTime: 5 * 60 * 1000, // optional caching

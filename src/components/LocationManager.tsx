@@ -7,10 +7,12 @@ import {
   useDynamicLocationStore,
 } from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function LocationManager() {
+  const queryClient = useQueryClient();
   const [isClient, setIsClient] = useState(false);
   const { accessToken, setTargetStore } = useUserAuthStore();
 
@@ -85,6 +87,35 @@ export default function LocationManager() {
     setDynamicLocation,
     setPermission,
   ]);
+
+  useEffect(() => {
+    const handler = () => window.location.reload();
+    navigator.permissions.query({ name: "geolocation" }).then((res) => {
+      res.onchange = handler; // fires when permission state changes
+    });
+  }, []);
+
+  /* 1. whenever we get the first valid fix, wipe the geo & store cache */
+  useEffect(() => {
+    if (!dynamicLat || !dynamicLon) return;
+    queryClient.invalidateQueries({
+      queryKey: ["geoInfo", dynamicLat, dynamicLon],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["nearesStore", dynamicLat, dynamicLon],
+    });
+  }, [dynamicLat, dynamicLon, queryClient]);
+
+  /* 2. same trick when actualLat/Lon arrive */
+  useEffect(() => {
+    if (!actualLat || !actualLon) return;
+    queryClient.invalidateQueries({
+      queryKey: ["geoInfo", actualLat, actualLon],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["nearesStore", actualLat, actualLon],
+    });
+  }, [actualLat, actualLon, queryClient]); // ✅ simple, exhaustive
 
   // !WHERE THE REVERSE GEOCODE HOOK RUN
   const { data: actualGeoInfo } = useReverseGeocode(actualLat, actualLon);

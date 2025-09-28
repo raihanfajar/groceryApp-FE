@@ -21,7 +21,7 @@ const UserLoginPage = () => {
         backgroundSize: "25%",
       }}
     >
-      <div className="w-full max-w-md rounded-lg border-2 border-black bg-[#ffffffdb] p-8 shadow-lg">
+      <div className="w-full max-w-md border-2 border-black bg-[#ffffffdb] p-5 shadow-lg sm:rounded-lg sm:p-8">
         {/* Title */}
         <h2 className="text-center text-lg font-bold text-gray-800">Login</h2>
         <p className="mt-1 text-center text-sm text-gray-600">

@@ -4,11 +4,12 @@ import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
 export const useUnifiedLogin = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const setUserAuth = useUserAuthStore((state) => state.setAuth);
     const setAdminAuth = useAdminAuthStore((state) => state.setAuth);
 
@@ -43,8 +44,9 @@ export const useUnifiedLogin = () => {
                     accessToken: data.data.accessToken,
                 });
                 
-                // Redirect to home page
-                router.push("/");
+                // Redirect to return URL or home page
+                const returnUrl = searchParams.get("returnUrl") || "/";
+                router.push(returnUrl);
             } else if (result.type === 'admin') {
                 const data = result.data as AdminAuthResponse;
                 console.log("Admin login successful:", data);

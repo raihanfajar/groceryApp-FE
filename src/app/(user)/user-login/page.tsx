@@ -36,7 +36,7 @@ const UserLoginPage = () => {
             Register here
           </Link>
         </p>
-        <UserLoginForm onSuccess={() => router.push(returnUrl)} />
+        <UserLoginForm />
         <SocialLogin />
       </div>
     </div>

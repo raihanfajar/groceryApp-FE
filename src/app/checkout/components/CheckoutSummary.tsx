@@ -181,7 +181,7 @@ function CheckoutSummary({
       {/* Button */}
       <button
         type="button"
-        className="mt-7 w-full rounded-md bg-[#00a63e] p-2 font-medium text-white"
+        className="mt-7 w-full cursor-pointer rounded-md bg-[#00a63e] p-2 font-medium text-white"
         onClick={createTransaction}
       >
         {isPending ? "Processing..." : "Create Transaction"}

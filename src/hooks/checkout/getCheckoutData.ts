@@ -86,6 +86,7 @@ export function useCreateTransactionMutation() {
       if (!accessToken) {
         throw new Error("Access token is not available.");
       }
+      console.log("create masuk" , input)
       try {
         const response = await axiosInstance.post<TransactionResponse>(
           "/transaction/create",

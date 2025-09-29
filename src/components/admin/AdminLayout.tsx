@@ -61,7 +61,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin/transactions",
       icon: CreditCard,
       current: pathname.startsWith("/admin/transactions"),
-      disabled: true,
     },
     {
       name: "Reports",

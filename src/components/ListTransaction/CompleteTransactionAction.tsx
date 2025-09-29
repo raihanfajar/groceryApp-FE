@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { Transaction } from "@/types/transaction/transactionTypes";
 import { useCompleteTransaction } from "@/hooks/transaction/useTransaction";
+import { TransactionFinal } from "@/types/transaction/FinalTypes";
 
 type Props = {
-  transaction: Transaction;
+  transaction: TransactionFinal;
 };
 
 export default function CompleteTransactionAction({ transaction }: Props) {

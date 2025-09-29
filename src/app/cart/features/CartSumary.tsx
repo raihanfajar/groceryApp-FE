@@ -97,9 +97,9 @@ function CartSummary() {
         </div>
         <button
           type="button"
-          className="mt-7 w-full rounded-md bg-[#00a63e] p-2 font-medium text-white"
+          className="mt-7 w-full cursor-pointer rounded-md bg-[#00a63e] p-2 font-medium text-white disabled:opacity-50"
           onClick={() => router.push("/checkout")}
-          disabled={validItems.length === 0} 
+          disabled={validItems.length === 0}
         >
           Proceed to Checkout
         </button>

@@ -14,7 +14,6 @@ import {
   useUserCartQuery,
 } from "@/hooks/checkout/getCheckoutData";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 
 const Page = () => {
   const [productVoucher, setProductVoucher] = useState<Voucher | null>(null);
@@ -27,9 +26,9 @@ const Page = () => {
     useUserAddressesQuery();
 
   const { data: cartData, isLoading: isLoadingCart } = useUserCartQuery();
-  const itemsAvailable = cartData?.items?.every(
-    (item) => item.availability.status === "AVAILABLE",
-  );
+  // const itemsAvailable = cartData?.items?.every(
+  //   (item) => item.availability.status === "AVAILABLE",
+  // );
 
   useEffect(() => {
     if (!addressData || addressData.length === 0) return;
@@ -63,10 +62,7 @@ const Page = () => {
     }
   }
 
-  if (!itemsAvailable) {
-    toast.error("No items available in cart");
-    router.push("/cart");
-  }
+
 
   if (isLoadingAddress || isLoadingCart) {
     return (

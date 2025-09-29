@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import { Transaction } from "@/types/transaction/transactionTypes";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import {
   useCancelTransaction,
   useUploadProofOfPayment,
 } from "@/hooks/transaction/useTransaction";
-import { createPaymentActionHandler } from "../features/PaymentActionHandler";
+import { UploadProofModal } from "./UploadProofModal";
+import { CancelConfirmModal } from "./CancelConfirmModal";
 
 type Props = {
   transaction: Transaction;
@@ -19,51 +21,29 @@ export default function PaymentActions({
   transaction,
   openMidtransPopup,
 }: Props) {
+  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+  const [isCancelModalOpen, setCancelModalOpen] = useState(false);
+
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { mutate: uploadMutate, isPending: isUploading } =
     useUploadProofOfPayment();
   const { mutate: cancelTransaction, isPending: isCanceling } =
     useCancelTransaction(transaction?.id);
 
-  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
-  const [isCancelModalOpen, setCancelModalOpen] = useState(false);
+  const handleUploadSubmit = (file: File) => {
+    if (!transaction?.id) return toast.error("Transaction ID missing");
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  const midtransUrl =
-    transaction?.snapRedirectUrl;
-
-  const handlePaymentButton = createPaymentActionHandler({
-    transaction,
-    openUploadModal: () => setUploadModalOpen(true),
-    openMidtransPopup,
-    midtransUrl,
-  });
-
-  const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const f = e.target.files?.[0] ?? null;
-    setSelectedFile(f);
-  };
-
-  const handleUploadSubmit = () => {
-    if (!selectedFile) {
-      toast.error("Please choose a file first.");
-      return;
-    }
-    if (!transaction?.id) {
-      toast.error("Transaction ID missing");
-      return;
-    }
     uploadMutate(
-      { transactionId: transaction.id, file: selectedFile },
+      { transactionId: transaction.id, file },
       {
         onSuccess: () => {
-          setSelectedFile(null);
           setUploadModalOpen(false);
+          toast.success("Upload successful!");
           queryClient.invalidateQueries({
             queryKey: ["transactionDetails", transaction.id],
-            exact: true,
           });
+          router.push("/");
         },
       },
     );
@@ -78,18 +58,28 @@ export default function PaymentActions({
 
   if (transaction?.status !== "waiting_payment") return null;
 
+  const paymentButtonText =
+    transaction.paymentMethod === "manual_transfer"
+      ? "Upload Payment Proof"
+      : "Pay with Midtrans";
+
+  const handlePaymentClick = () => {
+    if (transaction.paymentMethod === "manual_transfer") {
+      setUploadModalOpen(true);
+    } else if (openMidtransPopup && transaction.snapRedirectUrl) {
+      openMidtransPopup(transaction.snapRedirectUrl);
+    }
+  };
+
   return (
     <>
       <div className="mt-5 flex flex-col gap-3">
         <button
-          onClick={handlePaymentButton}
+          onClick={handlePaymentClick}
           className="btn btn-primary h-10 w-full text-sm"
         >
-          {transaction.paymentMethod === "manual_transfer"
-            ? "Upload Payment Proof"
-            : "Pay with Midtrans"}
+          {paymentButtonText}
         </button>
-
         <button
           onClick={() => setCancelModalOpen(true)}
           className="btn btn-outline btn-sm text-error h-10 w-full text-sm"
@@ -99,100 +89,19 @@ export default function PaymentActions({
         </button>
       </div>
 
-      {/* Upload Modal */}
-      {isUploadModalOpen && (
-        <div className="modal modal-open">
-          <div className="modal-box relative">
-            <button
-              type="button"
-              onClick={() => {
-                setUploadModalOpen(false);
-                setSelectedFile(null);
-              }}
-              className="btn btn-sm btn-circle btn-ghost absolute top-3 right-3 text-white"
-            >
-              ✕
-            </button>
+      <UploadProofModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        onSubmit={handleUploadSubmit}
+        isUploading={isUploading}
+      />
 
-            <h3 className="text-lg font-bold text-white">
-              Upload Payment Proof
-            </h3>
-            <p className="py-2 text-sm text-white">
-              Please upload your payment receipt or proof of transfer.
-            </p>
-
-            <div className="form-control">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="file-input file-input-bordered w-full text-white"
-              />
-            </div>
-
-            {selectedFile && (
-              <div className="bg-base-200 mt-3 rounded-lg border p-3 text-sm">
-                <div className="font-medium">{selectedFile.name}</div>
-                <div className="text-xs text-gray-500">
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB •{" "}
-                  {selectedFile.type}
-                </div>
-              </div>
-            )}
-
-            <div className="modal-action">
-              <button
-                onClick={() => {
-                  setUploadModalOpen(false);
-                  setSelectedFile(null);
-                }}
-                className="btn"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUploadSubmit}
-                className={`btn btn-primary ${isUploading ? "loading" : ""}`}
-                disabled={!selectedFile || isUploading}
-              >
-                {isUploading ? "Uploading..." : "Upload"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Cancel Confirmation Modal */}
-      {isCancelModalOpen && (
-        <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="text-lg font-bold text-white">
-              Confirm Cancel Transaction
-            </h3>
-            <p className="py-2 text-sm text-white">
-              Are you sure you want to cancel this transaction? This action
-              cannot be undone.
-            </p>
-
-            <div className="modal-action">
-              <button
-                onClick={() => setCancelModalOpen(false)}
-                className="btn border-2 border-black bg-white text-black"
-                disabled={isCanceling}
-              >
-                No, keep it
-              </button>
-              <button
-                onClick={handleConfirmCancel}
-                className={`btn btn-error text-black ${isCanceling ? "loading" : ""}`}
-                disabled={isCanceling}
-              >
-                {isCanceling ? "Cancelling..." : "Yes, cancel"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CancelConfirmModal
+        isOpen={isCancelModalOpen}
+        onClose={() => setCancelModalOpen(false)}
+        onConfirm={handleConfirmCancel}
+        isCanceling={isCanceling}
+      />
     </>
   );
 }

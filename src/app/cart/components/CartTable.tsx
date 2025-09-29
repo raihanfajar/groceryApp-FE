@@ -35,11 +35,11 @@ const CartTable = () => {
   };
 
   if (isLoading)
-    return <div className="p-4 text-center">Memuat keranjang...</div>;
+    return <div className="p-4 text-center">Loading Cart...</div>;
   if (isError)
     return (
       <div className="p-4 text-center text-red-500">
-        Gagal memuat keranjang.
+        Failed to load Cart
       </div>
     );
   if (!cart || cart.items.length === 0) {
@@ -80,7 +80,6 @@ const CartTable = () => {
             </div>
           </div>
           {cart.items.map((item) => {
-            console.log("Parent passing item:", item); // <-- lihat ini buat tiap item
             return (
               <CartRow
                 key={item.id}

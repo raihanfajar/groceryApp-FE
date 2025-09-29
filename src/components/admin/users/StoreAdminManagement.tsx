@@ -112,7 +112,9 @@ export default function StoreAdminManagement() {
       return Array.isArray(data) ? data : [];
     },
     enabled: !!admin?.accessToken,
-  }); // Create store admin mutation
+  });
+
+  // Create store admin mutation
   const createAdminMutation = useMutation({
     mutationFn: async (data: CreateStoreAdminData) => {
       const response = await axiosInstance.post("/admin/store-admins", data, {

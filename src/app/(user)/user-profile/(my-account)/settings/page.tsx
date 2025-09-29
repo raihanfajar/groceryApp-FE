@@ -22,7 +22,7 @@ const UserProfilePage = () => {
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <CardContent className="grid !h-full grid-cols-1 gap-6 md:grid-cols-3">
               {/* Avatar + Change password */}
               <div className="flex flex-col items-center">
                 <div className="mb-4 h-24 w-24 rounded-full bg-gray-300">
@@ -38,7 +38,9 @@ const UserProfilePage = () => {
               </div>
 
               {/* Personal Info */}
-              <SettingsPersonalInfo />
+              <div className="flex flex-col md:col-span-2">
+                <SettingsPersonalInfo />
+              </div>
             </CardContent>
           </Card>
         </section>

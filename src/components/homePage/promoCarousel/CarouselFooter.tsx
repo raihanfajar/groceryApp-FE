@@ -8,7 +8,7 @@ export default function CarouselFooter() {
         variant="link"
         className="!rounded-br-none !rounded-bl-none text-gray-600"
       >
-        <Link href={"#"}>See All Promo</Link>
+        <Link href={"/promo"}>See All Promo</Link>
       </Button>
     </div>
   );

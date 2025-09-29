@@ -27,6 +27,10 @@ export interface CarouselItem {
     image: string;
     alt: string;
     link: string;
+    title: string;
+    description: string;
+    period: string;
+    details: string[];
 }
 
 // Props for Carousel Component

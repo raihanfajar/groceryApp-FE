@@ -1,3 +1,4 @@
+import { slugify } from "@/functions/slugToTitle";
 import {
   Benefits,
   CarouselItem,
@@ -112,17 +113,77 @@ export const carouselItems: CarouselItem[] = [
   {
     image: "/promoCarousel/gate.jpg",
     alt: "Superwings Payday",
-    link: "#",
+    link: `/promo/${slugify("Superwings Payday Sale")}`,
+    title: "Superwings Payday Sale",
+    description:
+      "Get up to 50% OFF on selected SuperWings toys and merchandise during this payday season.",
+    period: "20 September 2025 - 10 October 2025",
+    details: [
+      "Minimum purchase Rp 200.000",
+      "Valid for member & non-member",
+      "Can be combined with loyalty points",
+      "While stocks last",
+    ],
   },
   {
-    image: "/promoCarousel/gate.jpg",
+    image: "/promoCarousel/sample-banner-1.jpeg",
     alt: "Loyalty Member Alfatar",
-    link: "#",
+    link: `/promo/${slugify("Loyalty Member Rewards")}`,
+    title: "Loyalty Member Rewards",
+    description:
+      "Double loyalty points and exclusive vouchers for every purchase made by registered members.",
+    period: "1 October 2025 - 31 October 2025",
+    details: [
+      "2× points for all transactions",
+      "Extra 10% voucher on weekdays",
+      "Auto-credited to member account",
+      "No minimum spend required",
+    ],
   },
   {
-    image: "/promoCarousel/gate.jpg",
+    image: "/promoCarousel/sample-banner-2.jpeg",
     alt: "Promo Special",
-    link: "#",
+    link: `/promo/${slugify("Weekend Special Promo")}`,
+    title: "Weekend Special Promo",
+    description:
+      "Flash discounts on selected categories every Saturday & Sunday—limited time only!",
+    period: "Every weekend in October 2025",
+    details: [
+      "Up to 40% off on selected items",
+      "Valid only on Sat-Sun",
+      "First 50 customers each day",
+      "Cannot combine with other promos",
+    ],
+  },
+  {
+    image: "/promoCarousel/sample-banner-3.jpeg",
+    alt: "Promo Special Kah?",
+    link: `/promo/${slugify("Mystery Flash Deal")}`,
+    title: "Mystery Flash Deal",
+    description:
+      "Surprise coupon drops at random hours—grab them before they disappear!",
+    period: "5 October 2025 - 15 October 2025",
+    details: [
+      "Coupons appear randomly between 10 AM - 8 PM",
+      "Values range 15% - 70% off",
+      "One coupon per customer per drop",
+      "Applicable store-wide",
+    ],
+  },
+  {
+    image: "/promoCarousel/sample-banner-4.jpeg",
+    alt: "Promo Special banget apa special aja",
+    link: `/promo/${slugify("Mega Special Discount")}`,
+    title: "Mega Special Discount",
+    description:
+      "The biggest markdown of the year—limited quantities, once it’s gone, it’s gone!",
+    period: "25 October 2025 - 30 October 2025",
+    details: [
+      "Up to 70% off clearance items",
+      "New items added daily at midnight",
+      "No returns or exchanges",
+      "Members get early access 1 hour before public",
+    ],
   },
 ];
 

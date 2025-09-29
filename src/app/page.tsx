@@ -10,12 +10,15 @@ import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
 import { carouselItems } from "@/components/homePage/mapData";
 import CustomBorder from "@/components/homePage/CustomBorder";
+import Image from "next/image";
 
 export default function HomePage() {
   const { targetStore } = useUserAuthStore();
-  const { data: targetStoreProducts } = useGetAllTargetStoreProducts(
-    targetStore?.id || "8d3b7b05-d17d-4dd5-a463-499a1e190d5e", // default store when there is no targetStore.id (which is Jakarta main store)
+  const { data: targetStoreProducts, isPending: isPendingTargetStoreProducts } = useGetAllTargetStoreProducts(
+    targetStore?.id || "c2c71ef0-0f43-4b58-b222-22d465bb88c2", // default store when there is no targetStore.id (which is Jakarta main store)
   );
+
+  if (isPendingTargetStoreProducts) return <div>Loading...</div>;
 
   // map BE shape → what ProductCard already expects
   const cardList = targetStoreProducts?.map((p) => ({
@@ -24,13 +27,15 @@ export default function HomePage() {
     name: p.name,
     category: p.category.name,
     price: p.price,
-    stock: p.stock, // <-- pass stock
+    stock: p.stock,
     slug: p.slug,
     discount:
       p.discount?.valueType === "PERCENTAGE"
         ? p.discount.value / 100
         : undefined,
   }));
+
+  console.log(cardList);
 
   return (
     <div className="mx-auto min-h-screen bg-white">
@@ -49,8 +54,22 @@ export default function HomePage() {
           </p>
         </div>
       )}
-      <ProductList items={cardList || []} name="Recommended Product" />
-      <ProductList items={cardList || []} name="Latest Product" />
+      {!cardList ? (
+        <section className="mx-auto flex h-[calc(100vh-105px)] max-w-[1280px] flex-col items-center justify-center px-4 py-8">
+          <Image
+            src="/no-product-found.jpeg"
+            alt="No Product Found"
+            width={400}
+            height={400}
+          />
+          <h2>No Product Found</h2>
+        </section>
+      ) : (
+        <>
+          <ProductList items={cardList || []} name="Recommended Product" />
+          <ProductList items={cardList || []} name="Latest Product" />
+        </>
+      )}
       <CustomBorder />
       <BenefitBanner />
     </div>

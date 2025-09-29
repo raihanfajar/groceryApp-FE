@@ -12,6 +12,7 @@ import {
   BarChart3,
   Archive,
   CreditCard,
+  Percent,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -31,7 +32,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return null;
   }
 
-  const navigation = [
+  const baseNavigation = [
     {
       name: "Dashboard",
       href: "/admin/dashboard",
@@ -57,6 +58,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       current: pathname.startsWith("/admin/categories"),
     },
     {
+      name: "Discounts",
+      href: "/admin/discounts",
+      icon: Percent,
+      current: pathname.startsWith("/admin/discounts"),
+    },
+    {
       name: "Transactions",
       href: "/admin/transactions",
       icon: CreditCard,
@@ -69,15 +76,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       current: pathname.startsWith("/admin/reports"),
       disabled: true,
     },
-    {
-      name: "Users",
-      href: "/admin/users",
-      icon: Users,
-      current: pathname.startsWith("/admin/users"),
-      disabled: !admin?.isSuper, // Only enable for super admins
-      superAdminOnly: true,
-    },
   ];
+
+  // Add Users tab only for Super Admin
+  const navigation = admin?.isSuper
+    ? [
+        ...baseNavigation,
+        {
+          name: "Users",
+          href: "/admin/users",
+          icon: Users,
+          current: pathname.startsWith("/admin/users"),
+        },
+      ]
+    : baseNavigation;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -95,9 +107,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         <Icon className="mr-3 h-6 w-6" />
                         {item.name}
                         <Badge variant="outline" className="ml-auto text-xs">
-                          {item.superAdminOnly && !admin?.isSuper
-                            ? "Super Admin Only"
-                            : "Soon"}
+                          Soon
                         </Badge>
                       </div>
                     ) : (

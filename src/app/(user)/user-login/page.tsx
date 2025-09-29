@@ -24,9 +24,6 @@ const UserLoginPage = () => {
       <div className="w-full max-w-md rounded-lg border-2 border-black bg-[#ffffffdb] p-8 shadow-lg">
         {/* Title */}
         <h2 className="text-center text-lg font-bold text-gray-800">Login</h2>
-        <p className="mt-1 text-center text-sm text-gray-600">
-          Sign in to your FreshNear account or admin dashboard
-        </p>
         <p className="mt-2 text-center text-xs text-gray-500">
           Don&apos;t have a customer account yet?{" "}
           <Link

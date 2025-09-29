@@ -512,9 +512,9 @@ export default function CreateDiscountForm({
                       htmlFor={product.id}
                       className="flex-1 cursor-pointer"
                     >
-                      <div className="flex items-center justify-between">
-                        <span>{product.name}</span>
-                        <span className="text-sm text-gray-500">
+                      <div className="flex items-center justify-between gap-4">
+                        <span className="flex-1 truncate">{product.name}</span>
+                        <span className="text-sm font-medium whitespace-nowrap text-blue-600">
                           Rp {product.price?.toLocaleString()}
                         </span>
                       </div>

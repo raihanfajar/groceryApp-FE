@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -45,13 +46,12 @@ import {
   DiscountValueType,
   Store,
 } from "@/types/discount";
-import CreateDiscountForm from "./CreateDiscountForm";
 import EditDiscountForm from "./EditDiscountForm";
 
 export default function DiscountManagement() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStoreId, setSelectedStoreId] = useState<string>("");
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingDiscount, setEditingDiscount] = useState<Discount | null>(null);
   const { admin } = useAdminAuthStore();
@@ -320,7 +320,7 @@ export default function DiscountManagement() {
           )}
         </div>
 
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
+        <Button onClick={() => router.push("/admin/discounts/create")}>
           <Plus className="mr-2 h-4 w-4" />
           Create Discount
         </Button>
@@ -416,17 +416,18 @@ export default function DiscountManagement() {
                       <TableCell>
                         <div>
                           <div className="text-sm font-medium">
-                            {discount.store.name}
+                            {discount.store?.name || "Global"}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {discount.store.city}, {discount.store.province}
+                            {discount.store
+                              ? `${discount.store.city}, ${discount.store.province}`
+                              : "All Stores"}
                           </div>
                         </div>
                       </TableCell>
                     )}
                     <TableCell>
                       <div className="flex items-center space-x-1">
-                        <PercentIcon className="h-3 w-3 text-gray-400" />
                         <span className="font-medium">
                           {formatDiscountValue(discount)}
                         </span>
@@ -518,16 +519,6 @@ export default function DiscountManagement() {
           )}
         </CardContent>
       </Card>
-
-      {/* Create Discount Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Create New Discount</DialogTitle>
-          </DialogHeader>
-          <CreateDiscountForm onClose={() => setIsCreateDialogOpen(false)} />
-        </DialogContent>
-      </Dialog>
 
       {/* Edit Discount Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

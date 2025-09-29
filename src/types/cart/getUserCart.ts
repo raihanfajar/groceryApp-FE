@@ -1,4 +1,4 @@
-export type DiscountType = "MANUAL" | "MINIMUM_PURCHASE" | "BOGO" | "AUTOMATIC";
+export type DiscountType = "MANUAL" | "MINIMUM_PURCHASE" | "BOGO" | "REGULAR";
 export type DiscountValueType = "PERCENTAGE" | "NOMINAL";
 
 export type Product = {

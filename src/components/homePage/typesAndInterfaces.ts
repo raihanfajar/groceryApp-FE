@@ -96,6 +96,12 @@ export type AddNewAddressDialogFormValues = {
     latLon: { lat: number; lon: number };
     addressDetails: string;
     isDefault: boolean;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+    province: string;
+    city: string;
+    district: string;
 };
 
 export interface AddNewAddressDialogRequest {
@@ -106,4 +112,10 @@ export interface AddNewAddressDialogRequest {
     lon: number;
     addressDetails: string;
     isDefault: boolean;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+    province: string;
+    city: string;
+    district: string;
 }

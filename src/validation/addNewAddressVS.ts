@@ -29,4 +29,7 @@ export const addNewAddressSchema = Yup.object().shape({
         .required("Required"),
 
     isDefault: Yup.boolean(), // optional, can still be false
+    provinceId: Yup.string().required("Province required"),
+    cityId: Yup.string().required("City required"),
+    districtId: Yup.string().required("District required"),
 });

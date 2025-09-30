@@ -14,11 +14,9 @@ import Image from "next/image";
 
 export default function HomePage() {
   const { targetStore } = useUserAuthStore();
-  const { data: targetStoreProducts, isPending: isPendingTargetStoreProducts } = useGetAllTargetStoreProducts(
+  const { data: targetStoreProducts } = useGetAllTargetStoreProducts(
     targetStore?.id || "c2c71ef0-0f43-4b58-b222-22d465bb88c2", // default store when there is no targetStore.id (which is Jakarta main store)
   );
-
-  if (isPendingTargetStoreProducts) return <div>Loading...</div>;
 
   // map BE shape → what ProductCard already expects
   const cardList = targetStoreProducts?.map((p) => ({

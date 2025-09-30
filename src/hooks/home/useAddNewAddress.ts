@@ -10,9 +10,16 @@ export const useAddNewAddress = (accessToken: string) => {
 
   return useMutation({
     mutationFn: async (body: AddNewAddressDialogRequest) => {
+      const payload = {
+        ...body,
+        provinceId: Number(body.provinceId),
+        cityId: Number(body.cityId),
+        districtId: Number(body.districtId),
+      }
+
       const { data } = await axiosInstance.post<baseGeoResponse>(
         "/geocoding/add-new-user-address",
-        body,
+        payload,
         { headers: { Authorization: `Bearer ${accessToken}` } },
       );
       return data;
@@ -22,6 +29,9 @@ export const useAddNewAddress = (accessToken: string) => {
       toast.success(data.message);
 
       queryClient.invalidateQueries({ queryKey: ["userAddressInfo"] });
+      queryClient.invalidateQueries({ queryKey: ["rajong-province"] });
+      queryClient.invalidateQueries({ queryKey: ["rajong-city"] });
+      queryClient.invalidateQueries({ queryKey: ["rajong-district"] });
     },
     onError: (error: baseError) => {
       console.log(error); // !Delete on production

@@ -122,6 +122,25 @@ export default function MapLeaflet({ onLocationChange }: MapLeafletProps) {
     }
   }, [ready, onLocationChange]);
 
+  /* === KILL leaflet tab-stops & focus thieves === */
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    const mapContainer = mapInstanceRef.current.getContainer();
+
+    const stripTabIndex = () => {
+      mapContainer.querySelectorAll("[tabindex]").forEach((n) => {
+        n.removeAttribute("tabindex");
+      });
+    };
+
+    stripTabIndex(); // initial strip
+    const mo = new MutationObserver(stripTabIndex);
+    mo.observe(mapContainer, { childList: true, subtree: true });
+
+    return () => mo.disconnect();
+  }, [ready]);
+
   return (
     <div className="flex w-full flex-col items-center">
       {/* Search Input */}

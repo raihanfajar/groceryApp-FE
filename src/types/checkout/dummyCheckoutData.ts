@@ -72,7 +72,7 @@ export const dummyCart: Cart = {
       appliedDiscount: {
         id: "disc-001",
         name: "Diskon 10% Opening Store",
-        type: "AUTOMATIC",
+        type: "REGULAR",
         valueType: "PERCENTAGE",
         value: 10,
         maxDiscountAmount: null,
@@ -124,7 +124,7 @@ export const dummyCart: Cart = {
       appliedDiscount: {
         id: "disc-002",
         name: "Diskon 10% Weekend",
-        type: "AUTOMATIC",
+        type: "REGULAR",
         valueType: "PERCENTAGE",
         value: 10,
         maxDiscountAmount: null,

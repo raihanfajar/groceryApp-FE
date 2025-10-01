@@ -52,7 +52,10 @@ export default function PaymentActions({
   const handleConfirmCancel = () => {
     if (!transaction?.id) return;
     cancelTransaction(undefined, {
-      onSuccess: () => setCancelModalOpen(false),
+      onSuccess: () => {
+        setCancelModalOpen(false);
+        router.push("/");
+      },
     });
   };
 

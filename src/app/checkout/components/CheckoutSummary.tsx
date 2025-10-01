@@ -26,10 +26,13 @@ function CheckoutSummary({
     (total, item) => total + item.activePrice * item.quantity,
     0,
   );
+  
+  const { targetStore } = useUserAuthStore();
+  const storeId = targetStore?.id;
 
-  const { data: shippingprice = 0 } = useShippingPriceQuery(
+  const { data: shippingprice } = useShippingPriceQuery(
     userAddress?.id ?? null,
-    "dummystoreID",
+    storeId ?? null,
   );
 
   let productDiscount = 0;
@@ -47,8 +50,7 @@ function CheckoutSummary({
 
   // Hook mutation
   const { mutateAsync, isPending } = useCreateTransactionMutation();
-
-  const { targetStore } = useUserAuthStore();
+  
   // Fungsi untuk buat transaksi
   const createTransaction = useCallback(async () => {
     if (!targetStore?.id) {

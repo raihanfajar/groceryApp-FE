@@ -13,8 +13,8 @@ export function CancelConfirmModal({ isOpen, onClose, onConfirm, isCanceling }: 
   return (
     <div className="modal modal-open">
       <div className="modal-box">
-        <h3 className="text-lg font-bold">Confirm Cancel Transaction</h3>
-        <p className="py-2 text-sm">Are you sure you want to cancel this transaction?</p>
+        <h3 className="text-lg font-bold text-white">Confirm Cancel Transaction</h3>
+        <p className="py-2 text-sm text-white">Are you sure you want to cancel this transaction?</p>
         <div className="modal-action">
           <button onClick={onClose} className="btn" disabled={isCanceling}>No, keep it</button>
           <button onClick={onConfirm} className={`btn btn-error ${isCanceling ? "loading" : ""}`} disabled={isCanceling}>

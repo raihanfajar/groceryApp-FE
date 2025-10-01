@@ -49,7 +49,7 @@ function Page() {
         </div>
         <div className="mt-3 mb-10 w-full flex-row justify-center space-y-5 md:ml-auto lg:flex lg:justify-between lg:gap-5 lg:space-y-0">
           <div className="border-lg w-full rounded-lg border border-black bg-[#f5f5f5] p-4 lg:self-start">
-            {transaction.productsTransaction?.map((item) => (
+            {transaction.products?.map((item) => (
               <TransactionProductItem key={item.id} item={item} />
             ))}
           </div>

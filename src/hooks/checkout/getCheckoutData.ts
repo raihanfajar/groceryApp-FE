@@ -65,12 +65,14 @@ export function useShippingPriceQuery(
     queryFn: async () => {
       if (!userAddressId || !storeId || !accessToken) return null;
       const response = await axiosInstance.get<
-        ApiResponse<{ shippingPrice: number | null }>
+        ApiResponse<{ shippingPrice: { price: number | null } | null }>
       >("/transaction/shipping", {
         headers: { Authorization: `Bearer ${accessToken}` },
         params: { userAddressId, storeId },
       });
-      return response.data.data.shippingPrice ?? null;
+      const shippingCost = response.data.data.shippingPrice?.price;
+
+      return shippingCost ?? null;
     },
     enabled: !!userAddressId && !!storeId && !!accessToken,
   });
@@ -86,7 +88,7 @@ export function useCreateTransactionMutation() {
       if (!accessToken) {
         throw new Error("Access token is not available.");
       }
-      console.log("create masuk" , input)
+      console.log("create masuk", input);
       try {
         const response = await axiosInstance.post<TransactionResponse>(
           "/transaction/create",

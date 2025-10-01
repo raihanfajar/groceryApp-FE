@@ -31,7 +31,7 @@ export type Transaction = {
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
   deletedAt?: string | null; // ISO Date string
-  productsTransaction?: TransactionProduct[];
+  products?: TransactionProduct[];
 };
 
 export type TransactionProduct = {
@@ -45,7 +45,7 @@ export type TransactionProduct = {
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
   deletedAt?: string | null; // ISO Date string
-  productDetails: Product;
+  product: Product;
 };
 
 export type Product = {

@@ -65,14 +65,18 @@ export default function PromoCarousel({ items }: CarouselProps) {
         >
           <div className="flex">
             {items.map((item, index) => (
-              <div key={index} className="flex-[0_0_100%] px-2">
-                <Link href={item.link}>
+              <div
+                key={index}
+                className="relative h-96 flex-[0_0_100%] overflow-hidden rounded-lg px-2"
+              >
+                <Link href={item.link} className="block h-full w-full">
                   <Image
                     src={item.image}
                     alt={item.alt}
-                    width={1000}
-                    height={1000}
-                    className="w-full rounded-lg object-cover"
+                    fill // makes the image span the whole box
+                    sizes="1000px"
+                    priority={index === 0} // optional: faster first paint
+                    className="object-cover"
                   />
                 </Link>
               </div>

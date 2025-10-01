@@ -57,6 +57,30 @@ body {
   }
 }
 
+.scaledown85 {
+  @media screen and (min-width: 1024px) {
+    zoom: 0.85;
+  }
+}
+
+.scaledown80 {
+  @media screen and (min-width: 1024px) {
+    zoom: 0.8;
+  }
+}
+
+.scaledown75 {
+  @media screen and (min-width: 1024px) {
+    zoom: 0.75;
+  }
+}
+
+.scaledown70 {
+  @media screen and (min-width: 1024px) {
+    zoom: 0.7;
+  }
+}
+
 /* Thin, modern scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
   width: 6px;

@@ -12,7 +12,7 @@ const fetchUserProfileInfo = async (accessToken: string) => {
 
 export const useGetUserProfileInfo = (accessToken: string) => {
     return useQuery({
-        queryKey: ["userProfileInfo"],
+        queryKey: ["userProfileInfo", accessToken],
         queryFn: () => fetchUserProfileInfo(accessToken),
         enabled: !!accessToken, // don’t run until both exist
         staleTime: 5 * 60 * 1000, // optional caching

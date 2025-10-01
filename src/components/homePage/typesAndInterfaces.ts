@@ -27,6 +27,10 @@ export interface CarouselItem {
     image: string;
     alt: string;
     link: string;
+    title: string;
+    description: string;
+    period: string;
+    details: string[];
 }
 
 // Props for Carousel Component
@@ -92,6 +96,12 @@ export type AddNewAddressDialogFormValues = {
     latLon: { lat: number; lon: number };
     addressDetails: string;
     isDefault: boolean;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+    province: string;
+    city: string;
+    district: string;
 };
 
 export interface AddNewAddressDialogRequest {
@@ -102,4 +112,10 @@ export interface AddNewAddressDialogRequest {
     lon: number;
     addressDetails: string;
     isDefault: boolean;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+    province: string;
+    city: string;
+    district: string;
 }

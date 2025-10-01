@@ -120,6 +120,8 @@ export default function LocationManager() {
   // !WHERE THE REVERSE GEOCODE HOOK RUN
   const { data: actualGeoInfo } = useReverseGeocode(actualLat, actualLon);
   const { data: dynamicGeoInfo } = useReverseGeocode(dynamicLat, dynamicLon);
+  console.log("actualGeoInfo", actualGeoInfo);
+  console.log("dynamicGeoInfo", dynamicGeoInfo);
 
   // !When geoInfo changes, push the display name into the store
   useEffect(() => {

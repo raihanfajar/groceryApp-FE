@@ -177,9 +177,11 @@ export default function AdminDashboard() {
               )}
               <li>• Customer support tools</li>
             </ul>
-            <Button variant="outline" className="w-full" disabled>
-              Coming Soon
-            </Button>
+            <Link className="mt-5" href={admin.isSuper ? "/admin/users" : "/"}>
+              <Button size="sm" className="w-full">
+                Manage Users
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

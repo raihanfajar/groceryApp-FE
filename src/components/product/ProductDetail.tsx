@@ -20,6 +20,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAddCartProduct } from "@/hooks/cart/getUserCart";
 
 interface ProductDetailProps {
   slug: string;
@@ -30,6 +31,7 @@ export default function ProductDetail({ slug }: ProductDetailProps) {
   const { data, isLoading, error } = useProductBySlug(slug);
   const [quantity, setQuantity] = useState(1);
   const [selectedStoreId, setSelectedStoreId] = useState<string>("");
+  const addCart = useAddCartProduct();
 
   // Set default store if not already selected - must be called before conditional returns
   useEffect(() => {
@@ -41,6 +43,10 @@ export default function ProductDetail({ slug }: ProductDetailProps) {
       setSelectedStoreId(data.data.product.storeStock[0].store.id);
     }
   }, [data?.data?.product?.storeStock, selectedStoreId]);
+
+  const handleAddToCart = () => {
+    addCart.mutate({ productId: product.id });
+  };
 
   if (isLoading) {
     return (
@@ -97,15 +103,6 @@ export default function ProductDetail({ slug }: ProductDetailProps) {
     } else if (!increment && quantity > 1) {
       setQuantity(quantity - 1);
     }
-  };
-
-  const handleAddToCart = () => {
-    // TODO: Implement add to cart functionality
-    console.log("Adding to cart:", {
-      product: product.id,
-      quantity,
-      store: selectedStoreId,
-    });
   };
 
   return (
@@ -272,7 +269,7 @@ export default function ProductDetail({ slug }: ProductDetailProps) {
               <Button
                 onClick={handleAddToCart}
                 disabled={!isInStock || !selectedStoreId}
-                className="flex-1"
+                className="flex-1 cursor-pointer"
                 size="lg"
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />

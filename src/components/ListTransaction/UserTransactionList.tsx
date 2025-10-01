@@ -1,4 +1,3 @@
-import { Transaction } from "@/types/transaction/transactionTypes";
 import React, { useState } from "react";
 import ProductTransactionList from "./ProductTransactionList";
 import { useCountdown } from "@/utils/useCountdown";
@@ -6,20 +5,23 @@ import ListTransactionPaymentActions from "./ListTransactionActionPayment";
 import CompleteTransactionAction from "./CompleteTransactionAction";
 import formatCurrency from "@/utils/FormatCurrency";
 import { useRouter } from "next/navigation";
+import { TransactionFinal } from "@/types/transaction/FinalTypes";
 
 type UserTransactionListProps = {
-  transaction: Transaction;
+  transaction: TransactionFinal;
 };
 
 function UserTransactionList({ transaction }: UserTransactionListProps) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
-  const products = transaction.productsTransaction ?? [];
+  const products = transaction.products ?? [];
   const visibleProducts = expanded ? products : products.slice(0, 1);
+
   const expiryArg =
     transaction.status === "waiting_payment" && transaction.expiryAt
       ? transaction.expiryAt
       : null;
+
   const countdown = useCountdown(expiryArg);
   const completed = transaction.status === "shipped" ? true : null;
 

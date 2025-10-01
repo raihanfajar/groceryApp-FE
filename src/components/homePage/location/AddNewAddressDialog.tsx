@@ -1,5 +1,5 @@
+// AddNewAddressDialog.tsx
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,19 +10,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAddNewAddress } from "@/hooks/home/useAddNewAddress";
+import { useRajongCity } from "@/hooks/rajong/useRajongCity";
+import { useRajongDistrict } from "@/hooks/rajong/useRajongDistrict";
+import { useRajongProvince } from "@/hooks/rajong/useRajongProvince";
 import { useActualLocationStore } from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { addNewAddressSchema } from "@/validation/addNewAddressVS";
 import { useFormik } from "formik";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { Checkbox } from "../../ui/checkbox";
 import { Label } from "../../ui/label";
 import { AddNewAddressDialogFormValues } from "../typesAndInterfaces";
 import AddNewAddressDialogFormField from "./AddNewAddressDialogFormField";
-import { useState } from "react";
+import { RajongSelectGroup } from "./RajongSelectGroup";
 
 const MapLeaflet = dynamic(() => import("./MapLeaflet"), { ssr: false });
-// declare typed global for leaflet map
 declare global {
   interface Window {
     __LEAFLET_MAP__?: import("leaflet").Map;
@@ -34,6 +37,38 @@ const inputBaseCn =
 const AddNewAddressDialog = () => {
   const [dialogKey, setDialogKey] = useState(0);
   const { accessToken } = useUserAuthStore();
+
+  const [provinceId, setProvinceId] = useState("");
+  const [cityId, setCityId] = useState("");
+  const [districtId, setDistrictId] = useState("");
+
+  const { data: provinces = [] } = useRajongProvince();
+  const { data: cities = [] } = useRajongCity(provinceId);
+  const { data: districts = [] } = useRajongDistrict(cityId);
+
+  const updateLocation = (
+    id: string,
+    list: { id: number; name: string }[],
+    idKey: keyof AddNewAddressDialogFormValues,
+    nameKey: keyof AddNewAddressDialogFormValues,
+  ) => {
+    const name = list.find((x) => String(x.id) === id)?.name ?? "";
+    formik.setFieldValue(idKey, id);
+    formik.setFieldValue(nameKey, name);
+  };
+
+  useEffect(() => {
+    updateLocation(provinceId, provinces, "provinceId", "province");
+  }, [provinceId]);
+
+  useEffect(() => {
+    updateLocation(cityId, cities, "cityId", "city");
+  }, [cityId]);
+
+  useEffect(() => {
+    updateLocation(districtId, districts, "districtId", "district");
+  }, [districtId]);
+
   const { setLocation: setActualLocation } = useActualLocationStore();
   const { mutateAsync: addNewAddress, isPending } =
     useAddNewAddress(accessToken);
@@ -46,6 +81,12 @@ const AddNewAddressDialog = () => {
       latLon: { lat: 0, lon: 0 },
       addressDetails: "",
       isDefault: false,
+      provinceId: "",
+      cityId: "",
+      districtId: "",
+      province: "",
+      city: "",
+      district: "",
     },
     validationSchema: addNewAddressSchema,
     onSubmit: (values) => {
@@ -54,20 +95,17 @@ const AddNewAddressDialog = () => {
         setActualLocation(values.latLon.lat, values.latLon.lon);
       }
       addNewAddress(
+        { ...values, lat: values.latLon.lat, lon: values.latLon.lon },
         {
-          addressLabel: values.addressLabel,
-          receiverName: values.receiverName,
-          receiverPhoneNumber: values.receiverPhoneNumber,
-          lat: values.latLon.lat,
-          lon: values.latLon.lon,
-          addressDetails: values.addressDetails,
-          isDefault: values.isDefault,
+          onSuccess: () => {
+            setDialogKey((k) => k + 1);
+            formik.resetForm();
+          },
         },
-        { onSuccess: () => setDialogKey((k) => k + 1) },
       );
     },
   });
-  // ✅ helper for checkbox fields
+
   const fieldCheckboxProps = (name: keyof AddNewAddressDialogFormValues) => ({
     checked: formik.values[name] as boolean,
     onCheckedChange: (val: boolean) => formik.setFieldValue(name, val),
@@ -147,6 +185,7 @@ const AddNewAddressDialog = () => {
 
               {/* MAP */}
               <div className="space-y-1">
+                <h1>Pinpoint Location</h1>
                 <MapLeaflet
                   onLocationChange={(lat, lon) =>
                     formik.setFieldValue("latLon", { lat, lon })
@@ -157,6 +196,16 @@ const AddNewAddressDialog = () => {
                   {formik.values.latLon.lon}
                 </p>
               </div>
+
+              {/* Cascading Picker */}
+              <RajongSelectGroup
+                provinceId={provinceId}
+                setProvinceId={setProvinceId}
+                cityId={cityId}
+                setCityId={setCityId}
+                districtId={districtId}
+                setDistrictId={setDistrictId}
+              />
 
               {/* Address Details */}
               <AddNewAddressDialogFormField

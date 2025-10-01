@@ -6,8 +6,9 @@ import { useGetUserProfileInfo } from "@/hooks/userProfile/useGetUserProfileInfo
 import { useUpdateUserProfileInfo } from "@/hooks/userProfile/useUpdateUserProfileInfo";
 import { cn } from "@/lib/utils";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { GmailLogo } from "@/svgs/GmailLogo";
 import { Form, Formik } from "formik";
-import { Check, Pencil, X, User, Phone, Mail } from "lucide-react";
+import { Check, Mail, Pencil, Phone, User, X } from "lucide-react";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -85,7 +86,11 @@ const SettingsPersonalInfo = () => {
               const isTouched = touched[field];
 
               return (
-                <div key={key} className="group">
+                <div
+                  key={key}
+                  hidden={userData.provider && field === "phone" ? true : false}
+                  className="group"
+                >
                   <div className="flex items-start gap-4">
                     {/* Icon */}
                     <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-50">
@@ -97,8 +102,15 @@ const SettingsPersonalInfo = () => {
                       <label className="mb-1 block text-xs font-semibold tracking-wide text-gray-500">
                         <span className="uppercase">{label}</span>
                         {field === "email" && userData.isVerified && (
-                          <span className="ml-2 text-xs text-green-400">
-                            (Verified)
+                          <span className="ml-2 inline-flex items-center gap-1 text-xs text-green-400">
+                            {userData.provider ? (
+                              <>
+                                (Verified by {userData.provider})
+                                <GmailLogo className="h-4 w-4" />{" "}
+                              </>
+                            ) : (
+                              "(Verified)"
+                            )}
                           </span>
                         )}
                         {field === "email" && !userData.isVerified && (
@@ -168,7 +180,7 @@ const SettingsPersonalInfo = () => {
                               setEditingField(field);
                               setFieldTouched(field, true, false);
                             }}
-                            disabled={userData.provider !== null}
+                            hidden={userData.provider !== null}
                             className="rounded-lg p-1.5 hover:bg-white"
                           >
                             <Pencil className="h-4 w-4 text-gray-400 hover:text-green-600" />

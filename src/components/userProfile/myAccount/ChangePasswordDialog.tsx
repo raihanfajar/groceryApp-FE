@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useChangeUserPassword } from "@/hooks/userProfile/useChangeUserPassword";
+import { useGetUserProfileInfo } from "@/hooks/userProfile/useGetUserProfileInfo";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { Eye, EyeOff } from "lucide-react";
 import { useRef, useState } from "react";
@@ -22,6 +23,7 @@ const ChangePasswordDialog = () => {
   const currentPasswordRef = useRef<HTMLInputElement>(null);
   const newPasswordRef = useRef<HTMLInputElement>(null);
   const { mutate, isPending } = useChangeUserPassword(accessToken);
+  const {data: userData} = useGetUserProfileInfo(accessToken);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -62,7 +64,7 @@ const ChangePasswordDialog = () => {
   return (
     <Dialog key={dialogKey}>
       <DialogTrigger asChild>
-        <Button className="cursor-pointer rounded-full bg-green-600 px-4 text-white hover:bg-green-700">
+        <Button hidden={!!userData?.provider} className="cursor-pointer rounded-full bg-green-600 px-4 text-white hover:bg-green-700">
           Change Password
         </Button>
       </DialogTrigger>

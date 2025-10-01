@@ -17,8 +17,6 @@ import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Image from "next/image";
 import AddNewAddressDialog from "./AddNewAddressDialog";
 import { AddressCard } from "./AddressCard";
-// import { useActualLocationStore } from "@/store/useLocationStore";
-// import { useSetUserDefaultAddress } from "@/hooks/home/useSetUserDefaultAddress";
 
 const SendToDialog = ({
   displayName,
@@ -30,8 +28,6 @@ const SendToDialog = ({
   const purified = displayName?.split(",").slice(0, 2).join(", ") + "...";
   const { accessToken } = useUserAuthStore();
   const { data: userAddressInfo } = useGetUserAddressInfo(accessToken);
-  // const { setLocation: setActualLocation } = useActualLocationStore();
-  // const {mutateAsync: setAddressAsDefault} = useSetUserDefaultAddress(accessToken); //prettier-ignore
 
   return (
     <>
@@ -76,15 +72,11 @@ const SendToDialog = ({
                     addressDisplayName={addr.addressDisplayName}
                     addressDetails={addr.addressDetails}
                     isDefault={addr.isDefault}
-                    // onClick={() => {
-                    //   setActualLocation(Number(addr.lat), Number(addr.lon));
-                    //   setAddressAsDefault(addr.id);
-                    // }}
                   />
                 ))}
             </div>
           ) : (
-            <div className="flex flex-col h-full items-center justify-center">
+            <div className="flex h-full flex-col items-center justify-center">
               <Image
                 src="/no-location-found.jpg"
                 alt="no location found illustration"

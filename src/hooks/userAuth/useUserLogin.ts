@@ -1,12 +1,12 @@
 import { baseError, baseUserResponse, LoginFormValues } from "@/components/userAuth/typesAndInterfaces";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 
 export const useUserLogin = (options?: { onSuccess?: () => void }) => {
-    // const router = useRouter();
+    const queryClient = useQueryClient();
     const setUserAuth = useUserAuthStore((state) => state.setAuth);
 
     return useMutation({
@@ -15,6 +15,10 @@ export const useUserLogin = (options?: { onSuccess?: () => void }) => {
             return data;
         },
         onSuccess: (data: baseUserResponse) => {
+            queryClient.invalidateQueries({ queryKey: ["userAddressInfo"] });
+            queryClient.invalidateQueries({ queryKey: ["nearestStore"] });
+            queryClient.invalidateQueries({ queryKey: ["targetStoreProductsInfo"] });
+            queryClient.invalidateQueries({ queryKey: ["userProfileInfo"] });
             console.log(data); //! Delete on production
             toast.success(data.message);
             // Set the token to global state

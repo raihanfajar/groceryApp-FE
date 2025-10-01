@@ -3,10 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Truck } from "lucide-react";
+import { Warehouse } from "lucide-react";
 import Image from "next/image";
-import { ProductCardProps } from "../typesAndInterfaces";
 import { useRouter } from "next/navigation";
+import { ProductCardProps } from "../typesAndInterfaces";
 
 export function ProductCard({
   image,
@@ -68,8 +68,9 @@ export function ProductCard({
           )}
         </p>
         <div className="flex h-5 items-center gap-1 text-[10px] text-gray-600">
-          <Truck size={14} className="text-orange-500" />
-          Instant delivery
+          <Warehouse size={14} className="text-orange-500" />
+          <span>Stock</span>
+          <span className="ml-auto">{stock}</span>
         </div>
       </CardContent>
 

@@ -75,7 +75,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin/reports",
       icon: BarChart3,
       current: pathname.startsWith("/admin/reports"),
-      disabled: true,
     },
   ];
 

@@ -101,17 +101,7 @@ const ProductBasicForm: React.FC<ProductBasicFormProps> = ({
         label="Product Description"
         value={formData.description}
         onChange={onDescriptionChange}
-        placeholder="Enter a detailed product description...
-
-Examples of good formatting:
-• Use bullet points for features
-• Bold text for important details
-• Headers to organize information
-
-Product highlights:
-- Fresh quality guaranteed
-- Premium ingredients
-- Perfect for daily use"
+        placeholder="Enter a detailed product description..."
         required
         className="col-span-full"
       />

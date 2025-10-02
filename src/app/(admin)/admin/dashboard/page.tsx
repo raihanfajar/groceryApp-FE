@@ -99,10 +99,15 @@ export default function AdminDashboard() {
             <TrendingUp className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Coming Soon</div>
+            <div className="text-2xl font-bold">Analytics</div>
             <p className="text-muted-foreground text-xs">
               Business intelligence
             </p>
+            <Link href="/admin/reports">
+              <Button size="sm" className="mt-2 w-full">
+                View Reports
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -135,19 +140,18 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <p className="mb-4 text-sm text-gray-600">
-              The Report & Analysis system is ready on the backend! Features
-              include:
+              View comprehensive analytics and insights:
             </p>
             <ul className="mb-4 space-y-1 text-sm text-gray-600">
               <li>• Monthly sales summaries with KPIs</li>
               <li>• Category and product performance analysis</li>
               <li>• Stock movement tracking and trends</li>
               <li>• Low stock alerts and warnings</li>
-              <li>• Role-based access control</li>
+              <li>• Interactive charts and visualizations</li>
             </ul>
-            <Button className="w-full" disabled>
-              Launch Reports (Frontend Integration Needed)
-            </Button>
+            <Link href="/admin/reports">
+              <Button className="w-full">View Reports & Analytics</Button>
+            </Link>
           </CardContent>
         </Card>
 

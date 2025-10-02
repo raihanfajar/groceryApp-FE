@@ -3,7 +3,6 @@
 import { ReactNode } from "react";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard,
   Package,
@@ -101,27 +100,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 const Icon = item.icon;
                 return (
                   <li key={item.name}>
-                    {item.disabled ? (
-                      <div className="flex cursor-not-allowed items-center rounded-lg px-4 py-2 text-sm font-medium text-gray-400">
-                        <Icon className="mr-3 h-6 w-6" />
-                        {item.name}
-                        <Badge variant="outline" className="ml-auto text-xs">
-                          Soon
-                        </Badge>
-                      </div>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                          item.current
-                            ? "bg-blue-50 text-blue-700"
-                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                        }`}
-                      >
-                        <Icon className="mr-3 h-6 w-6" />
-                        {item.name}
-                      </Link>
-                    )}
+                    <Link
+                      href={item.href}
+                      className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                        item.current
+                          ? "bg-blue-50 text-blue-700"
+                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    >
+                      <Icon className="mr-3 h-6 w-6" />
+                      {item.name}
+                    </Link>
                   </li>
                 );
               })}

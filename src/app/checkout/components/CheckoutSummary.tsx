@@ -26,10 +26,13 @@ function CheckoutSummary({
     (total, item) => total + item.activePrice * item.quantity,
     0,
   );
+  
+  const { targetStore } = useUserAuthStore();
+  const storeId = targetStore?.id;
 
-  const { data: shippingprice = 0 } = useShippingPriceQuery(
+  const { data: shippingprice } = useShippingPriceQuery(
     userAddress?.id ?? null,
-    "dummystoreID",
+    storeId ?? null,
   );
 
   let productDiscount = 0;
@@ -47,8 +50,7 @@ function CheckoutSummary({
 
   // Hook mutation
   const { mutateAsync, isPending } = useCreateTransactionMutation();
-
-  const { targetStore } = useUserAuthStore();
+  
   // Fungsi untuk buat transaksi
   const createTransaction = useCallback(async () => {
     if (!targetStore?.id) {
@@ -181,7 +183,7 @@ function CheckoutSummary({
       {/* Button */}
       <button
         type="button"
-        className="mt-7 w-full rounded-md bg-[#00a63e] p-2 font-medium text-white"
+        className="mt-7 w-full cursor-pointer rounded-md bg-[#00a63e] p-2 font-medium text-white"
         onClick={createTransaction}
       >
         {isPending ? "Processing..." : "Create Transaction"}

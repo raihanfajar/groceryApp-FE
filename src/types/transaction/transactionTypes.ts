@@ -31,9 +31,7 @@ export type Transaction = {
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
   deletedAt?: string | null; // ISO Date string
-
-  // relasi
-  productsTransaction?: TransactionProduct[];
+  products?: TransactionProduct[];
 };
 
 export type TransactionProduct = {
@@ -47,7 +45,7 @@ export type TransactionProduct = {
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
   deletedAt?: string | null; // ISO Date string
-  productDetails: Product;
+  product: Product;
 };
 
 export type Product = {
@@ -67,15 +65,4 @@ export type Product = {
   categoryId: string;
   isActive: boolean;
   weight: number;
-};
-
-export type PaginatedTransactions = {
-  data: Transaction[];
-  meta?: {
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-    hasNext: boolean;
-  };
 };

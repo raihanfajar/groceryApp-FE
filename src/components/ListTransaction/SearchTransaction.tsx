@@ -1,14 +1,14 @@
 import { useDebounce } from "@/hooks/useDebounce";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
-type SearchParams = {
+export type SearchParams = {
   orderId?: string;
-  startDate?: string; // yyyy-mm-dd
-  endDate?: string; // yyyy-mm-dd
+  startDate?: string;
+  endDate?: string;
 };
 
 type Props = {
-  params?: SearchParams;
+  params: SearchParams;
   onChange: (next: SearchParams) => void;
   debounceMs?: number;
 };
@@ -18,73 +18,64 @@ export default function SearchTransaction({
   onChange,
   debounceMs = 400,
 }: Props) {
-  const [orderId, setOrderId] = useState(params?.orderId ?? "");
-  const [startDate, setStartDate] = useState(params?.startDate ?? "");
-  const [endDate, setEndDate] = useState(params?.endDate ?? "");
+  const [values, setValues] = useState(params);
+  const debouncedValues = useDebounce(values, debounceMs);
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
-    setOrderId(params?.orderId ?? "");
-    setStartDate(params?.startDate ?? "");
-    setEndDate(params?.endDate ?? "");
-  }, [params?.orderId, params?.startDate, params?.endDate]);
-
-  const debouncedOrderId = useDebounce(orderId, debounceMs);
-  const debouncedStartDate = useDebounce(startDate, debounceMs);
-  const debouncedEndDate = useDebounce(endDate, debounceMs);
+    setValues(params);
+  }, [params]);
 
   useEffect(() => {
-    onChange({
-      orderId: debouncedOrderId?.trim() ? debouncedOrderId.trim() : undefined,
-      startDate: debouncedStartDate?.trim() ? debouncedStartDate : undefined,
-      endDate: debouncedEndDate?.trim() ? debouncedEndDate : undefined,
-    });
-  }, [debouncedOrderId, debouncedStartDate, debouncedEndDate, onChange]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    onChange(debouncedValues);
+  }, [debouncedValues, onChange]);
+
+  const handleChange = (field: keyof SearchParams, value: string) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 items-end gap-3 md:grid-cols-3">
-        {/* Order ID input */}
+        {/* Order ID Input */}
         <div className="form-control w-full rounded-md border p-4 shadow-xs">
           <label className="label pb-0">
             <span className="label-text">Search by orderId</span>
           </label>
           <input
             type="text"
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
+            value={values.orderId ?? ""}
+            onChange={(e) => handleChange("orderId", e.target.value)}
             className="w-full border-b-2 px-2 py-1 focus:border-blue-500 focus:outline-none"
             placeholder="Enter order id..."
-            aria-label="Search by order id"
           />
         </div>
-
-        {/* Start Date input */}
+        {/* Start Date Input */}
         <div className="form-control w-full rounded-md border p-4 shadow-xs">
           <label className="label pb-0">
             <span className="label-text">Start date</span>
           </label>
           <input
             type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            onFocus={(e) => e.currentTarget.showPicker?.()} // 👈 auto buka kalender
+            value={values.startDate ?? ""}
+            onChange={(e) => handleChange("startDate", e.target.value)}
             className="w-full cursor-pointer border-b-2 px-2 py-1 focus:border-blue-500 focus:outline-none"
-            aria-label="Filter by start date"
           />
         </div>
-
-        {/* End Date input */}
+        {/* End Date Input */}
         <div className="form-control w-full rounded-md border p-4 shadow-xs">
           <label className="label pb-0">
             <span className="label-text">End date</span>
           </label>
           <input
             type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            onFocus={(e) => e.currentTarget.showPicker?.()} // 👈 auto buka kalender
+            value={values.endDate ?? ""}
+            onChange={(e) => handleChange("endDate", e.target.value)}
             className="w-full cursor-pointer border-b-2 px-2 py-1 focus:border-blue-500 focus:outline-none"
-            aria-label="Filter by end date"
           />
         </div>
       </div>

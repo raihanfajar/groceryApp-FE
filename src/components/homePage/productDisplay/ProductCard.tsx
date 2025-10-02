@@ -7,8 +7,10 @@ import { Warehouse } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ProductCardProps } from "../typesAndInterfaces";
+import { useAddCartProduct } from "@/hooks/cart/getUserCart";
 
 export function ProductCard({
+  id,
   image,
   name,
   category,
@@ -20,6 +22,7 @@ export function ProductCard({
   const router = useRouter();
   const isOut = stock === 0;
   const displayedPrice = discount ? Math.round(price * (1 - discount)) : price;
+  const addCart = useAddCartProduct();
 
   return (
     <Card
@@ -77,6 +80,7 @@ export function ProductCard({
       {/* button */}
       <CardFooter className="p-2">
         <Button
+          onClick={() => addCart.mutate({ productId: String(id) })}
           disabled={isOut}
           variant={isOut ? "secondary" : "default"}
           className={`w-full ${

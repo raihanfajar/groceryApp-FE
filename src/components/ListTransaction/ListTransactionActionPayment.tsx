@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Transaction } from "@/types/transaction/transactionTypes";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -9,9 +8,10 @@ import {
   useUploadProofOfPayment,
 } from "@/hooks/transaction/useTransaction";
 import { createPaymentActionHandler } from "@/app/transaction/features/PaymentActionHandler";
+import { TransactionFinal } from "@/types/transaction/FinalTypes";
 
 type Props = {
-  transaction: Transaction;
+  transaction: TransactionFinal;
   openMidtransPopup?: (url: string) => void;
 };
 

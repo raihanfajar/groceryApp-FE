@@ -1,10 +1,8 @@
 import { baseError } from "@/components/userAuth/typesAndInterfaces";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { ApiResponse } from "@/types/apiResponse";
-import {
-  PaginatedTransactions,
-  Transaction,
-} from "@/types/transaction/transactionTypes";
+import { PaginatedTransactionsFinal, QueryParams } from "@/types/transaction/FinalTypes";
+import { Transaction } from "@/types/transaction/transactionTypes";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -30,7 +28,7 @@ export function useTransactionDetailsQuery(transactionId: string) {
       if (!transactionId) return null;
       const response = await axiosInstance.get<
         ApiResponse<{ transaction: Transaction }>
-      >(`/transaction/user-detail/?transactionId=${transactionId}`, {
+      >(`/transaction/user-detail?transactionId=${transactionId}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       return response.data.data.transaction;
@@ -132,7 +130,7 @@ export function useUploadProofOfPayment() {
       formData.append("paymentProof", file);
 
       const response = await axiosInstance.post(
-        `/transactions/upload-proof?transactionId=${transactionId}`,
+        `/transaction/upload-proof?transactionId=${transactionId}`,
         formData,
         {
           headers: {
@@ -160,44 +158,25 @@ export function useUploadProofOfPayment() {
 }
 
 // Get User Transaction List
-export function useUserTransactionsQuery(params?: {
-  page?: number;
-  pageSize?: number;
-  status?: string;
-  orderId?: string;
-  startDate?: string;
-  endDate?: string;
-}) {
+export function useUserTransactionsQuery(params?: QueryParams) {
   const { accessToken } = useUserAuthStore();
-  const queryKey = ["userTransactions", params ?? {}];
+  const queryKey = ["userTransactions", params];
 
-  return useQuery<
-    PaginatedTransactions | null,
-    unknown,
-    PaginatedTransactions | null
-  >({
+  return useQuery<PaginatedTransactionsFinal | null>({
     queryKey,
     queryFn: async () => {
       if (!accessToken) return null;
 
-      const qs = new URLSearchParams();
-      if (params?.page) qs.set("page", String(params.page));
-      if (params?.pageSize) qs.set("pageSize", String(params.pageSize));
-      if (params?.status) qs.set("status", params.status ?? "");
-      if (params?.orderId) qs.set("orderId", params.orderId ?? "");
-      if (params?.startDate) qs.set("startDate", params.startDate);
-      if (params?.endDate) qs.set("endDate", params.endDate);
+      const validParams = Object.fromEntries(
+        Object.entries(params ?? {}).filter(([, value]) => value) 
+      );
+      const qs = new URLSearchParams(validParams as Record<string, string>).toString();
+      const url = `/transaction/user?${qs}`;
 
-      for (const [k, v] of Array.from(qs.entries())) {
-        if (!v) qs.delete(k);
-      }
-
-      const url = `/transaction/user${qs.toString() ? `?${qs.toString()}` : ""}`;
-      const response = await axiosInstance.get<
-        ApiResponse<PaginatedTransactions>
-      >(url, {
+      const response = await axiosInstance.get<ApiResponse<PaginatedTransactionsFinal>>(url, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
+      
       return response.data.data ?? null;
     },
   });

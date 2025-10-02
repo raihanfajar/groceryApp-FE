@@ -105,3 +105,46 @@ export function useUpdateCartQuantity() {
     },
   });
 }
+
+// Add product to cart
+export function useAddCartProduct() {
+  const queryClient = useQueryClient();
+  const { accessToken, targetStore } = useUserAuthStore();
+
+  return useMutation<
+    ApiResponse<{ cart: Cart }>,
+    baseError,
+    { productId: string }
+  >({
+    mutationFn: async (input) => {
+      if (!accessToken) throw new Error("Access token is missing");
+      if (!input?.productId) throw new Error("productId is required");
+
+      const payload = {
+        storeId: String(targetStore?.id),
+        productId: String(input.productId),
+      };
+
+      const url = `/cart/add`;
+      const response = await axiosInstance.post<ApiResponse<{ cart: Cart }>>(
+        url,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Cart product added successfully");
+      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY, exact: false });
+    },
+    onError: (err: unknown) => {
+      const customError = err as baseError;
+      const errorMessage =
+        customError?.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+}

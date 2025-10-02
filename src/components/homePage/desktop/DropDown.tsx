@@ -87,6 +87,9 @@ export const ProfileDropDown = () => {
           <Link href={"/user-profile/waiting-for-payment"}>
             <DropdownMenuItem>Waiting for Payment</DropdownMenuItem>
           </Link>
+          <Link href={"/user-profile/waiting-for-confirmation"}>
+            <DropdownMenuItem>Waiting for Confirmation</DropdownMenuItem>
+          </Link>
           <Link href={"/user-profile/processed"}>
             <DropdownMenuItem>Processed</DropdownMenuItem>
           </Link>

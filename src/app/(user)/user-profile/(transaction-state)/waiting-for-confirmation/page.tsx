@@ -1,10 +1,12 @@
 "use client";
-import SearchTransaction from "@/components/ListTransaction/SearchTransaction";
+import SearchTransaction, {
+  SearchParams,
+} from "@/components/ListTransaction/SearchTransaction";
 import UserTransactionList from "@/components/ListTransaction/UserTransactionList";
 import LeftNavUserProfile from "@/components/userProfile/LeftNavUserProfile";
 import { useUserTransactionsQuery } from "@/hooks/transaction/useTransaction";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const WaitingForConfirmationPage = () => {
   const [params, setParams] = useState({
@@ -18,6 +20,23 @@ const WaitingForConfirmationPage = () => {
 
   // 🔹 call hook
   const { data, isLoading, isError } = useUserTransactionsQuery(params);
+
+  const searchParams = useMemo(
+    () => ({
+      orderId: params.orderId,
+      startDate: params.startDate,
+      endDate: params.endDate,
+    }),
+    [params.orderId, params.startDate, params.endDate],
+  );
+
+  const handleSearchChange = useCallback((nextSearchParams: SearchParams) => {
+    setParams((currentParams) => ({
+      ...currentParams,
+      ...nextSearchParams,
+      page: 1,
+    }));
+  }, []);
 
   const page = params.page;
   const pageSize = params.pageSize;
@@ -45,19 +64,9 @@ const WaitingForConfirmationPage = () => {
         {/* Main Content */}
         <section className="w-full overflow-hidden rounded-lg border bg-white p-6 shadow-md">
           <SearchTransaction
-            params={{
-              orderId: params.orderId,
-              startDate: params.startDate,
-              endDate: params.endDate,
-            }}
+            params={searchParams}
+            onChange={handleSearchChange}
             debounceMs={300}
-            onChange={(next) =>
-              setParams((p) => ({
-                ...p,
-                ...next,
-                page: 1,
-              }))
-            }
           />
 
           {/* 🔹 Render content */}

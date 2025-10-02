@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 
 function TransactionProductItem({ item }: { item: TransactionProduct }) {
-  const { productDetails, quantity, price, discount, finalPrice } = item;
+  const { product, quantity, price, discount, finalPrice } = item;
   const basePrice = price; // harga asli per item
   const activePrice = price - discount; // harga setelah diskon (per item)
 
@@ -17,10 +17,10 @@ function TransactionProductItem({ item }: { item: TransactionProduct }) {
             <div className="mask mask-squircle h-16 w-16">
               <Image
                 src={
-                  productDetails.picture1 ||
+                  product.picture1 ||
                   "https://placehold.co/100x100/e2e8f0/adb5bd?text=Produk"
                 }
-                alt={productDetails.name}
+                alt={product.name}
                 width={120}
                 height={120}
                 className="object-cover"
@@ -29,7 +29,7 @@ function TransactionProductItem({ item }: { item: TransactionProduct }) {
           </div>
           <div className="flex flex-col">
             <div className="line-clamp-2 font-medium break-words text-base">
-              {productDetails.name}
+              {product.name}
             </div>
           </div>
         </div>
@@ -57,10 +57,10 @@ function TransactionProductItem({ item }: { item: TransactionProduct }) {
             <div className="mask mask-squircle h-14 w-14">
               <Image
                 src={
-                  productDetails.picture1 ||
+                  product.picture1 ||
                   "https://placehold.co/100x100/e2e8f0/adb5bd?text=Produk"
                 }
-                alt={productDetails.name}
+                alt={product.name}
                 width={100}
                 height={100}
                 className="object-cover"
@@ -69,7 +69,7 @@ function TransactionProductItem({ item }: { item: TransactionProduct }) {
           </div>
           <div className="flex flex-1 flex-col gap-1">
             <div className="line-clamp-2 text-sm font-semibold break-words">
-              {productDetails.name}
+              {product.name}
             </div>
             <div className="flex items-center gap-3">
               {discount > 0 && (

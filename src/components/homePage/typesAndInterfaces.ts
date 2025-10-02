@@ -65,7 +65,7 @@ export interface ProductProps {
 }
 
 // Props for Product Card Component (reuse Product minus 'id')
-export interface ProductCardProps extends Omit<Product, "id"> {
+export interface ProductCardProps extends Product {
     onClick?: () => void; // optional extra functionality
 }
 

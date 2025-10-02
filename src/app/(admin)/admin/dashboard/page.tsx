@@ -1,35 +1,70 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  BarChart3,
-  Package,
-  Users,
-  TrendingUp,
-  AlertCircle,
-} from "lucide-react";
-import Link from "next/link";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RefreshCw } from "lucide-react";
+import { useDashboardData, useStores } from "@/hooks/admin/useDashboardData";
+
+// Dashboard Components
+import DailySalesCard from "@/components/admin/dashboard/DailySalesCard";
+import MonthlySalesCard from "@/components/admin/dashboard/MonthlySalesCard";
+import MonthlyTransactionsCard from "@/components/admin/dashboard/MonthlyTransactionsCard";
+import TotalProductsCard from "@/components/admin/dashboard/TotalProductsCard";
+import SalesGraphCard from "@/components/admin/dashboard/SalesGraphCard";
+import TopSellingProductsCard from "@/components/admin/dashboard/TopSellingProductsCard";
+import RecentTransactionsCard from "@/components/admin/dashboard/RecentTransactionsCard";
+import LowStockAlertsCard from "@/components/admin/dashboard/LowStockAlertsCard";
 
 export default function AdminDashboard() {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
+  const [selectedStoreId, setSelectedStoreId] = useState<string>("");
+  const { stores } = useStores();
+
+  // Use dashboard data hook
+  // Pass undefined for "all" stores to let backend aggregate all data
+  // Pass selectedStoreId as-is to track whether Super Admin has made a selection
+  const storeIdForQuery =
+    selectedStoreId === "all" ? undefined : selectedStoreId;
+  const {
+    stats,
+    salesChartData,
+    topProducts,
+    recentTransactions,
+    lowStockAlerts,
+    isLoading,
+    refetch,
+    period,
+  } = useDashboardData(storeIdForQuery, selectedStoreId);
 
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push("/admin-login");
     }
   }, [isAuthenticated, router]);
+
+  // Auto-select default for both admin types
+  useEffect(() => {
+    if (admin) {
+      if (admin.isSuper) {
+        // Set "All Stores" as default for Super Admin
+        setSelectedStoreId("all");
+      } else if (admin.store?.id) {
+        // Set assigned store for Store Admin
+        setSelectedStoreId(admin.store.id);
+      }
+    }
+  }, [admin]);
 
   if (!admin) {
     return (
@@ -44,151 +79,119 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout>
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Welcome back, {admin.name}!
-        </h2>
-        <p className="text-gray-600">
-          {admin.isSuper
-            ? "You have access to all stores and system-wide analytics."
-            : `Managing ${admin.store?.name} in ${admin.store?.city}, ${admin.store?.province}`}
-        </p>
+      {/* Header with Store Selector */}
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Welcome back, {admin.name}!
+          </h2>
+          <p className="mt-1 text-gray-600">
+            {admin.isSuper
+              ? "Monitor performance across all stores"
+              : `${admin.store?.name} - ${admin.store?.city}`}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* Store Selector for Super Admin */}
+          {admin.isSuper && (
+            <Select value={selectedStoreId} onValueChange={setSelectedStoreId}>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue placeholder="Select Store" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Stores</SelectItem>
+                {stores.map((store) => (
+                  <SelectItem key={store.id} value={store.id}>
+                    {store.name} - {store.city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+
+          {/* Refresh Button */}
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+            size="sm"
+            disabled={isLoading}
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
+          </Button>
+        </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Products</CardTitle>
-            <Package className="text-muted-foreground h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Available</div>
-            <p className="text-muted-foreground text-xs">
-              Manage your product catalog
+      {/* Show message if Super Admin hasn't selected store */}
+      {admin.isSuper && !selectedStoreId ? (
+        <div className="flex h-[400px] items-center justify-center rounded-lg border-2 border-dashed">
+          <div className="text-center">
+            <p className="text-lg font-medium text-gray-700">
+              Select a store to view dashboard
             </p>
-            <Link href="/admin/products">
-              <Button size="sm" className="mt-2 w-full">
-                Manage Products
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+            <p className="mt-1 text-sm text-gray-500">
+              Choose a store from the dropdown above or select &quot;All
+              Stores&quot;
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Row 1: Stats Cards */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <DailySalesCard amount={stats.dailySales} isLoading={isLoading} />
+            <MonthlySalesCard
+              amount={stats.monthlySales}
+              period={period}
+              isLoading={isLoading}
+            />
+            <MonthlyTransactionsCard
+              count={stats.monthlyTransactions}
+              period={period}
+              isLoading={isLoading}
+            />
+            <TotalProductsCard
+              count={stats.totalProducts}
+              isLoading={isLoading}
+            />
+          </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Categories</CardTitle>
-            <Package className="text-muted-foreground h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Available</div>
-            <p className="text-muted-foreground text-xs">
-              Organize your products
-            </p>
-            <Link href="/admin/categories">
-              <Button size="sm" className="mt-2 w-full">
-                Manage Categories
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+          {/* Row 2: Sales Graph & Top Products */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+            <div className="lg:col-span-3">
+              <SalesGraphCard
+                labels={salesChartData.labels}
+                data={salesChartData.data}
+                isLoading={isLoading}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <TopSellingProductsCard
+                products={topProducts}
+                isLoading={isLoading}
+              />
+            </div>
+          </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Performance</CardTitle>
-            <TrendingUp className="text-muted-foreground h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Analytics</div>
-            <p className="text-muted-foreground text-xs">
-              Business intelligence
-            </p>
-            <Link href="/admin/reports">
-              <Button size="sm" className="mt-2 w-full">
-                View Reports
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Alerts</CardTitle>
-            <AlertCircle className="text-muted-foreground h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-muted-foreground text-xs">
-              Active notifications
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Feature Cards */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <BarChart3 className="h-5 w-5" />
-              <span>Report & Analysis</span>
-            </CardTitle>
-            <CardDescription>
-              Access comprehensive sales and stock reports with business
-              intelligence
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm text-gray-600">
-              View comprehensive analytics and insights:
-            </p>
-            <ul className="mb-4 space-y-1 text-sm text-gray-600">
-              <li>• Monthly sales summaries with KPIs</li>
-              <li>• Category and product performance analysis</li>
-              <li>• Stock movement tracking and trends</li>
-              <li>• Low stock alerts and warnings</li>
-              <li>• Interactive charts and visualizations</li>
-            </ul>
-            <Link href="/admin/reports">
-              <Button className="w-full">View Reports & Analytics</Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>User Management</span>
-            </CardTitle>
-            <CardDescription>
-              {admin.isSuper
-                ? "Manage users and store administrators across all locations"
-                : "View customer information for your store"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm text-gray-600">
-              User management capabilities:
-            </p>
-            <ul className="mb-4 space-y-1 text-sm text-gray-600">
-              <li>• View customer accounts and activity</li>
-              {admin.isSuper && (
-                <>
-                  <li>• Create and manage store administrators</li>
-                  <li>• System-wide user analytics</li>
-                </>
-              )}
-              <li>• Customer support tools</li>
-            </ul>
-            <Link className="mt-5" href={admin.isSuper ? "/admin/users" : "/"}>
-              <Button size="sm" className="w-full">
-                Manage Users
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
+          {/* Row 3: Recent Transactions & Low Stock Alerts */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+            <div className="lg:col-span-3">
+              <RecentTransactionsCard
+                transactions={recentTransactions}
+                isLoading={isLoading}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <LowStockAlertsCard
+                alerts={lowStockAlerts}
+                isLoading={isLoading}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

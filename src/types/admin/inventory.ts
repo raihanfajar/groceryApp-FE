@@ -184,6 +184,11 @@ export interface LowStockAlert {
       name: string;
     };
   };
+  store?: {
+    id: string;
+    name: string;
+    city: string;
+  };
   createdAt: string;
   updatedAt: string;
 }

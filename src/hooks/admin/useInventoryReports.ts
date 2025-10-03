@@ -41,10 +41,17 @@ interface UseInventoryReportsReturn {
   refetch: () => void;
 }
 
-export const useInventoryReports = (): UseInventoryReportsReturn => {
+export const useInventoryReports = (
+  selectedStoreId?: string,
+): UseInventoryReportsReturn => {
   const { admin } = useAdminAuthStore();
-  const storeId = !admin?.isSuper ? admin?.store?.id || "store-1" : undefined;
+  const storeId = admin?.isSuper
+    ? selectedStoreId
+    : admin?.store?.id || undefined;
   const token = admin?.accessToken || "";
+
+  // For Super Admin, require storeId to be selected
+  const isEnabled = !!token && (!admin?.isSuper || !!storeId);
 
   // Fetch inventory summary
   const {
@@ -55,7 +62,7 @@ export const useInventoryReports = (): UseInventoryReportsReturn => {
   } = useQuery({
     queryKey: ["admin", "inventory", "summary", storeId],
     queryFn: () => adminInventoryAPI.getInventorySummary(token, { storeId }),
-    enabled: !!token,
+    enabled: isEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
@@ -80,7 +87,7 @@ export const useInventoryReports = (): UseInventoryReportsReturn => {
       ];
       return mockCategoryData;
     },
-    enabled: !!token,
+    enabled: isEnabled,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
@@ -105,7 +112,7 @@ export const useInventoryReports = (): UseInventoryReportsReturn => {
       ];
       return mockStockValueData;
     },
-    enabled: !!token,
+    enabled: isEnabled,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
@@ -161,7 +168,7 @@ export const useInventoryReports = (): UseInventoryReportsReturn => {
         outOfStockProducts: mockOutOfStockProducts,
       };
     },
-    enabled: !!token,
+    enabled: isEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 

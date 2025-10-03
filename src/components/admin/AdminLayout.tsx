@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
-  FolderTree,
   Users,
   BarChart3,
   Archive,
@@ -42,19 +41,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       name: "Products",
       href: "/admin/products",
       icon: Package,
-      current: pathname.startsWith("/admin/products"),
+      current:
+        pathname.startsWith("/admin/products") ||
+        pathname.startsWith("/admin/categories"),
     },
     {
       name: "Inventory",
       href: "/admin/inventory",
       icon: Archive,
       current: pathname.startsWith("/admin/inventory"),
-    },
-    {
-      name: "Categories",
-      href: "/admin/categories",
-      icon: FolderTree,
-      current: pathname.startsWith("/admin/categories"),
     },
     {
       name: "Discounts",
@@ -93,7 +88,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-sm">
+        <aside className="w-64 flex-shrink-0 bg-white shadow-sm">
           <nav className="mt-8 px-4">
             <ul className="space-y-2">
               {navigation.map((item) => {
@@ -143,7 +138,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1">
+        <main className="min-w-0 flex-1 overflow-x-hidden">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             {children}
           </div>

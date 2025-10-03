@@ -4,11 +4,14 @@ import { AdminProductCategory } from "@/types/admin/product";
 import { FolderTree } from "lucide-react";
 import Link from "next/link";
 import CategoryCard from "./CategoryCard";
+import CategoryListRow from "./CategoryListRow";
+import LoadingLogo from "@/components/ui/LoadingLogo";
 
 interface CategoryGridProps {
   categories: AdminProductCategory[];
   loading: boolean;
   isSuper: boolean;
+  view?: "grid" | "list";
   onDelete: (id: string) => void;
 }
 
@@ -16,12 +19,13 @@ export default function CategoryGrid({
   categories,
   loading,
   isSuper,
+  view = "grid",
   onDelete,
 }: CategoryGridProps) {
   if (loading) {
     return (
       <div className="flex justify-center py-8">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+        <LoadingLogo size="md" message="Loading categories..." />
       </div>
     );
   }
@@ -39,6 +43,21 @@ export default function CategoryGrid({
           )}
         </CardContent>
       </Card>
+    );
+  }
+
+  if (view === "list") {
+    return (
+      <div className="space-y-3">
+        {categories.map((category) => (
+          <CategoryListRow
+            key={category.id}
+            category={category}
+            isSuper={isSuper}
+            onDelete={onDelete}
+          />
+        ))}
+      </div>
     );
   }
 

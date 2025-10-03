@@ -189,7 +189,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Desktop Filters Sidebar */}
         {showFilters && (
-          <aside className="hidden w-80 flex-shrink-0 lg:block">
+          <aside className="hidden w-56 flex-shrink-0 lg:block">
             <div className="sticky top-6">
               <ProductFiltersComponent
                 filters={filters}

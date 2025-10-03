@@ -7,11 +7,13 @@ import {
   AdminProductCategory,
   ProductFilters,
 } from "@/types/admin/product";
+import { useStores } from "@/hooks/admin/useStores";
 import { toast } from "react-toastify";
 
 export const useProductListing = () => {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
+  const { data: stores = [] } = useStores();
 
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
@@ -116,6 +118,7 @@ export const useProductListing = () => {
   return {
     products,
     categories,
+    stores,
     loading,
     filters,
     pagination,

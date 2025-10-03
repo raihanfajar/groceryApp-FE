@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import CategoryCurrentInfo from "./CategoryCurrentInfo";
 import CategoryPreview from "./CategoryPreview";
 import CategoryIconSelector from "./CategoryIconSelector";
 import { getDefaultIcon } from "@/constants/categoryIcons";
+import { PRODUCT_QUERY_KEYS } from "@/hooks/product/useProducts";
 
 interface CategoryEditFormProps {
   initialFormData: UpdateCategoryFormData;
@@ -31,6 +33,7 @@ export default function CategoryEditForm({
 }: CategoryEditFormProps) {
   const { admin } = useAdminAuthStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] =
     useState<UpdateCategoryFormData>(initialFormData);
@@ -72,8 +75,13 @@ export default function CategoryEditForm({
       return;
     }
 
-    if (formData.name.trim().length > 50) {
-      toast.error("Category name must not exceed 50 characters");
+    if (formData.name.trim().length > 30) {
+      toast.error("Category name must not exceed 30 characters");
+      return;
+    }
+
+    if (formData.description && formData.description.trim().length > 50) {
+      toast.error("Category description must not exceed 50 characters");
       return;
     }
 
@@ -92,8 +100,14 @@ export default function CategoryEditForm({
         formData.id,
         updateData,
       );
+
+      // Invalidate categories cache to refresh navbar and homepage
+      await queryClient.invalidateQueries({
+        queryKey: PRODUCT_QUERY_KEYS.categories,
+      });
+
       toast.success("Category updated successfully!");
-      router.push("/admin/categories");
+      router.push("/admin/products?tab=categories");
     } catch (error) {
       console.error("Error updating category:", error);
       let errorMessage = "Failed to update category";
@@ -128,11 +142,11 @@ export default function CategoryEditForm({
           onChange={handleInputChange}
           placeholder="Enter category name"
           required
-          maxLength={50}
+          maxLength={30}
           className="w-full"
         />
         <p className="text-sm text-gray-500">
-          {(formData.name || "").length}/50 characters
+          {(formData.name || "").length}/30 characters
         </p>
       </div>
 
@@ -146,11 +160,11 @@ export default function CategoryEditForm({
           onChange={handleInputChange}
           placeholder="Enter category description"
           rows={4}
-          maxLength={200}
+          maxLength={50}
           className="w-full"
         />
         <p className="text-sm text-gray-500">
-          {(formData.description || "").length}/200 characters
+          {(formData.description || "").length}/50 characters
         </p>
       </div>
 
@@ -175,7 +189,7 @@ export default function CategoryEditForm({
 
       {/* Submit Button */}
       <div className="flex justify-end space-x-4">
-        <Link href="/admin/categories">
+        <Link href="/admin/products?tab=categories">
           <Button type="button" variant="outline">
             Cancel
           </Button>

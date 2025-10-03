@@ -22,6 +22,15 @@ export interface ProductStock {
   store: ProductStore;
 }
 
+export interface ProductDiscount {
+  id: string;
+  name: string;
+  type: string;
+  valueType: "PERCENTAGE" | "NOMINAL";
+  value: number;
+  maxDiscountAmount: number | null;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -40,6 +49,7 @@ export interface Product {
   category: ProductCategory;
   totalStock: number;
   storeStock?: ProductStock[];
+  discount?: ProductDiscount | null;
 }
 
 export interface ProductsResponse {

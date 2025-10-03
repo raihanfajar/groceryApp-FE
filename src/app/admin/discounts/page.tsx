@@ -9,6 +9,7 @@ import DiscountManagement from "@/components/admin/discounts/DiscountManagement"
 import DiscountHistory from "@/components/admin/discounts/DiscountHistory";
 import { Card, CardContent } from "@/components/ui/card";
 import { Percent, History } from "lucide-react";
+import LoadingLogo from "@/components/ui/LoadingLogo";
 
 export default function DiscountsPage() {
   const { admin, isAuthenticated } = useAdminAuthStore();
@@ -23,10 +24,7 @@ export default function DiscountsPage() {
   if (!admin) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-32 w-32 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading discount management...</p>
-        </div>
+        <LoadingLogo size="lg" message="Loading discount management..." />
       </div>
     );
   }

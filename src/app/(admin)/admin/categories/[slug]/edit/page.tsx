@@ -41,7 +41,7 @@ export default function EditCategoryPage() {
     } catch (error) {
       console.error("Error loading category:", error);
       toast.error("Failed to load category");
-      router.push("/admin/categories");
+      router.push("/admin/products?tab=categories");
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ export default function EditCategoryPage() {
 
     if (!admin?.isSuper) {
       toast.error("Access denied. Super admin privileges required.");
-      router.push("/admin/categories");
+      router.push("/admin/products?tab=categories");
       return;
     }
 
@@ -88,7 +88,7 @@ export default function EditCategoryPage() {
           <div className="text-center">
             <FolderTree className="mx-auto mb-4 h-12 w-12 text-gray-400" />
             <p className="text-gray-500">Category not found</p>
-            <Link href="/admin/categories">
+            <Link href="/admin/products?tab=categories">
               <Button className="mt-4">Back to Categories</Button>
             </Link>
           </div>

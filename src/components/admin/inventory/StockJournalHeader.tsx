@@ -5,11 +5,18 @@ import { FileText, Download, Calendar } from "lucide-react";
 interface StockJournalHeaderProps {
   isSuper: boolean;
   storeName?: string;
+  stats?: {
+    movementsToday: number;
+    stockAdditions: number;
+    stockReductions: number;
+    transfers: number;
+  };
 }
 
 const StockJournalHeader: React.FC<StockJournalHeaderProps> = ({
   isSuper,
   storeName,
+  stats,
 }) => {
   return (
     <div className="space-y-4">
@@ -44,19 +51,27 @@ const StockJournalHeader: React.FC<StockJournalHeaderProps> = ({
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">0</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {stats?.movementsToday ?? 0}
+              </div>
               <div className="text-sm text-gray-600">Movements Today</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">0</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats?.stockAdditions ?? 0}
+              </div>
               <div className="text-sm text-gray-600">Stock Additions</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">0</div>
+              <div className="text-2xl font-bold text-red-600">
+                {stats?.stockReductions ?? 0}
+              </div>
               <div className="text-sm text-gray-600">Stock Reductions</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">0</div>
+              <div className="text-2xl font-bold text-yellow-600">
+                {stats?.transfers ?? 0}
+              </div>
               <div className="text-sm text-gray-600">Transfers</div>
             </div>
           </div>

@@ -41,8 +41,8 @@ const StockFiltersComponent: React.FC<StockFiltersComponentProps> = ({
   onCategoryFilter,
   onStoreFilter,
 }) => {
-  const hasActiveFilters =
-    filters.search || filters.categoryId || (isSuper && filters.storeId);
+  // Check for active filters (excluding storeId for Super Admin since it defaults to "all")
+  const hasActiveFilters = filters.search || filters.categoryId;
 
   const clearFilters = () => {
     onSearch("");

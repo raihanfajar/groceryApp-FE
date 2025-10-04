@@ -31,31 +31,45 @@ export const useStockManagement = () => {
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
+  const [storeIdInitialized, setStoreIdInitialized] = useState(false);
   const [filters, setFilters] = useState<StockFilters>({
     page: 1,
     limit: 12,
     search: "",
     storeId: admin?.isSuper
-      ? urlStoreId || undefined // Use URL param if available for Super Admin
+      ? urlStoreId || undefined // Default to undefined (All Stores) for Super Admin
       : admin?.store?.id || "store-1", // Use assigned store for Store Admin
   });
 
   useEffect(() => {
     // Update storeId filter when admin data changes
-    if (!admin?.isSuper) {
-      const storeId = admin?.store?.id || "store-1"; // Default store if none assigned
-      setFilters((prev) => ({ ...prev, storeId }));
-    } else if (urlStoreId && !filters.storeId) {
-      // Set URL store ID for Super Admin if not already set
-      setFilters((prev) => ({ ...prev, storeId: urlStoreId }));
+    if (admin?.isSuper) {
+      // For Super Admin: use URL param if available, otherwise undefined for "All Stores"
+      setFilters((prev) => ({
+        ...prev,
+        storeId: urlStoreId || undefined,
+      }));
+      setStoreIdInitialized(true);
+    } else if (admin?.store?.id) {
+      // For Store Admin: use their assigned store
+      setFilters((prev) => ({
+        ...prev,
+        storeId: admin?.store?.id || "store-1",
+      }));
+      setStoreIdInitialized(true);
     }
-  }, [admin, urlStoreId, filters.storeId]);
+  }, [admin?.isSuper, admin?.store?.id, urlStoreId]);
 
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
     limit: 12,
     totalPages: 0,
+  });
+  const [stats, setStats] = useState({
+    productsUpdatedToday: 0,
+    lowStockAlerts: 0,
+    stockMovementsToday: 0,
   });
 
   const loadProducts = useCallback(async () => {
@@ -100,6 +114,68 @@ export const useStockManagement = () => {
     }
   }, [admin?.accessToken, admin?.isSuper]);
 
+  const loadStats = useCallback(async () => {
+    try {
+      if (!admin?.accessToken) return;
+
+      // Get today's date range
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      // Build filters object, only including storeId if it's defined and not 'all'
+      const journalFilters: {
+        dateFrom: string;
+        dateTo: string;
+        limit: number;
+        storeId?: string;
+      } = {
+        dateFrom: today.toISOString(),
+        dateTo: tomorrow.toISOString(),
+        limit: 1000,
+      };
+      if (filters.storeId && filters.storeId !== "all") {
+        journalFilters.storeId = filters.storeId;
+      }
+
+      const alertFilters: { storeId?: string } = {};
+      if (filters.storeId && filters.storeId !== "all") {
+        alertFilters.storeId = filters.storeId;
+      }
+
+      // Fetch today's stock movements and low stock alerts
+      const [journalResponse, alertsResponse] = await Promise.all([
+        adminInventoryAPI.getStockJournal(admin.accessToken, journalFilters),
+        adminInventoryAPI.getLowStockAlerts(admin.accessToken, alertFilters),
+      ]);
+
+      const todayMovements = journalResponse.data.data;
+
+      // Count unique products updated today (excluding TRANSFER)
+      const uniqueProducts = new Set(
+        todayMovements
+          .filter((entry) => entry.type !== "TRANSFER")
+          .map((entry) => entry.productId),
+      );
+      const productsUpdatedToday = uniqueProducts.size;
+
+      // Get low stock alerts count
+      const lowStockAlerts = alertsResponse.data.length;
+
+      // Count total movements today
+      const stockMovementsToday = todayMovements.length;
+
+      setStats({
+        productsUpdatedToday,
+        lowStockAlerts,
+        stockMovementsToday,
+      });
+    } catch (error) {
+      console.error("Error loading stats:", error);
+    }
+  }, [admin?.accessToken, filters.storeId]);
+
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push("/admin-login");
@@ -109,6 +185,14 @@ export const useStockManagement = () => {
     loadCategories();
     loadStores();
   }, [isAuthenticated, router, loadProducts, loadCategories, loadStores]);
+
+  // Reload stats when store filter changes or when it's first initialized
+  useEffect(() => {
+    // Only load stats if we have admin access token and storeId has been initialized
+    if (admin?.accessToken && storeIdInitialized) {
+      loadStats();
+    }
+  }, [filters.storeId, admin?.accessToken, storeIdInitialized, loadStats]);
 
   const handleUpdateStock = useCallback(
     async (
@@ -176,6 +260,7 @@ export const useStockManagement = () => {
     loading,
     filters,
     pagination,
+    stats,
     admin,
     isAuthenticated,
     handleUpdateStock,

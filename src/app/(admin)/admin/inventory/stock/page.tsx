@@ -20,6 +20,7 @@ function StockManagementPage() {
     loading,
     filters,
     pagination,
+    stats,
     admin,
     handleUpdateStock,
     handleSearch,
@@ -45,6 +46,7 @@ function StockManagementPage() {
         <StockManagementHeader
           isSuper={admin.isSuper || false}
           storeName={admin.store?.name}
+          stats={stats}
         />
 
         <StockFiltersComponent

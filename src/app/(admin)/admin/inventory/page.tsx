@@ -73,12 +73,12 @@ export default function InventoryDashboard() {
       return;
     }
 
-    // Load stores for Super Admin
+    // Load stores for Super Admin and set default to "All Stores"
     if (admin?.isSuper) {
       loadStores();
+      setSelectedStoreId("all");
     } else {
-      // For store admins, we need to handle the case where store is null
-      // This might be a backend issue where store assignment is not properly set
+      // For store admins, use their assigned store
       if (admin?.store?.id) {
         setSelectedStoreId(admin.store.id);
       } else {
@@ -92,15 +92,16 @@ export default function InventoryDashboard() {
   const loadInventoryData = useCallback(async () => {
     if (!admin?.accessToken) return;
 
-    // For Super Admins, we need a selected store ID
-    // For Store Admins, the backend should auto-assign their store
-    if (admin.isSuper && !selectedStoreId) return;
+    // Convert "all" to undefined for backend to aggregate all stores
+    const storeIdForQuery =
+      selectedStoreId === "all" ? undefined : selectedStoreId;
 
     try {
       setLoading(true);
 
-      // Only send storeId for Super Admins, let backend auto-assign for Store Admins
-      const filters = admin.isSuper ? { storeId: selectedStoreId } : undefined;
+      // Send storeId filter only if specific store is selected
+      const filters =
+        admin.isSuper && storeIdForQuery ? { storeId: storeIdForQuery } : undefined;
 
       const [summaryResponse, alertsResponse] = await Promise.all([
         adminInventoryAPI.getInventorySummary(admin.accessToken, filters),
@@ -153,16 +154,10 @@ export default function InventoryDashboard() {
   }, [admin?.accessToken, admin?.isSuper, selectedStoreId]);
 
   useEffect(() => {
-    if (admin?.accessToken) {
-      // For Super Admins, wait for store selection
-      // For Store Admins, load immediately
-      if (admin.isSuper && selectedStoreId) {
-        loadInventoryData();
-      } else if (!admin.isSuper) {
-        loadInventoryData();
-      }
+    if (admin?.accessToken && selectedStoreId) {
+      loadInventoryData();
     }
-  }, [admin?.accessToken, admin?.isSuper, selectedStoreId, loadInventoryData]);
+  }, [admin?.accessToken, selectedStoreId, loadInventoryData]);
 
   if (!admin) {
     return (
@@ -206,6 +201,7 @@ export default function InventoryDashboard() {
                   />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">All Stores</SelectItem>
                   {stores.map((store) => (
                     <SelectItem key={store.id} value={store.id}>
                       {store.name} - {store.city}
@@ -217,23 +213,7 @@ export default function InventoryDashboard() {
           </div>
         </div>
 
-        {admin.isSuper && (!selectedStoreId || loadingStores) ? (
-          <Card>
-            <CardContent className="flex h-64 items-center justify-center">
-              <div className="text-center">
-                <Archive className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-4 text-lg font-medium text-gray-900">
-                  {loadingStores ? "Loading Stores" : "Select a Store"}
-                </h3>
-                <p className="mt-2 text-gray-600">
-                  {loadingStores
-                    ? "Fetching available stores..."
-                    : "Choose a store from the dropdown above to view inventory data"}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : !admin.isSuper && !admin.store?.id ? (
+        {!admin.isSuper && !admin.store?.id ? (
           <Card>
             <CardContent className="flex h-64 items-center justify-center">
               <div className="text-center">
@@ -260,16 +240,22 @@ export default function InventoryDashboard() {
         ) : (
           <>
             {/* Store Info Banner */}
-            {selectedStore && (
+            {admin.isSuper && (
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">
-                        {selectedStore.name}
+                        {selectedStoreId === "all"
+                          ? "All Stores - Aggregated View"
+                          : selectedStore?.name || "Store"}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        {selectedStore.city}, {selectedStore.province}
+                        {selectedStoreId === "all"
+                          ? "Viewing inventory data across all stores"
+                          : selectedStore
+                            ? `${selectedStore.city}, ${selectedStore.province}`
+                            : ""}
                       </p>
                     </div>
                     <div className="text-right">

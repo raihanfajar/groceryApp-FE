@@ -85,9 +85,11 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
   };
 
   return (
-    <div className="space-y-4 rounded-lg border bg-white p-4">
+    <div className="space-y-4 rounded-lg border bg-white p-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium">Filter Stock Movements</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Filter Stock Movements
+        </h3>
         {hasActiveFilters && (
           <Button variant="outline" size="sm" onClick={clearFilters}>
             <X className="mr-1 h-4 w-4" />
@@ -96,14 +98,15 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+      {/* First row - 4 columns */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Search */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Search</label>
           <div className="relative">
             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
             <Input
-              placeholder="Search by product or notes..."
+              placeholder="Product or notes..."
               value={filters.search || ""}
               onChange={(e) => onSearch(e.target.value)}
               className="pl-10"
@@ -120,14 +123,14 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
               onProductFilter(value === "all" ? undefined : value)
             }
           >
-            <SelectTrigger>
-              <SelectValue placeholder="All Products" />
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Products" className="truncate" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Products</SelectItem>
               {products.map((product) => (
                 <SelectItem key={product.id} value={product.id}>
-                  {product.name}
+                  <span className="truncate">{product.name}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -143,14 +146,14 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
               onCategoryFilter(value === "all" ? undefined : value)
             }
           >
-            <SelectTrigger>
-              <SelectValue placeholder="All Categories" />
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Categories" className="truncate" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
-                  {category.name}
+                  <span className="truncate">{category.name}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -170,14 +173,14 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
               )
             }
           >
-            <SelectTrigger>
-              <SelectValue placeholder="All Types" />
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Types" className="truncate" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
               {movementTypes.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {type.label}
+                  <span className="truncate">{type.label}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -185,8 +188,8 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
         </div>
       </div>
 
-      {/* Second row of filters */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {/* Second row - Date Range right-aligned */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Store Filter (Super Admin only) */}
         {isSuper && (
           <div className="space-y-2">
@@ -197,14 +200,14 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
                 onStoreFilter(value === "all" ? undefined : value)
               }
             >
-              <SelectTrigger>
-                <SelectValue placeholder="All Stores" />
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Stores" className="truncate" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Stores</SelectItem>
                 {stores.map((store) => (
                   <SelectItem key={store.id} value={store.id}>
-                    {store.name}
+                    <span className="truncate">{store.name}</span>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -212,8 +215,8 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
           </div>
         )}
 
-        {/* Date Range Filters */}
-        <div className="space-y-2">
+        {/* Start Date */}
+        <div className="space-y-2 lg:col-start-3">
           <label className="text-sm font-medium text-gray-700">
             Start Date
           </label>
@@ -230,6 +233,7 @@ const StockJournalFilters: React.FC<StockJournalFiltersProps> = ({
           </div>
         </div>
 
+        {/* End Date */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">End Date</label>
           <div className="relative">

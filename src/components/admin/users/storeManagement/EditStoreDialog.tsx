@@ -1,4 +1,6 @@
 "use client";
+import MapLeaflet from "@/components/homePage/location/MapLeaflet";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,13 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { StoreFormData } from "../typesAndInterfaces";
-import { DetailedStoreInfo } from "../typesAndInterfaces";
-import { RajongSelectGroup } from "@/components/homePage/location/RajongSelectGroup";
-import MapLeaflet from "@/components/homePage/location/MapLeaflet";
+import { DetailedStoreInfo, StoreFormData } from "../typesAndInterfaces";
+import { RajongSelectGroupWithNames } from "./RajongSelectGroupWithNames";
 
 interface Props {
   open: boolean;
@@ -33,25 +32,37 @@ export function EditStoreDialog({
 }: Props) {
   if (!editingStore) return null;
 
-  /* ---- detect changes ---- */
+  // !Changes detection
   const hasChanges =
     formData.name !== editingStore.name ||
-    formData.province !== editingStore.province ||
-    formData.city !== editingStore.city ||
-    formData.district !== editingStore.district ||
+    formData.provinceId !== String(editingStore.provinceId) ||
+    formData.cityId !== String(editingStore.cityId) ||
+    formData.districtId !== String(editingStore.districtId) ||
     formData.lat !== String(editingStore.lat) ||
     formData.lng !== String(editingStore.lng);
 
-  /* ---- map pin handler ---- */
+  // !Map pin handler
   const handleMapPin = (lat: number, lng: number) => {
     setFormData({ ...formData, lat: String(lat), lng: String(lng) });
+  };
+
+  const handleRajongChange = (
+    level: "province" | "city" | "district",
+    id: string,
+    name: string,
+  ) => {
+    setFormData({
+      ...formData,
+      [`${level}Id`]: id,
+      [level]: name,
+    });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="sm:max-w-[600px]"
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]"
       >
         <DialogHeader>
           <DialogTitle>Edit Store</DialogTitle>
@@ -74,19 +85,11 @@ export function EditStoreDialog({
           </div>
 
           {/* ---- rajong cascade ---- */}
-          <RajongSelectGroup
-            provinceId={formData.province}
-            setProvinceId={(v: string) =>
-              setFormData({ ...formData, province: v, city: "", district: "" })
-            }
-            cityId={formData.city}
-            setCityId={(v: string) =>
-              setFormData({ ...formData, city: v, district: "" })
-            }
-            districtId={formData.district}
-            setDistrictId={(v: string) =>
-              setFormData({ ...formData, district: v })
-            }
+          <RajongSelectGroupWithNames
+            provinceId={formData.provinceId}
+            cityId={formData.cityId}
+            districtId={formData.districtId}
+            onChange={(level, id, name) => handleRajongChange(level, id, name)}
           />
 
           {/* ---- lat / lng ---- */}

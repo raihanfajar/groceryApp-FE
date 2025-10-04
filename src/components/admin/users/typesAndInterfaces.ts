@@ -17,6 +17,18 @@ export interface DetailedStoreInfo {
     deletedAt: string | null;
 }
 
+export interface addStoreRequest {
+    name: string;
+    province: string;
+    city: string;
+    district: string;
+    lat: string;
+    lng: string;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+}
+
 export interface storeResponse {
     status: string;
     message: string;
@@ -30,6 +42,9 @@ export interface StoreFormData {
     district: string;
     lat: string;
     lng: string;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
 }
 
 // !STORE ADMIN MANAGEMENT

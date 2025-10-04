@@ -1,15 +1,16 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useAddStore } from "@/hooks/admin/store-admin-management/useAddStore";
+import { useGetAllStore } from "@/hooks/admin/store-admin-management/useGetAllStore";
+import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { DetailedStoreInfo } from "../typesAndInterfaces";
 import { AddStoreDialog } from "./AddStoreDialog";
 import { EditStoreDialog } from "./EditStoreDialog";
 import { StoreTable } from "./StoreTable";
-import { Button } from "@/components/ui/button";
-import { DetailedStoreInfo } from "../typesAndInterfaces";
-import { useGetAllStore } from "@/hooks/admin/store-admin-management/useGetAllStore";
-import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 
 export interface Store {
   id: string;
@@ -20,8 +21,8 @@ export interface Store {
 }
 
 export default function StoreManagement() {
+  // !Initialization and states setup
   const { admin } = useAdminAuthStore();
-  const PAGE_SIZE = 5;
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -29,10 +30,15 @@ export default function StoreManagement() {
   const [editingStore, setEditingStore] = useState<DetailedStoreInfo | null>(
     null,
   );
+  const formData = { name: "", province: "", city: "", district: "", lat: "", lng: "", provinceId: "", cityId: "", districtId: ""}; //prettier-ignore
+  const [addForm, setAddForm] = useState(formData);
+  const [editForm, setEditForm] = useState(formData);
 
-  /* ---- dummy data until you plug hooks ---- */
+  // !Hooks
   const { data: stores = [] } = useGetAllStore(admin?.accessToken);
+  const { mutateAsync: addStore, isPending: isAddingStore } = useAddStore(admin?.accessToken); //prettier-ignore
 
+  // !Filtration
   const filtered = stores.filter(
     (s) =>
       s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,22 +46,18 @@ export default function StoreManagement() {
       s.province.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  // !Pagination
+  const PAGE_SIZE = 5;
   const total = filtered.length;
   const pageCount = Math.ceil(total / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
   useState(() => setPage(1)); // reset on search change (lazy)
 
-  const formData = { name: "", province: "", city: "", district: "", lat: "", lng: "",}; //prettier-ignore
-
-  /* ---- form states ---- */
-  const [addForm, setAddForm] = useState(formData);
-  const [editForm, setEditForm] = useState(formData);
-
-  /* ---- handlers ---- */
+  // !Handlers
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("ADD store", addForm);
+    addStore(addForm);
     setIsAddOpen(false);
     setAddForm(formData);
   };
@@ -76,6 +78,9 @@ export default function StoreManagement() {
       district: store.district,
       lat: store.lat,
       lng: store.lng,
+      provinceId: String(store.provinceId),
+      cityId: String(store.cityId),
+      districtId: String(store.districtId),
     });
     setIsEditOpen(true);
   };
@@ -103,6 +108,7 @@ export default function StoreManagement() {
           formData={addForm}
           setFormData={setAddForm}
           onSubmit={handleAddSubmit}
+          isAdding={isAddingStore}
         />
       </div>
 

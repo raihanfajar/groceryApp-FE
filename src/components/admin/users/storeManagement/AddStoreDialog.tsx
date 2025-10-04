@@ -1,4 +1,5 @@
 "use client";
+import MapLeaflet from "@/components/homePage/location/MapLeaflet";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,8 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { StoreFormData } from "../typesAndInterfaces";
-import { RajongSelectGroup } from "@/components/homePage/location/RajongSelectGroup";
-import MapLeaflet from "@/components/homePage/location/MapLeaflet";
+import { RajongSelectGroupWithNames } from "./RajongSelectGroupWithNames";
 
 interface Props {
   open: boolean;
@@ -22,6 +22,7 @@ interface Props {
   formData: StoreFormData;
   setFormData: (data: StoreFormData) => void;
   onSubmit: (e: React.FormEvent) => void;
+  isAdding?: boolean;
 }
 
 export function AddStoreDialog({
@@ -30,10 +31,24 @@ export function AddStoreDialog({
   formData,
   setFormData,
   onSubmit,
+  isAdding,
 }: Props) {
-  /* ---- map callback ---- */
+  /* map pin -> lat/lng */
   const handleMapPin = (lat: number, lng: number) => {
     setFormData({ ...formData, lat: String(lat), lng: String(lng) });
+  };
+
+  /* single helper that writes BOTH id & name */
+  const handleRajongChange = (
+    level: "province" | "city" | "district",
+    id: string,
+    name: string,
+  ) => {
+    setFormData({
+      ...formData,
+      [`${level}Id`]: id,
+      [level]: name,
+    });
   };
 
   return (
@@ -45,7 +60,8 @@ export function AddStoreDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[600px]">
+      {/* scrollable content */}
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <form onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>Create New Store</DialogTitle>
@@ -55,7 +71,7 @@ export function AddStoreDialog({
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            {/* ---- store name ---- */}
+            {/* Store Name */}
             <div className="grid gap-2">
               <Label className="text-sm font-extrabold text-green-700">
                 Store Name
@@ -71,52 +87,41 @@ export function AddStoreDialog({
               />
             </div>
 
-            {/* ---- rajong cascade ---- */}
-            <RajongSelectGroup
-              provinceId={formData.province}
-              setProvinceId={(v: string) =>
-                setFormData({
-                  ...formData,
-                  province: v,
-                  city: "",
-                  district: "",
-                })
-              }
-              cityId={formData.city}
-              setCityId={(v: string) =>
-                setFormData({ ...formData, city: v, district: "" })
-              }
-              districtId={formData.district}
-              setDistrictId={(v: string) =>
-                setFormData({ ...formData, district: v })
+            {/* Rajong Cascade (id + name) */}
+            <RajongSelectGroupWithNames
+              provinceId={formData.provinceId}
+              cityId={formData.cityId}
+              districtId={formData.districtId}
+              onChange={(level, id, name) =>
+                handleRajongChange(level, id, name)
               }
             />
 
-            {/* ---- lat / lng read-only (populated by map) ---- */}
-            <div className="grid gap-2">
-              <Label className="text-sm font-extrabold text-green-700">
-                Latitude
-              </Label>
-              <Input
-                value={formData.lat}
-                readOnly
-                placeholder="Click map"
-                className="border-black bg-gray-100 font-mono text-sm"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label className="text-sm font-extrabold text-green-700">
-                Longitude
-              </Label>
-              <Input
-                value={formData.lng}
-                readOnly
-                placeholder="Click map"
-                className="border-black bg-gray-100 font-mono text-sm"
-              />
+            {/* Lat / Lng (read-only) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label className="text-sm font-extrabold text-green-700">
+                  Latitude
+                </Label>
+                <Input
+                  value={formData.lat}
+                  readOnly
+                  className="border-black bg-gray-100 font-mono text-sm"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label className="text-sm font-extrabold text-green-700">
+                  Longitude
+                </Label>
+                <Input
+                  value={formData.lng}
+                  readOnly
+                  className="border-black bg-gray-100 font-mono text-sm"
+                />
+              </div>
             </div>
 
-            {/* ---- map ---- */}
+            {/* Map */}
             <MapLeaflet onLocationChange={handleMapPin} />
           </div>
 
@@ -128,8 +133,12 @@ export function AddStoreDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" className="bg-green-700 hover:bg-black">
-              Add Store
+            <Button
+              type="submit"
+              className="bg-green-700 hover:bg-black"
+              disabled={isAdding}
+            >
+              {isAdding ? "Adding..." : "Add Store"}
             </Button>
           </DialogFooter>
         </form>

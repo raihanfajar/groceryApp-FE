@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, Upload, Download } from "lucide-react";
+import { Package, Upload, Download, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface StockManagementHeaderProps {
   isSuper: boolean;
@@ -17,10 +18,23 @@ const StockManagementHeader: React.FC<StockManagementHeaderProps> = ({
   storeName,
   stats,
 }) => {
+  const router = useRouter();
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
+          <div className="mb-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/admin/inventory")}
+              className="text-gray-900"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Inventory
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900">Stock Management</h1>
           <p className="text-gray-600">
             {isSuper

@@ -80,7 +80,8 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
   };
 
   const handleApplyChanges = async () => {
-    if (!selectedStoreId || pendingStock === null) return;
+    if (!selectedStoreId || selectedStoreId === "all" || pendingStock === null)
+      return;
 
     setIsUpdating(true);
     try {
@@ -176,7 +177,7 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
           </div>
 
           {/* Stock Actions */}
-          {selectedStoreId ? (
+          {selectedStoreId && selectedStoreId !== "all" ? (
             <div className="space-y-2">
               {!showStockInput ? (
                 <>

@@ -20,6 +20,7 @@ interface StockFilters {
   categoryId?: string;
   storeId?: string;
   lowStockOnly?: boolean;
+  sortBy?: "stock-asc" | "stock-desc";
 }
 
 interface StockFiltersComponentProps {
@@ -30,6 +31,7 @@ interface StockFiltersComponentProps {
   onSearch: (query: string) => void;
   onCategoryFilter: (categoryId: string | undefined) => void;
   onStoreFilter: (storeId: string | undefined) => void;
+  onSortChange: (sortBy: "stock-asc" | "stock-desc" | undefined) => void;
 }
 
 const StockFiltersComponent: React.FC<StockFiltersComponentProps> = ({
@@ -40,13 +42,16 @@ const StockFiltersComponent: React.FC<StockFiltersComponentProps> = ({
   onSearch,
   onCategoryFilter,
   onStoreFilter,
+  onSortChange,
 }) => {
   // Check for active filters (excluding storeId for Super Admin since it defaults to "all")
-  const hasActiveFilters = filters.search || filters.categoryId;
+  const hasActiveFilters =
+    filters.search || filters.categoryId || filters.sortBy;
 
   const clearFilters = () => {
     onSearch("");
     onCategoryFilter(undefined);
+    onSortChange(undefined);
     if (isSuper) {
       onStoreFilter(undefined);
     }
@@ -64,10 +69,10 @@ const StockFiltersComponent: React.FC<StockFiltersComponentProps> = ({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Search */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="block h-5 text-sm font-medium text-gray-700">
             Search Products
           </label>
           <div className="relative">
@@ -76,21 +81,23 @@ const StockFiltersComponent: React.FC<StockFiltersComponentProps> = ({
               placeholder="Search by product name..."
               value={filters.search || ""}
               onChange={(e) => onSearch(e.target.value)}
-              className="pl-10"
+              className="w-full pl-10"
             />
           </div>
         </div>
 
         {/* Category Filter */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Category</label>
+          <label className="block h-5 text-sm font-medium text-gray-700">
+            Category
+          </label>
           <Select
             value={filters.categoryId || "all"}
             onValueChange={(value) =>
               onCategoryFilter(value === "all" ? undefined : value)
             }
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
@@ -104,17 +111,47 @@ const StockFiltersComponent: React.FC<StockFiltersComponentProps> = ({
           </Select>
         </div>
 
+        {/* Stock Count Sort */}
+        <div className="space-y-2">
+          <label className="block h-5 text-sm font-medium text-gray-700">
+            Stock Count
+          </label>
+          <Select
+            value={filters.sortBy || "none"}
+            onValueChange={(value) =>
+              onSortChange(
+                value === "none"
+                  ? undefined
+                  : (value as "stock-asc" | "stock-desc"),
+              )
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Sort by Stock" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">No Sorting</SelectItem>
+              <SelectItem value="stock-asc">Ascending (Low to High)</SelectItem>
+              <SelectItem value="stock-desc">
+                Descending (High to Low)
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Store Filter (Super Admin only) */}
-        {isSuper && (
+        {isSuper ? (
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Store</label>
+            <label className="block h-5 text-sm font-medium text-gray-700">
+              Store
+            </label>
             <Select
               value={filters.storeId || "all"}
               onValueChange={(value) =>
                 onStoreFilter(value === "all" ? undefined : value)
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Stores" />
               </SelectTrigger>
               <SelectContent>
@@ -126,6 +163,10 @@ const StockFiltersComponent: React.FC<StockFiltersComponentProps> = ({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {/* Empty placeholder to maintain grid structure for store admins */}
           </div>
         )}
       </div>

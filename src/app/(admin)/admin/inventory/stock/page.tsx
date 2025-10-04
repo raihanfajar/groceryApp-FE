@@ -26,6 +26,7 @@ function StockManagementPage() {
     handleSearch,
     handleCategoryFilter,
     handleStoreFilter,
+    handleSortChange,
     handlePageChange,
   } = useStockManagement();
 
@@ -57,6 +58,7 @@ function StockManagementPage() {
           onSearch={handleSearch}
           onCategoryFilter={handleCategoryFilter}
           onStoreFilter={handleStoreFilter}
+          onSortChange={handleSortChange}
         />
 
         {loading ? (

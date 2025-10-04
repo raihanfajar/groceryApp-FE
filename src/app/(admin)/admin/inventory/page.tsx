@@ -101,7 +101,9 @@ export default function InventoryDashboard() {
 
       // Send storeId filter only if specific store is selected
       const filters =
-        admin.isSuper && storeIdForQuery ? { storeId: storeIdForQuery } : undefined;
+        admin.isSuper && storeIdForQuery
+          ? { storeId: storeIdForQuery }
+          : undefined;
 
       const [summaryResponse, alertsResponse] = await Promise.all([
         adminInventoryAPI.getInventorySummary(admin.accessToken, filters),
@@ -399,46 +401,69 @@ export default function InventoryDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {lowStockAlerts.slice(0, 5).map((alert) => (
-                      <div
-                        key={`${alert.storeId}-${alert.productId}`}
-                        className="flex items-center justify-between rounded-lg border p-4"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
-                            {alert.product.picture1 ? (
-                              <Image
-                                src={alert.product.picture1}
-                                alt={alert.product.name}
-                                width={32}
-                                height={32}
-                                className="rounded object-cover"
-                              />
-                            ) : (
-                              <Package className="h-6 w-6 text-gray-400" />
-                            )}
+                    {lowStockAlerts.slice(0, 5).map((alert) => {
+                      const alertStore = stores.find(
+                        (s) => s.id === alert.storeId,
+                      );
+                      return (
+                        <div
+                          key={`${alert.storeId}-${alert.productId}`}
+                          className="flex items-center justify-between rounded-lg border p-4"
+                        >
+                          <div className="flex flex-1 items-center space-x-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
+                              {alert.product.picture1 ? (
+                                <Image
+                                  src={alert.product.picture1}
+                                  alt={alert.product.name}
+                                  width={32}
+                                  height={32}
+                                  className="rounded object-cover"
+                                />
+                              ) : (
+                                <Package className="h-6 w-6 text-gray-400" />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-medium">
+                                {alert.product.name}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                {alert.product.category.name}
+                              </p>
+                              {admin.isSuper && alertStore && (
+                                <p className="mt-1 text-xs font-medium text-blue-600">
+                                  📍 {alertStore.name} - {alertStore.city}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-medium">
-                              {alert.product.name}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {alert.product.category.name}
-                            </p>
+                          <div className="flex items-center space-x-4">
+                            <div className="text-right">
+                              <p className="text-sm font-medium">
+                                Stock:{" "}
+                                <span className="text-red-600">
+                                  {alert.stock}
+                                </span>{" "}
+                                / {alert.minStock}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {alert.isOutOfStock
+                                  ? "Out of Stock"
+                                  : "Low Stock"}
+                              </p>
+                            </div>
+                            <Link
+                              href={`/admin/inventory/stock?storeId=${alert.storeId}&sortBy=stock-asc`}
+                            >
+                              <Button size="sm" variant="default">
+                                Action
+                              </Button>
+                            </Link>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium">
-                            Stock:{" "}
-                            <span className="text-red-600">{alert.stock}</span>{" "}
-                            / {alert.minStock}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {alert.isOutOfStock ? "Out of Stock" : "Low Stock"}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {lowStockAlerts.length > 5 && (
                       <div className="text-center">
                         <Link href="/admin/inventory/reports">

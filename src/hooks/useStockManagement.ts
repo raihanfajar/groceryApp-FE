@@ -25,8 +25,12 @@ export const useStockManagement = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Get storeId from URL params (when coming from inventory dashboard)
+  // Get storeId and sortBy from URL params (when coming from inventory dashboard)
   const urlStoreId = searchParams.get("storeId");
+  const urlSortBy = searchParams.get("sortBy") as
+    | "stock-asc"
+    | "stock-desc"
+    | null;
 
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
@@ -40,15 +44,17 @@ export const useStockManagement = () => {
     storeId: admin?.isSuper
       ? urlStoreId || undefined // Default to undefined (All Stores) for Super Admin
       : admin?.store?.id || "store-1", // Use assigned store for Store Admin
+    sortBy: urlSortBy || undefined, // Pre-set sort from URL if available
   });
 
   useEffect(() => {
-    // Update storeId filter when admin data changes
+    // Update storeId and sortBy filters when admin data or URL params change
     if (admin?.isSuper) {
-      // For Super Admin: use URL param if available, otherwise undefined for "All Stores"
+      // For Super Admin: use URL params if available
       setFilters((prev) => ({
         ...prev,
         storeId: urlStoreId || undefined,
+        sortBy: urlSortBy || prev.sortBy, // Keep existing sortBy if no URL param
       }));
       setStoreIdInitialized(true);
     } else if (admin?.store?.id) {
@@ -56,10 +62,11 @@ export const useStockManagement = () => {
       setFilters((prev) => ({
         ...prev,
         storeId: admin?.store?.id || "store-1",
+        sortBy: urlSortBy || prev.sortBy, // Keep existing sortBy if no URL param
       }));
       setStoreIdInitialized(true);
     }
-  }, [admin?.isSuper, admin?.store?.id, urlStoreId]);
+  }, [admin?.isSuper, admin?.store?.id, urlStoreId, urlSortBy]);
 
   const [pagination, setPagination] = useState({
     total: 0,

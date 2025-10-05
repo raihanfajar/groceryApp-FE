@@ -70,7 +70,7 @@ export default function SalesGraphCard({
   };
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />
@@ -80,18 +80,18 @@ export default function SalesGraphCard({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="flex h-[300px] items-center justify-center">
+          <div className="flex h-[250px] items-center justify-center">
             <div className="text-center">
               <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
               <p className="mt-2 text-sm text-gray-500">Loading chart...</p>
             </div>
           </div>
         ) : data.length === 0 ? (
-          <div className="flex h-[300px] items-center justify-center">
+          <div className="flex h-[250px] items-center justify-center">
             <p className="text-sm text-gray-500">No sales data available</p>
           </div>
         ) : (
-          <div className="h-[300px]">
+          <div className="h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

@@ -159,15 +159,15 @@ export default function AdminDashboard() {
           </div>
 
           {/* Row 2: Sales Graph & Top Products */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-            <div className="lg:col-span-3">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-8">
+            <div className="lg:col-span-5">
               <SalesGraphCard
                 labels={salesChartData.labels}
                 data={salesChartData.data}
                 isLoading={isLoading}
               />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-3">
               <TopSellingProductsCard
                 products={topProducts}
                 isLoading={isLoading}
@@ -185,7 +185,7 @@ export default function AdminDashboard() {
               alerts={lowStockAlerts}
               stores={stores}
               isSuper={admin.isSuper}
-              maxDisplay={5}
+              maxDisplay={3}
               showViewAll={true}
             />
           </div>

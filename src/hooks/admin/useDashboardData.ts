@@ -55,7 +55,7 @@ export const useDashboardData = (
     },
     enabled: isEnabled,
     staleTime: 2 * 60 * 1000, // 2 minutes
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
   });
 
   // Fetch recent transactions
@@ -76,6 +76,7 @@ export const useDashboardData = (
     },
     enabled: isEnabled,
     staleTime: 1 * 60 * 1000, // 1 minute
+    refetchOnWindowFocus: false,
   });
 
   // Fetch low stock alerts
@@ -94,6 +95,7 @@ export const useDashboardData = (
     },
     enabled: isEnabled,
     staleTime: 3 * 60 * 1000, // 3 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Calculate dashboard stats

@@ -11,7 +11,7 @@ export default function TotalProductsCard({
   isLoading,
 }: TotalProductsCardProps) {
   return (
-    <Card>
+    <Card className="bg-purple-50">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Total Products</CardTitle>
         <Package className="text-muted-foreground h-4 w-4" />

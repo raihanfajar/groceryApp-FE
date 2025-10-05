@@ -99,7 +99,7 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
           })}
           {showViewAll && alerts.length > maxDisplay && (
             <div className="text-center">
-              <Link href="/admin/inventory/reports">
+              <Link href="/admin/inventory/stock?storeId=all&sortBy=stock-asc">
                 <Button variant="outline" size="sm">
                   View All {alerts.length} Alerts
                 </Button>

@@ -13,7 +13,7 @@ export default function MonthlyTransactionsCard({
   isLoading,
 }: MonthlyTransactionsCardProps) {
   return (
-    <Card>
+    <Card className="bg-yellow-50">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">
           Monthly Transactions

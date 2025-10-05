@@ -387,52 +387,59 @@ export default function InventoryDashboard() {
               </CardContent>
             </Card>
 
-            {/* Low Stock Alerts */}
-            <LowStockAlertsSection
-              alerts={lowStockAlerts}
-              stores={stores}
-              isSuper={admin.isSuper}
-              maxDisplay={5}
-              showViewAll={true}
-            />
+            {/* Low Stock Alerts & Stock by Category */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+              {/* Low Stock Alerts */}
+              <div className="lg:col-span-2">
+                <LowStockAlertsSection
+                  alerts={lowStockAlerts}
+                  stores={stores}
+                  isSuper={admin.isSuper}
+                  maxDisplay={5}
+                  showViewAll={true}
+                />
+              </div>
 
-            {/* Category Breakdown */}
-            {inventorySummary?.stockByCategory &&
-              inventorySummary.stockByCategory.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Stock by Category</CardTitle>
-                    <CardDescription>
-                      Inventory distribution across product categories
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {inventorySummary.stockByCategory.map((category) => (
-                        <div
-                          key={category.categoryId}
-                          className="flex items-center justify-between"
-                        >
-                          <div>
-                            <h4 className="font-medium">
-                              {category.categoryName}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {category.productCount} products
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-lg font-bold">
-                              {category.totalStock}
-                            </p>
-                            <p className="text-xs text-gray-500">units</p>
-                          </div>
+              {/* Category Breakdown */}
+              {inventorySummary?.stockByCategory &&
+                inventorySummary.stockByCategory.length > 0 && (
+                  <div className="lg:col-span-2">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Stock by Category</CardTitle>
+                        <CardDescription>
+                          Inventory distribution across product categories
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          {inventorySummary.stockByCategory.map((category) => (
+                            <div
+                              key={category.categoryId}
+                              className="flex items-center justify-between"
+                            >
+                              <div>
+                                <h4 className="font-medium">
+                                  {category.categoryName}
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  {category.productCount} products
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-lg font-bold">
+                                  {category.totalStock}
+                                </p>
+                                <p className="text-xs text-gray-500">units</p>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+            </div>
           </>
         )}
       </div>

@@ -28,7 +28,7 @@ export default function TopSellingProductsCard({
   };
 
   return (
-    <Card>
+    <Card className="flex h-full flex-col">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-yellow-500" />
@@ -36,29 +36,44 @@ export default function TopSellingProductsCard({
         </CardTitle>
         <CardDescription>Best performers this month</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 overflow-auto">
         {isLoading ? (
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="h-12 w-12 animate-pulse rounded bg-gray-200"></div>
+          <div className="space-y-2">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 rounded-lg border p-3"
+              >
+                {/* Rank Badge Skeleton */}
+                <div className="h-6 w-6 flex-shrink-0 animate-pulse rounded-full bg-gray-200"></div>
+
+                {/* Product Image Skeleton */}
+                <div className="h-12 w-12 flex-shrink-0 animate-pulse rounded-lg bg-gray-200"></div>
+
+                {/* Product Info Skeleton */}
                 <div className="flex-1 space-y-2">
                   <div className="h-4 w-32 animate-pulse rounded bg-gray-200"></div>
                   <div className="h-3 w-20 animate-pulse rounded bg-gray-100"></div>
+                </div>
+
+                {/* Stats Skeleton */}
+                <div className="flex-shrink-0 space-y-2 text-right">
+                  <div className="ml-auto h-4 w-16 animate-pulse rounded bg-gray-200"></div>
+                  <div className="ml-auto h-3 w-20 animate-pulse rounded bg-gray-100"></div>
                 </div>
               </div>
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="flex h-[200px] flex-col items-center justify-center text-center">
+          <div className="flex h-[250px] flex-col items-center justify-center text-center">
             <Package className="mb-2 h-8 w-8 text-gray-400" />
             <p className="text-sm text-gray-500">
               No sales data available for this period
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {products.slice(0, 5).map((product, index) => (
+          <div className="space-y-2">
+            {products.slice(0, 3).map((product, index) => (
               <div
                 key={product.productId}
                 className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-gray-50"
@@ -70,9 +85,7 @@ export default function TopSellingProductsCard({
                       ? "bg-yellow-100 text-yellow-700"
                       : index === 1
                         ? "bg-gray-100 text-gray-700"
-                        : index === 2
-                          ? "bg-orange-100 text-orange-700"
-                          : "bg-blue-50 text-blue-700"
+                        : "bg-orange-100 text-orange-700"
                   }`}
                 >
                   {index + 1}

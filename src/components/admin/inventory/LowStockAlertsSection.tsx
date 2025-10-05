@@ -79,9 +79,8 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
                     <p className="text-sm font-medium">
-                      Stock:{" "}
-                      <span className="text-red-600">{alert.stock}</span> /{" "}
-                      {alert.minStock}
+                      Stock: <span className="text-red-600">{alert.stock}</span>{" "}
+                      / {alert.minStock}
                     </p>
                     <p className="text-xs text-gray-500">
                       {alert.isOutOfStock ? "Out of Stock" : "Low Stock"}

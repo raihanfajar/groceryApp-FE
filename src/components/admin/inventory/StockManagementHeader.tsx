@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, Upload, Download, ArrowLeft, Grid3x3, List } from "lucide-react";
+import { Package, Upload, Download, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface StockManagementHeaderProps {
@@ -11,16 +11,12 @@ interface StockManagementHeaderProps {
     lowStockAlerts: number;
     stockMovementsToday: number;
   };
-  viewMode?: "grid" | "list";
-  onViewModeChange?: (mode: "grid" | "list") => void;
 }
 
 const StockManagementHeader: React.FC<StockManagementHeaderProps> = ({
   isSuper,
   storeName,
   stats,
-  viewMode = "grid",
-  onViewModeChange,
 }) => {
   const router = useRouter();
 
@@ -47,26 +43,6 @@ const StockManagementHeader: React.FC<StockManagementHeaderProps> = ({
           </p>
         </div>
         <div className="flex space-x-2">
-          {onViewModeChange && (
-            <div className="flex items-center space-x-1 border rounded-md p-1">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onViewModeChange("grid")}
-                className="h-8 px-3"
-              >
-                <Grid3x3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onViewModeChange("list")}
-                className="h-8 px-3"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
           <Button variant="outline" size="sm">
             <Download className="mr-2 h-4 w-4" />
             Export Stock

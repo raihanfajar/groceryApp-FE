@@ -108,7 +108,7 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="overflow-hidden transition-shadow hover:shadow-lg">
       <div className="relative aspect-square">
         {product.picture1 ? (
           <Image
@@ -123,7 +123,10 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
           </div>
         )}
         <div className="absolute top-1 right-1 flex flex-col gap-1">
-          <Badge variant={product.isActive ? "default" : "secondary"} className="text-xs">
+          <Badge
+            variant={product.isActive ? "default" : "secondary"}
+            className="text-xs"
+          >
             {product.isActive ? "Active" : "Inactive"}
           </Badge>
           {isLowStock && (
@@ -138,10 +141,10 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
       <CardContent className="p-3">
         <div className="space-y-2">
           <div>
-            <h3 className="truncate font-medium text-sm text-gray-900">
+            <h3 className="truncate text-sm font-medium text-gray-900">
               {product.name}
             </h3>
-            <p className="text-xs text-gray-600 truncate">
+            <p className="truncate text-xs text-gray-600">
               {product.category.name}
             </p>
             <p className="text-xs font-medium text-green-600">
@@ -152,9 +155,7 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
           {/* Stock Information */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-700">
-                Stock:
-              </span>
+              <span className="text-xs font-medium text-gray-700">Stock:</span>
               <div className="text-right">
                 <span
                   className={`text-base font-bold ${isLowStock ? "text-red-600" : "text-green-600"}`}
@@ -195,7 +196,7 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
                       variant="outline"
                       size="sm"
                       onClick={() => setShowStockInput(true)}
-                      className="h-8 text-xs px-1"
+                      className="h-8 px-1 text-xs"
                     >
                       Set
                     </Button>

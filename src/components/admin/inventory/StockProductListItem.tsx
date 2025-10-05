@@ -107,10 +107,10 @@ const StockProductListItem: React.FC<StockProductListItemProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between rounded-lg border bg-white p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-center space-x-4 flex-1 min-w-0">
+    <div className="flex items-center justify-between rounded-lg border bg-white p-4 transition-shadow hover:shadow-md">
+      <div className="flex min-w-0 flex-1 items-center space-x-4">
         {/* Product Image */}
-        <div className="relative h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
           {product.picture1 ? (
             <Image
               src={product.picture1}
@@ -126,36 +126,48 @@ const StockProductListItem: React.FC<StockProductListItemProps> = ({
         </div>
 
         {/* Product Info */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center space-x-2">
-            <h3 className="font-medium text-gray-900 truncate">
+            <h3 className="truncate font-medium text-gray-900">
               {product.name}
             </h3>
-            <Badge variant={product.isActive ? "default" : "secondary"} className="flex-shrink-0">
+            <Badge
+              variant={product.isActive ? "default" : "secondary"}
+              className="flex-shrink-0"
+            >
               {product.isActive ? "Active" : "Inactive"}
             </Badge>
             {isLowStock && (
-              <Badge variant="destructive" className="flex items-center flex-shrink-0">
+              <Badge
+                variant="destructive"
+                className="flex flex-shrink-0 items-center"
+              >
                 <AlertTriangle className="mr-1 h-3 w-3" />
                 Low
               </Badge>
             )}
           </div>
-          <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+          <div className="mt-1 flex items-center space-x-4 text-sm text-gray-600">
             <span>{product.category.name}</span>
-            <span className="font-medium text-green-600">{formatPrice(product.price)}</span>
+            <span className="font-medium text-green-600">
+              {formatPrice(product.price)}
+            </span>
           </div>
         </div>
 
         {/* Stock Info */}
-        <div className="flex items-center space-x-6 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center space-x-6">
           <div className="text-center">
             <p className="text-xs text-gray-500">Current Stock</p>
-            <p className={`text-lg font-bold ${isLowStock ? "text-red-600" : "text-green-600"}`}>
+            <p
+              className={`text-lg font-bold ${isLowStock ? "text-red-600" : "text-green-600"}`}
+            >
               {currentStock}
             </p>
             {pendingStock !== null && pendingStock !== currentStock && (
-              <p className="text-xs font-medium text-blue-600">→ {pendingStock}</p>
+              <p className="text-xs font-medium text-blue-600">
+                → {pendingStock}
+              </p>
             )}
           </div>
           {minStock > 0 && (
@@ -168,7 +180,7 @@ const StockProductListItem: React.FC<StockProductListItemProps> = ({
       </div>
 
       {/* Stock Actions */}
-      <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
+      <div className="ml-4 flex flex-shrink-0 items-center space-x-2">
         {selectedStoreId && selectedStoreId !== "all" ? (
           <>
             {!showStockInput ? (
@@ -249,7 +261,7 @@ const StockProductListItem: React.FC<StockProductListItemProps> = ({
             )}
           </>
         ) : (
-          <div className="text-sm text-yellow-700 px-3 py-2 bg-yellow-50 rounded border border-yellow-200">
+          <div className="rounded border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-700">
             Select a store
           </div>
         )}

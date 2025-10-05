@@ -12,10 +12,12 @@ import StockEmptyState from "@/components/admin/inventory/StockEmptyState";
 import StockPagination from "@/components/admin/inventory/StockPagination";
 import { useStockManagement } from "@/hooks/useStockManagement";
 import { AdminProduct } from "@/types/admin/product";
+import { Button } from "@/components/ui/button";
+import { Grid3x3, List } from "lucide-react";
 
 function StockManagementPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  
+
   const {
     products,
     categories,
@@ -51,8 +53,6 @@ function StockManagementPage() {
           isSuper={admin.isSuper || false}
           storeName={admin.store?.name}
           stats={stats}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
         />
 
         <StockFiltersComponent
@@ -65,6 +65,30 @@ function StockManagementPage() {
           onStoreFilter={handleStoreFilter}
           onSortChange={handleSortChange}
         />
+
+        {/* View Mode Toggle */}
+        <div className="flex justify-end">
+          <div className="flex items-center space-x-1 rounded-md border bg-white p-1">
+            <Button
+              variant={viewMode === "grid" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+              className="h-8 px-3"
+            >
+              <Grid3x3 className="mr-2 h-4 w-4" />
+              Grid
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+              className="h-8 px-3"
+            >
+              <List className="mr-2 h-4 w-4" />
+              List
+            </Button>
+          </div>
+        </div>
 
         {loading ? (
           <div className="flex justify-center py-8">

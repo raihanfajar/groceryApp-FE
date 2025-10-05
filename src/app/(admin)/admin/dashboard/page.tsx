@@ -23,7 +23,7 @@ import TotalProductsCard from "@/components/admin/dashboard/TotalProductsCard";
 import SalesGraphCard from "@/components/admin/dashboard/SalesGraphCard";
 import TopSellingProductsCard from "@/components/admin/dashboard/TopSellingProductsCard";
 import RecentTransactionsCard from "@/components/admin/dashboard/RecentTransactionsCard";
-import LowStockAlertsCard from "@/components/admin/dashboard/LowStockAlertsCard";
+import LowStockAlertsSection from "@/components/admin/inventory/LowStockAlertsSection";
 
 export default function AdminDashboard() {
   const { admin, isAuthenticated } = useAdminAuthStore();
@@ -176,19 +176,18 @@ export default function AdminDashboard() {
           </div>
 
           {/* Row 3: Recent Transactions & Low Stock Alerts */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-            <div className="lg:col-span-3">
-              <RecentTransactionsCard
-                transactions={recentTransactions}
-                isLoading={isLoading}
-              />
-            </div>
-            <div className="lg:col-span-1">
-              <LowStockAlertsCard
-                alerts={lowStockAlerts}
-                isLoading={isLoading}
-              />
-            </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <RecentTransactionsCard
+              transactions={recentTransactions}
+              isLoading={isLoading}
+            />
+            <LowStockAlertsSection
+              alerts={lowStockAlerts}
+              stores={stores}
+              isSuper={admin.isSuper}
+              maxDisplay={5}
+              showViewAll={true}
+            />
           </div>
         </div>
       )}

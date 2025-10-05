@@ -3,10 +3,7 @@ import {
   useAdminConfirmOrderMutation,
   useAdminShipTransactionMutation,
 } from "@/hooks/admin/transaction/adminTransaction";
-import {
-  TransactionFinal,
-  TransactionProductFinal,
-} from "@/types/transaction/FinalTypes";
+import { TransactionFinal } from "@/types/transaction/FinalTypes";
 import {
   AlertDialog,
   AlertDialogAction,

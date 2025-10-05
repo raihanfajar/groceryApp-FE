@@ -50,7 +50,6 @@ export type TransactionFinal = {
     | "waiting_payment"
     | "waiting_confirmation" 
     | "on_process" 
-    | "paid"
     | "shipped"
     | "completed"
     | "cancelled";

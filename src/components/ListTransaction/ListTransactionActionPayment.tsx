@@ -7,19 +7,20 @@ import {
   useCancelTransaction,
   useUploadProofOfPayment,
 } from "@/hooks/transaction/useTransaction";
-import { createPaymentActionHandler } from "@/app/transaction/features/PaymentActionHandler";
 import { TransactionFinal } from "@/types/transaction/FinalTypes";
+import { useRouter } from "next/navigation";
 
 type Props = {
   transaction: TransactionFinal;
   openMidtransPopup?: (url: string) => void;
 };
 
-export default function ListTransactionPaymentActions({
+export default function PaymentActions({
   transaction,
   openMidtransPopup,
 }: Props) {
   const queryClient = useQueryClient();
+  const router = useRouter(); // Tambahkan router untuk redirect
   const { mutate: uploadMutate, isPending: isUploading } =
     useUploadProofOfPayment();
   const { mutate: cancelTransaction, isPending: isCanceling } =
@@ -27,18 +28,15 @@ export default function ListTransactionPaymentActions({
 
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [isCancelModalOpen, setCancelModalOpen] = useState(false);
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const midtransUrl = transaction?.snapRedirectUrl;
-
-
-  const handlePaymentButton = createPaymentActionHandler({
-    transaction,
-    openUploadModal: () => setUploadModalOpen(true),
-    openMidtransPopup,
-    midtransUrl,
-  });
+  const handlePaymentClick = () => {
+    if (transaction.paymentMethod === "manual_transfer") {
+      setUploadModalOpen(true);
+    } else if (openMidtransPopup && transaction.snapRedirectUrl) {
+      openMidtransPopup(transaction.snapRedirectUrl);
+    }
+  };
 
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const f = e.target.files?.[0] ?? null;
@@ -46,13 +44,8 @@ export default function ListTransactionPaymentActions({
   };
 
   const handleUploadSubmit = () => {
-    if (!selectedFile) {
-      toast.error("Please choose a file first.");
-      return;
-    }
-    if (!transaction?.id) {
-      toast.error("Transaction ID missing");
-      return;
+    if (!selectedFile || !transaction?.id) {
+      return toast.error("Please choose a file first.");
     }
     uploadMutate(
       { transactionId: transaction.id, file: selectedFile },
@@ -60,10 +53,11 @@ export default function ListTransactionPaymentActions({
         onSuccess: () => {
           setSelectedFile(null);
           setUploadModalOpen(false);
+          toast.success("Upload successful! Redirecting...");
           queryClient.invalidateQueries({
             queryKey: ["transactionDetails", transaction.id],
-            exact: true,
           });
+          router.push("/");
         },
       },
     );
@@ -72,7 +66,11 @@ export default function ListTransactionPaymentActions({
   const handleConfirmCancel = () => {
     if (!transaction?.id) return;
     cancelTransaction(undefined, {
-      onSuccess: () => setCancelModalOpen(false),
+      onSuccess: () => {
+        setCancelModalOpen(false);
+        toast.info("Transaction cancelled. Redirecting...");
+        router.push("/");
+      },
     });
   };
 
@@ -80,10 +78,10 @@ export default function ListTransactionPaymentActions({
 
   return (
     <>
-      <div className="flex flex-col gap-3 md:items-center md:flex-row md:gap-3">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
         <div className="w-full">
           <button
-            onClick={handlePaymentButton}
+            onClick={handlePaymentClick}
             className="btn btn-primary h-10 w-full text-sm"
           >
             {transaction.paymentMethod === "manual_transfer"
@@ -91,7 +89,6 @@ export default function ListTransactionPaymentActions({
               : "Pay with Midtrans"}
           </button>
         </div>
-
         <div className="w-full">
           <button
             onClick={() => setCancelModalOpen(true)}
@@ -117,14 +114,12 @@ export default function ListTransactionPaymentActions({
             >
               ✕
             </button>
-
             <h3 className="text-lg font-bold text-white">
               Upload Payment Proof
             </h3>
             <p className="py-2 text-sm text-white">
               Please upload your payment receipt or proof of transfer.
             </p>
-
             <div className="form-control">
               <input
                 type="file"
@@ -133,7 +128,6 @@ export default function ListTransactionPaymentActions({
                 className="file-input file-input-bordered w-full text-white"
               />
             </div>
-
             {selectedFile && (
               <div className="bg-base-200 mt-3 rounded-lg border p-3 text-sm">
                 <div className="font-medium">{selectedFile.name}</div>
@@ -143,7 +137,6 @@ export default function ListTransactionPaymentActions({
                 </div>
               </div>
             )}
-
             <div className="modal-action">
               <button
                 onClick={() => {
@@ -177,7 +170,6 @@ export default function ListTransactionPaymentActions({
               Are you sure you want to cancel this transaction? This action
               cannot be undone.
             </p>
-
             <div className="modal-action">
               <button
                 onClick={() => setCancelModalOpen(false)}
@@ -188,7 +180,9 @@ export default function ListTransactionPaymentActions({
               </button>
               <button
                 onClick={handleConfirmCancel}
-                className={`btn btn-error text-black ${isCanceling ? "loading" : ""}`}
+                className={`btn btn-error text-black ${
+                  isCanceling ? "loading" : ""
+                }`}
                 disabled={isCanceling}
               >
                 {isCanceling ? "Cancelling..." : "Yes, cancel"}

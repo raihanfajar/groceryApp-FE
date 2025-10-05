@@ -1,11 +1,6 @@
 import { CartItemWithPromo } from "@/types/cart/getUserCart";
 
-export const useCartItemLogic = ({
-  item,
-  isUpdating,
-  onUpdateQuantity,
-  onPromptDelete,
-}: {
+type CartItemLogicProps = {
   item: CartItemWithPromo;
   isUpdating: boolean;
   onUpdateQuantity: (
@@ -14,7 +9,11 @@ export const useCartItemLogic = ({
     newQuantity: number,
   ) => void;
   onPromptDelete: (item: CartItemWithPromo) => void;
-}) => {
+};
+
+export const useCartItemLogic = (props: CartItemLogicProps) => {
+  const { item, isUpdating, onUpdateQuantity, onPromptDelete } = props;
+
   const {
     product,
     quantity = 0,
@@ -24,7 +23,8 @@ export const useCartItemLogic = ({
     availability,
   } = item;
 
-  const basePrice = activePrice + discountAmount;
+  const basePrice = product.price;
+
   const currentStock = Number(availability?.currentStock ?? 0);
   const isAvailable = availability?.status === "AVAILABLE";
 
@@ -36,8 +36,9 @@ export const useCartItemLogic = ({
 
   const handleUpdate = (newQuantity: number) => {
     if (isUpdating || !isAvailable || !product) return;
-    if (newQuantity > currentStock) return;
-    if (newQuantity === 0) {
+    if (newQuantity > currentStock && currentStock > 0) return;
+
+    if (newQuantity < 1) {
       onPromptDelete(item);
     } else {
       onUpdateQuantity(product.id, storeId, newQuantity);

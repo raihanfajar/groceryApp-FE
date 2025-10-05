@@ -13,13 +13,27 @@ import { baseError } from "@/components/userAuth/typesAndInterfaces";
 export const CART_QUERY_KEY = ["userCart"];
 
 // Ambil cart user
-async function fetchUserCart(): Promise<Cart | null> {
-  const { accessToken } = useUserAuthStore.getState();
-  const response = await axiosInstance.get<ApiResponse<{ cart: Cart | null }>>(
-    "/cart/user",
-    { headers: { Authorization: `Bearer ${accessToken}` } },
-  );
-  return response.data.data.cart ?? null;
+export function useUserCart(options?: { enabled?: boolean }) {
+  const { accessToken } = useUserAuthStore();
+
+  return useQuery<Cart | null, Error>({
+    queryKey: [...CART_QUERY_KEY, accessToken],
+
+    queryFn: async () => {
+      if (!accessToken) {
+        return null;
+      }
+
+      const response = await axiosInstance.get<
+        ApiResponse<{ cart: Cart | null }>
+      >("/cart/user", { headers: { Authorization: `Bearer ${accessToken}` } });
+      return response.data.data.cart ?? null;
+    },
+
+    enabled: !!accessToken && (options?.enabled ?? true),
+
+    staleTime: 1000 * 60,
+  });
 }
 
 // Update quantity satu item
@@ -33,15 +47,6 @@ async function updateCartItem(
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   return response.data.data.cart ?? null;
-}
-
-export function useUserCart(options?: { enabled?: boolean }) {
-  return useQuery<Cart | null, Error>({
-    queryKey: CART_QUERY_KEY,
-    queryFn: fetchUserCart,
-    enabled: options?.enabled ?? true,
-    staleTime: 1000 * 60,
-  });
 }
 
 export function useUpdateCartQuantity() {

@@ -26,7 +26,7 @@ function CheckoutSummary({
     (total, item) => total + item.activePrice * item.quantity,
     0,
   );
-  
+
   const { targetStore } = useUserAuthStore();
   const storeId = targetStore?.id;
 
@@ -48,10 +48,8 @@ function CheckoutSummary({
     deliveryDiscount = deliveryVoucher.discount;
   }
 
-  // Hook mutation
   const { mutateAsync, isPending } = useCreateTransactionMutation();
-  
-  // Fungsi untuk buat transaksi
+
   const createTransaction = useCallback(async () => {
     if (!targetStore?.id) {
       toast.error("Store is not available.");

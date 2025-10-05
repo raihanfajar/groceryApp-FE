@@ -2,7 +2,7 @@ export type Transaction = {
   id: string;
   userId: string;
   storeId: string;
-  status: "waiting_payment" | "paid" | "shipped" | "completed" | "cancelled"; // sesuaikan dengan enum OrderStatus
+  status: "waiting_payment" | "paid" | "shipped" | "completed" | "cancelled";
   totalProductPrice: number;
   discountedProductPrice: number;
   finalProductPrice: number;

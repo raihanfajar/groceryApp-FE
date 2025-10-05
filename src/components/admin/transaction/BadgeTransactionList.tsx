@@ -1,36 +1,33 @@
-import { Badge } from "@/components/ui/badge";
+import { TransactionFinal } from "@/types/transaction/FinalTypes";
 import { cn } from "@/lib/utils";
+type OrderStatus = TransactionFinal["status"];
 
-type Status =
-  | "waiting_payment"
-  | "waiting_confirmation"
-  | "on_process"
-  | "shipped"
-  | "completed"
-  | "cancelled";
+type Props = {
+  status: OrderStatus;
+};
 
-interface TransactionStatusBadgeProps {
-  status: Status;
-}
+const statusStyles: Record<OrderStatus, string> = {
+  waiting_payment: "bg-yellow-100 text-yellow-800",
+  waiting_confirmation: "bg-blue-100 text-blue-800",
+  on_process: "bg-indigo-100 text-indigo-800",
+  shipped: "bg-purple-100 text-purple-800",
+  completed: "bg-green-100 text-green-800",
+  cancelled: "bg-red-100 text-red-800",
+};
 
-export function TransactionStatusBadge({
-  status,
-}: TransactionStatusBadgeProps) {
-  const statusStyles: Record<Status, string> = {
-    waiting_payment: "bg-yellow-100 text-yellow-800 border-yellow-300",
-    waiting_confirmation: "bg-blue-100 text-blue-800 border-blue-300",
-    on_process: "bg-indigo-100 text-indigo-800 border-indigo-300",
-    shipped: "bg-purple-100 text-purple-800 border-purple-300",
-    completed: "bg-green-100 text-green-800 border-green-300",
-    cancelled: "bg-red-100 text-red-800 border-red-300",
-  };
+export default function TransactionStatusBadge({ status }: Props) {
+  const formattedStatus = status
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (l) => l.toUpperCase());
 
   return (
-    <Badge
-      variant="outline"
-      className={cn("capitalize", statusStyles[status] || "bg-gray-100")}
+    <span
+      className={cn(
+        "inline-flex rounded-full px-2 text-xs leading-5 font-semibold",
+        statusStyles[status],
+      )}
     >
-      {status.replace(/_/g, " ")}
-    </Badge>
+      {formattedStatus}
+    </span>
   );
 }

@@ -17,15 +17,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { TransactionStatusBadge } from "./BadgeTransactionList";
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
+import formatCurrency from "@/utils/FormatCurrency";
+import TransactionStatusBadge from "./BadgeTransactionList";
 
 const TransactionItemsList = ({
   items,
@@ -123,7 +116,7 @@ export function TransactionTable({
             {transactions.map((trx) => (
               <tr key={trx.id} className="border-b">
                 <td className="p-4 align-top">
-                  <TransactionStatusBadge status={trx.status as any} />
+                  <TransactionStatusBadge status={trx.status} />
                 </td>
                 <td className="p-4 align-top">
                   <p className="line-clamp-1 font-mono break-words">{trx.id}</p>
@@ -154,7 +147,7 @@ export function TransactionTable({
                 <p className="line-clamp-1 font-mono text-xs break-words">
                   {trx.id}
                 </p>
-                <TransactionStatusBadge status={trx.status as any} />
+                <TransactionStatusBadge status={trx.status} />
               </div>
               <Dialog>
                 <DialogTrigger asChild>

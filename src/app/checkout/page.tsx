@@ -25,7 +25,6 @@ const Page = () => {
 
   const { data: cartData, isLoading: isLoadingCart } = useUserCartQuery();
 
-
   useEffect(() => {
     if (!addressData || addressData.length === 0) return;
     const defaultAddress =
@@ -57,8 +56,6 @@ const Page = () => {
       addressList = [addressData];
     }
   }
-
-
 
   if (isLoadingAddress || isLoadingCart) {
     return (

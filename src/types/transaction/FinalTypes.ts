@@ -39,14 +39,20 @@ export type TransactionProductFinal = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-  product: ProductFinal; 
+  product: ProductFinal;
 };
 
 export type TransactionFinal = {
   id: string;
   userId: string;
   storeId: string;
-  status: "waiting_payment" | "paid" | "shipped" | "completed" | "cancelled"; // sesuaikan dengan enum OrderStatus
+  status:
+    | "waiting_payment"
+    | "waiting_confirmation" 
+    | "on_process" 
+    | "shipped"
+    | "completed"
+    | "cancelled";
   totalProductPrice: number;
   discountedProductPrice: number;
   finalProductPrice: number;
@@ -67,14 +73,14 @@ export type TransactionFinal = {
   codeVoucherProduct?: string | null;
   codeVoucherDelivery?: string | null;
   paymentProof?: string | null;
-  paymentMethod?: string | null; // contoh: "gopay" | "bca_va" | "manual_transfer"
+  paymentMethod?: string | null;
   snapToken?: string | null;
   snapRedirectUrl?: string | null;
-  paidAt?: string | null; // ISO Date string
-  expiryAt?: string | null; // ISO Date string
-  createdAt: string; // ISO Date string
-  updatedAt: string; // ISO Date string
-  deletedAt?: string | null; // ISO Date string
+  paidAt?: string | null;
+  expiryAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
   products?: TransactionProductFinal[];
 };
 
@@ -85,4 +91,9 @@ export type QueryParams = {
   orderId?: string;
   startDate?: string;
   endDate?: string;
+};
+
+export type getAllStoreTypes = {
+  id: string;
+  name: string;
 };

@@ -31,7 +31,6 @@ export default function LayoutWrapper({
     "/verify-user-email",
     "/reset-password-user",
     "/login-success",
-    "/ip-testing",
   ];
 
   //! HIDE FOOTER PADA ROUTE DAN LANJUTAN-NYA
@@ -39,8 +38,7 @@ export default function LayoutWrapper({
     "/verify-user-email",
     "/reset-password-user",
     "/login-success",
-    "/map-testing",
-    // "/ip-testing",
+    "/admin"
   ];
 
   const shouldHideNav = hideLayoutNavOn.some((route) =>

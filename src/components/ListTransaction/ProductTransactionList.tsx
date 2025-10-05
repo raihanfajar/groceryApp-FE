@@ -11,7 +11,7 @@ function ProductTransactionList({ item }: { item: TransactionProductFinal }) {
     <>
       {/* Desktop View */}
       <div className="mt-3 hidden items-center border-b bg-white text-gray-800 lg:flex">
-        <div className="flex w-5/12 items-center gap-6">
+        <div className="flex w-5/12 items-center gap-6 pb-3">
           <div className="avatar">
             <div className="mask mask-squircle h-16 w-16">
               <Image

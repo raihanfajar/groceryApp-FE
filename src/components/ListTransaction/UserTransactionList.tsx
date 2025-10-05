@@ -6,6 +6,7 @@ import CompleteTransactionAction from "./CompleteTransactionAction";
 import formatCurrency from "@/utils/FormatCurrency";
 import { useRouter } from "next/navigation";
 import { TransactionFinal } from "@/types/transaction/FinalTypes";
+import { formatDateToIndonesian } from "@/utils/FormatDate";
 
 type UserTransactionListProps = {
   transaction: TransactionFinal;
@@ -29,6 +30,11 @@ function UserTransactionList({ transaction }: UserTransactionListProps) {
     <>
       <div className="mt-2 h-auto w-full rounded-md border border-gray-600">
         <div className="p-4">
+          <div className="border-b pb-3 text-sm">
+            Transaction Id : {transaction.id}
+            <br />
+            {formatDateToIndonesian(transaction.createdAt)}
+          </div>
           <div
             className="cursor-pointer"
             onClick={() => router.push(`/transaction/${transaction.id}`)}

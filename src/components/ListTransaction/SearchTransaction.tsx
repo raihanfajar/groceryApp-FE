@@ -22,6 +22,9 @@ export default function SearchTransaction({
   const debouncedValues = useDebounce(values, debounceMs);
   const isInitialMount = useRef(true);
 
+  const startDateRef = useRef<HTMLInputElement>(null);
+  const endDateRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     setValues(params);
   }, [params]);
@@ -50,32 +53,42 @@ export default function SearchTransaction({
             type="text"
             value={values.orderId ?? ""}
             onChange={(e) => handleChange("orderId", e.target.value)}
-            className="w-full border-b-2 px-2 py-1 focus:border-blue-500 focus:outline-none"
+            className="w-full border-b-2 bg-transparent px-2 py-1 focus:border-blue-500 focus:outline-none"
             placeholder="Enter order id..."
           />
         </div>
+
         {/* Start Date Input */}
-        <div className="form-control w-full rounded-md border p-4 shadow-xs">
-          <label className="label pb-0">
+        <div
+          className="form-control w-full cursor-pointer rounded-md border p-4 shadow-xs"
+          onClick={() => startDateRef.current?.showPicker()}
+        >
+          <label className="label cursor-pointer pb-0">
             <span className="label-text">Start date</span>
           </label>
           <input
+            ref={startDateRef}
             type="date"
             value={values.startDate ?? ""}
             onChange={(e) => handleChange("startDate", e.target.value)}
-            className="w-full cursor-pointer border-b-2 px-2 py-1 focus:border-blue-500 focus:outline-none"
+            className="w-full border-b-2 bg-transparent px-2 py-1 focus:border-blue-500 focus:outline-none"
           />
         </div>
+
         {/* End Date Input */}
-        <div className="form-control w-full rounded-md border p-4 shadow-xs">
-          <label className="label pb-0">
+        <div
+          className="form-control w-full cursor-pointer rounded-md border p-4 shadow-xs"
+          onClick={() => endDateRef.current?.showPicker()}
+        >
+          <label className="label cursor-pointer pb-0">
             <span className="label-text">End date</span>
           </label>
           <input
+            ref={endDateRef}
             type="date"
             value={values.endDate ?? ""}
             onChange={(e) => handleChange("endDate", e.target.value)}
-            className="w-full cursor-pointer border-b-2 px-2 py-1 focus:border-blue-500 focus:outline-none"
+            className="w-full border-b-2 bg-transparent px-2 py-1 focus:border-blue-500 focus:outline-none"
           />
         </div>
       </div>

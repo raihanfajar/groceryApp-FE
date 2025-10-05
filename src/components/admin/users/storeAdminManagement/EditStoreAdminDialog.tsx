@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { StoreAdmin } from "./typesAndInterfaces";
+import { StoreAdmin } from "../typesAndInterfaces";
 
 interface EditStoreAdminDialogProps {
   open: boolean;
@@ -40,17 +40,23 @@ export function EditStoreAdminDialog({
   editingStoreAdmin,
 }: EditStoreAdminDialogProps) {
   if (!editingStoreAdmin) return null; // don't render if nothing selected
+  const hasChanges =
+    formData.name !== editingStoreAdmin.name ||
+    formData.email !== editingStoreAdmin.email ||
+    formData.storeId !== (editingStoreAdmin.store?.id ?? "");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Store Admin</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="edit-name">Name</Label>
+            <Label className="text-sm font-extrabold text-green-700">
+              Name
+            </Label>
             <Input
               id="edit-name"
               value={formData.name}
@@ -58,11 +64,14 @@ export function EditStoreAdminDialog({
                 setFormData({ ...formData, name: e.target.value })
               }
               required
+              className="border-black bg-white pr-10 font-semibold tracking-widest shadow-sm focus:!ring-2 focus:!ring-green-700"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-email">Email</Label>
+            <Label className="text-sm font-extrabold text-green-700">
+              Email
+            </Label>
             <Input
               id="edit-email"
               type="email"
@@ -71,18 +80,21 @@ export function EditStoreAdminDialog({
                 setFormData({ ...formData, email: e.target.value })
               }
               required
+              className="border-black bg-white pr-10 font-semibold tracking-widest shadow-sm focus:!ring-2 focus:!ring-green-700"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-store">Store</Label>
+            <Label className="text-sm font-extrabold text-green-700">
+              Store
+            </Label>
             <Select
               value={formData.storeId}
               onValueChange={(value) =>
                 setFormData({ ...formData, storeId: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-sm border-black bg-white font-semibold tracking-widest shadow-sm focus:!ring-2 focus:!ring-green-700">
                 <SelectValue placeholder="Select a store" />
               </SelectTrigger>
               <SelectContent>
@@ -103,7 +115,11 @@ export function EditStoreAdminDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="bg-green-700 hover:bg-black"
+              disabled={isSubmitting || !hasChanges}
+            >
               {isSubmitting ? "Updating..." : "Update Store Admin"}
             </Button>
           </DialogFooter>

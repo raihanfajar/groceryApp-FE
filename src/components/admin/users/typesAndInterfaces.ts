@@ -1,3 +1,53 @@
+// !STORE MANAGEMENT
+export interface DetailedStoreInfo {
+    id: string;
+    provinceId: number;
+    province: string;
+    cityId: number;
+    city: string;
+    district: string;
+    districtId: number;
+    address: string;
+    name: string;
+    lat: string;
+    lng: string;
+    radiusKm: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+}
+
+export interface storeRequest {
+    name: string;
+    province: string;
+    city: string;
+    district: string;
+    lat: string;
+    lng: string;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+}
+
+export interface storeResponse {
+    status: string;
+    message: string;
+    data: DetailedStoreInfo[];
+}
+
+export interface StoreFormData {
+    name: string;
+    city: string;
+    province: string;
+    district: string;
+    lat: string;
+    lng: string;
+    provinceId: string;
+    cityId: string;
+    districtId: string;
+}
+
+// !STORE ADMIN MANAGEMENT
 export interface Store {
     id: string;
     name: string;

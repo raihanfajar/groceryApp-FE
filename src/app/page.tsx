@@ -48,11 +48,11 @@ export default function HomePage() {
             {targetStore.name}
           </h1>
           <p className="text-sm text-gray-500">
-            All products available at your selected store
+            All products available at this store
           </p>
         </div>
       )}
-      {!cardList ? (
+      {!cardList || cardList.length === 0 ? (
         <section className="mx-auto flex h-[calc(100vh-105px)] max-w-[1280px] flex-col items-center justify-center px-4 py-8">
           <Image
             src="/no-product-found.jpeg"

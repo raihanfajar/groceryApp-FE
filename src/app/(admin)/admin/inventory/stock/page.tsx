@@ -2,17 +2,20 @@
 
 // ! ERROR ketika npm run build, disuruh wrap suspense, jadi beginiin (ghazi)
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import StockManagementHeader from "@/components/admin/inventory/StockManagementHeader";
 import StockFiltersComponent from "@/components/admin/inventory/StockFiltersComponent";
 import StockProductCard from "@/components/admin/inventory/StockProductCard";
+import StockProductListItem from "@/components/admin/inventory/StockProductListItem";
 import StockEmptyState from "@/components/admin/inventory/StockEmptyState";
 import StockPagination from "@/components/admin/inventory/StockPagination";
 import { useStockManagement } from "@/hooks/useStockManagement";
 import { AdminProduct } from "@/types/admin/product";
 
 function StockManagementPage() {
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  
   const {
     products,
     categories,
@@ -48,6 +51,8 @@ function StockManagementPage() {
           isSuper={admin.isSuper || false}
           storeName={admin.store?.name}
           stats={stats}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
 
         <StockFiltersComponent
@@ -67,10 +72,21 @@ function StockManagementPage() {
           </div>
         ) : products.length === 0 ? (
           <StockEmptyState />
-        ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        ) : viewMode === "grid" ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {products.map((product: AdminProduct) => (
               <StockProductCard
+                key={product.id}
+                product={product}
+                selectedStoreId={filters.storeId || admin.store?.id}
+                onUpdateStock={handleUpdateStock}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {products.map((product: AdminProduct) => (
+              <StockProductListItem
                 key={product.id}
                 product={product}
                 selectedStoreId={filters.storeId || admin.store?.id}

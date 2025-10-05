@@ -59,7 +59,6 @@ export const useUnifiedLogin = () => {
         router.push(returnUrl);
       } else if (result.type === "admin") {
         const data = result.data as AdminAuthResponse;
-        console.log("Admin login successful:", data);
         toast.success(data.message);
 
         // Set the admin auth to global state

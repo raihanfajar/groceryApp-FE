@@ -22,7 +22,6 @@ export const useAdminLogin = () => {
       return data;
     },
     onSuccess: (data: AdminAuthResponse) => {
-      console.log("Admin login successful:", data);
       toast.success(data.message);
 
       // Set the admin auth to global state

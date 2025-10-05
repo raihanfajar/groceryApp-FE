@@ -1,24 +1,34 @@
 import { baseError } from "@/components/userAuth/typesAndInterfaces";
-import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { ApiResponse } from "@/types/apiResponse";
 import {
+  getAllStoreTypes,
   PaginatedTransactionsFinal,
   QueryParams,
 } from "@/types/transaction/FinalTypes";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 import { Transaction } from "@tiptap/pm/state";
 import { toast } from "react-toastify";
 
+// 1. Definisikan satu query key utama untuk semua data transaksi
+export const TRANSACTIONS_QUERY_KEY = ["transactions"];
+
 // ------------------ GET: Store (Admin) Transactions ------------------
 export function useStoreTransactionsQuery(params?: QueryParams) {
-  const { accessToken } = useUserAuthStore();
-  const queryKey = ["storeTransactions", params];
+  const { admin } = useAdminAuthStore();
+  const token = admin?.accessToken;
+  const queryKey = [...TRANSACTIONS_QUERY_KEY, "list", params];
 
   return useQuery<PaginatedTransactionsFinal | null>({
     queryKey,
     queryFn: async () => {
-      if (!accessToken) return null;
+      if (!token) return null;
 
       const validParams = Object.fromEntries(
         Object.entries(params ?? {}).filter(([, value]) => value),
@@ -31,11 +41,12 @@ export function useStoreTransactionsQuery(params?: QueryParams) {
       const response = await axiosInstance.get<
         ApiResponse<PaginatedTransactionsFinal>
       >(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       return response.data.data ?? null;
     },
+    enabled: !!token,
   });
 }
 
@@ -43,65 +54,49 @@ export function useStoreTransactionsQuery(params?: QueryParams) {
 export function useUserTransactionDetailAdminQuery(
   transactionId?: string | null,
 ) {
-  const { accessToken } = useUserAuthStore();
-  const queryKey = ["adminTransactionDetail", transactionId];
+  const { admin } = useAdminAuthStore();
+  const token = admin?.accessToken;
+  const queryKey = [...TRANSACTIONS_QUERY_KEY, "detail", transactionId];
 
   return useQuery<Transaction | null>({
     queryKey,
     queryFn: async () => {
-      if (!accessToken) return null;
-      if (!transactionId) return null;
+      if (!token || !transactionId) return null;
 
       const url = `/transaction/admin-detail?transactionId=${encodeURIComponent(transactionId)}`;
       const response = await axiosInstance.get<
         ApiResponse<{ transaction: Transaction }>
       >(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       return response.data.data?.transaction ?? null;
     },
-    enabled: Boolean(accessToken && transactionId),
+    enabled: !!(token && transactionId),
   });
 }
 
 // ------------------ PUT: Confirming Order (Admin) ------------------
-export function useAdminConfirmOrderMutation(transactionId?: string) {
-  const { accessToken } = useUserAuthStore();
+export function useAdminConfirmOrderMutation() {
+  const { admin } = useAdminAuthStore();
+  const token = admin?.accessToken;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (transactionId: string) => {
       if (!transactionId) throw new Error("Transaction ID is missing");
-      if (!accessToken) throw new Error("Access token is missing");
+      if (!token) throw new Error("Access token is missing");
 
       const url = `/transaction/admin/confirm?transaction=${encodeURIComponent(transactionId)}`;
       const response = await axiosInstance.put<
         ApiResponse<{ transaction: Transaction }>
-      >(
-        url,
-        {},
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
+      >(url, {}, { headers: { Authorization: `Bearer ${token}` } });
 
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(data?.message ?? "Order confirmed");
-      queryClient.invalidateQueries({
-        queryKey: ["adminTransactionDetail", transactionId],
-        exact: true,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["storeTransactions"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["userTransactions"],
-        exact: false,
-      });
+      queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
     },
     onError: (err: unknown) => {
       const customError = err as baseError;
@@ -113,42 +108,26 @@ export function useAdminConfirmOrderMutation(transactionId?: string) {
 }
 
 // ------------------ PUT: Cancel Order Payment (Admin) ------------------
-export function useAdminCancelOrderPaymentMutation(transactionId?: string) {
-  const { accessToken } = useUserAuthStore();
+export function useAdminCancelOrderPaymentMutation() {
+  const { admin } = useAdminAuthStore();
+  const token = admin?.accessToken;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (transactionId: string) => {
       if (!transactionId) throw new Error("Transaction ID is missing");
-      if (!accessToken) throw new Error("Access token is missing");
+      if (!token) throw new Error("Access token is missing");
 
       const url = `/transaction/admin/cancel-payment?transaction=${encodeURIComponent(transactionId)}`;
       const response = await axiosInstance.put<
         ApiResponse<{ transaction: Transaction }>
-      >(
-        url,
-        {},
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
+      >(url, {}, { headers: { Authorization: `Bearer ${token}` } });
 
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(data?.message ?? "Payment canceled");
-      queryClient.invalidateQueries({
-        queryKey: ["adminTransactionDetail", transactionId],
-        exact: true,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["storeTransactions"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["userTransactions"],
-        exact: false,
-      });
+      queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
     },
     onError: (err: unknown) => {
       const customError = err as baseError;
@@ -160,42 +139,26 @@ export function useAdminCancelOrderPaymentMutation(transactionId?: string) {
 }
 
 // ------------------ PUT: Shipping / Shipped Transaction (Admin) ------------------
-export function useAdminShipTransactionMutation(transactionId?: string) {
-  const { accessToken } = useUserAuthStore();
+export function useAdminShipTransactionMutation() {
+  const { admin } = useAdminAuthStore();
+  const token = admin?.accessToken;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (transactionId: string) => {
       if (!transactionId) throw new Error("Transaction ID is missing");
-      if (!accessToken) throw new Error("Access token is missing");
+      if (!token) throw new Error("Access token is missing");
 
       const url = `/transaction/admin/shipping?transaction=${encodeURIComponent(transactionId)}`;
       const response = await axiosInstance.put<
         ApiResponse<{ transaction: Transaction }>
-      >(
-        url,
-        {},
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
+      >(url, {}, { headers: { Authorization: `Bearer ${token}` } });
 
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(data?.message ?? "Transaction marked as shipped");
-      queryClient.invalidateQueries({
-        queryKey: ["adminTransactionDetail", transactionId],
-        exact: true,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["storeTransactions"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["userTransactions"],
-        exact: false,
-      });
+      queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
     },
     onError: (err: unknown) => {
       const customError = err as baseError;
@@ -207,42 +170,26 @@ export function useAdminShipTransactionMutation(transactionId?: string) {
 }
 
 // ------------------ PUT: Cancel Store Transaction (Admin) ------------------
-export function useAdminCancelStoreTransactionMutation(transactionId?: string) {
-  const { accessToken } = useUserAuthStore();
+export function useAdminCancelStoreTransactionMutation() {
+  const { admin } = useAdminAuthStore();
+  const token = admin?.accessToken;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (transactionId: string) => {
       if (!transactionId) throw new Error("Transaction ID is missing");
-      if (!accessToken) throw new Error("Access token is missing");
+      if (!token) throw new Error("Access token is missing");
 
       const url = `/transaction/admin/cancel?transaction=${encodeURIComponent(transactionId)}`;
       const response = await axiosInstance.put<
         ApiResponse<{ transaction: Transaction }>
-      >(
-        url,
-        {},
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
+      >(url, {}, { headers: { Authorization: `Bearer ${token}` } });
 
       return response.data;
     },
     onSuccess: (data) => {
       toast.success(data?.message ?? "Store transaction canceled");
-      queryClient.invalidateQueries({
-        queryKey: ["adminTransactionDetail", transactionId],
-        exact: true,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["storeTransactions"],
-        exact: false,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["userTransactions"],
-        exact: false,
-      });
+      queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
     },
     onError: (err: unknown) => {
       const customError = err as baseError;
@@ -250,5 +197,41 @@ export function useAdminCancelStoreTransactionMutation(transactionId?: string) {
         customError?.response?.data?.message || "Something went wrong";
       toast.error(errorMessage);
     },
+  });
+}
+
+// ------------------ Get: All Store List (Admin) ------------------
+type QueryFnData = ApiResponse<{ storeList: getAllStoreTypes[] }> | null;
+type SelectedData = getAllStoreTypes[];
+
+type StoreListQueryOptions = Omit<
+  UseQueryOptions<QueryFnData, Error, SelectedData>,
+  "queryKey" | "queryFn"
+>;
+
+export function useStoreListQuery(options?: StoreListQueryOptions) {
+  const { admin } = useAdminAuthStore();
+  const token = admin?.accessToken;
+  const queryKey = [...TRANSACTIONS_QUERY_KEY, "store"];
+
+  const { enabled, ...restOptions } = options || {};
+
+  return useQuery<QueryFnData, Error, SelectedData>({
+    queryKey,
+    queryFn: async () => {
+      if (!token) return null;
+
+      const response = await axiosInstance.get<
+        ApiResponse<{ storeList: getAllStoreTypes[] }>
+      >(`/transaction/store`, { headers: { Authorization: `Bearer ${token}` } });
+      return response.data;
+    },
+    enabled: !!token && (enabled ?? true),
+
+    select: (data) => {
+      return data?.data?.storeList ?? [];
+    },
+
+    ...restOptions,
   });
 }

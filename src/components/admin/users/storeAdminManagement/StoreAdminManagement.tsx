@@ -9,13 +9,16 @@ import { useUpdateStoreAdmin } from "@/hooks/admin/store-admin-management/useUpd
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { PaginationFooter } from "../PaginationFooter";
+import { CreateStoreAdminData, StoreAdmin } from "../typesAndInterfaces";
 import { AddStoreAdminDialog } from "./AddStoreAdminDialog";
 import { EditStoreAdminDialog } from "./EditStoreAdminDialog";
 import { StoreAdminTable } from "./StoreAdminTable";
-import { CreateStoreAdminData, StoreAdmin } from "./typesAndInterfaces";
 
 export default function StoreAdminManagement() {
+  const PAGE_SIZE = 5;
+  const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddStoreAdminDialogOpen, setIsAddStoreAdminDialogOpen] = useState(false); //prettier-ignore
   const [isEditStoreAdminDialogOpen, setIsEditStoreAdminDialogOpen] = useState(false); //prettier-ignore
@@ -42,7 +45,7 @@ export default function StoreAdminManagement() {
   // !Fetch store admins
   const { data: storeAdmins, isLoading: isLoadingAdmins } = useGetStoreAdmin(admin?.accessToken); //prettier-ignore
   // !Fetch stores for dropdown
-  const { data: stores } = useGetStoreForDropdown(admin?.accessToken); //prettire-ignore
+  const { data: stores } = useGetStoreForDropdown(admin?.accessToken);
   // !Add store admin mutation
   const { mutate: addStoreAdmin, isPending: isAddingStoreAdmin } = useAddStoreAdmin(admin?.accessToken); //prettier-ignore
   // !Delete store admin mutation
@@ -103,8 +106,18 @@ export default function StoreAdminManagement() {
       admin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       admin.store?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      admin.store?.province.toLowerCase().includes(searchTerm.toLowerCase()),
+      admin.store?.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      admin?.store?.city.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const total = filteredAdmins.length;
+  const pageCount = Math.ceil(total / PAGE_SIZE);
+  const paginatedAdmins = filteredAdmins.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE,
+  );
+
+  useEffect(() => setPage(1), [searchTerm]);
 
   if (isLoadingAdmins) {
     return (
@@ -149,13 +162,23 @@ export default function StoreAdminManagement() {
             Store Administrators ({filteredAdmins?.length || 0})
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          {filteredAdmins?.length ? (
-            <StoreAdminTable
-              admins={filteredAdmins}
-              onEdit={handleEditAdmin}
-              onDelete={handleDeleteAdmin}
-            />
+        <CardContent className="p-0">
+          {paginatedAdmins.length ? (
+            <>
+              <StoreAdminTable
+                admins={paginatedAdmins}
+                onEdit={handleEditAdmin}
+                onDelete={handleDeleteAdmin}
+              />
+              {paginatedAdmins.length > 0 && (
+                <PaginationFooter
+                  page={page}
+                  pageCount={pageCount}
+                  onPrev={() => setPage((p) => Math.max(1, p - 1))}
+                  onNext={() => setPage((p) => Math.min(pageCount, p + 1))}
+                />
+              )}
+            </>
           ) : (
             <div className="py-8 text-center text-sm text-gray-500">
               No store admins. Get started by creating one.

@@ -18,8 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
-import { CreateStoreAdminData } from "./typesAndInterfaces";
+import { Eye, EyeOff, Plus } from "lucide-react";
+import { CreateStoreAdminData } from "../typesAndInterfaces";
+import { useState } from "react";
 
 interface AddStoreAdminDialogProps {
   open: boolean;
@@ -40,10 +41,12 @@ export function AddStoreAdminDialog({
   onSubmit,
   isSubmitting,
 }: AddStoreAdminDialogProps) {
+  const [show, setShow] = useState(false);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button className="flex items-center space-x-2">
+        <Button className="flex items-center space-x-2 bg-green-700 hover:bg-black">
           <Plus className="h-4 w-4" />
           <span>Add Store Admin</span>
         </Button>
@@ -59,19 +62,24 @@ export function AddStoreAdminDialog({
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label className="text-sm font-extrabold text-green-700">
+                Name
+              </Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                placeholder="Enter full name"
+                placeholder="Enter store admin name"
                 required
+                className="border-black bg-white font-semibold tracking-widest shadow-sm focus:!ring-2 focus:!ring-green-700"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label className="text-sm font-extrabold text-green-700">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -81,30 +89,48 @@ export function AddStoreAdminDialog({
                 }
                 placeholder="Enter email address"
                 required
+                className="border-black bg-white font-semibold tracking-widest shadow-sm focus:!ring-2 focus:!ring-green-700"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                placeholder="Enter password"
-                required
-              />
+              <Label className="text-sm font-extrabold text-green-700">
+                Password
+              </Label>
+              {/* relative wrapper */}
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={show ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder="Enter password"
+                  required
+                  className="border-black bg-white pr-10 font-semibold tracking-widest shadow-sm focus:!ring-2 focus:!ring-green-700"
+                />
+                <button
+                  tabIndex={-1}
+                  type="button"
+                  aria-label={show ? "Hide password" : "Show password"}
+                  onClick={() => setShow(!show)}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                >
+                  {show ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="store">Assign Store</Label>
+              <Label className="text-sm font-extrabold text-green-700">
+                Assign Store
+              </Label>
               <Select
                 value={formData.storeId}
                 onValueChange={(value) =>
                   setFormData({ ...formData, storeId: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-sm border-black bg-white font-semibold tracking-widest shadow-sm focus:!ring-2 focus:!ring-green-700">
                   <SelectValue placeholder="Select a store" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,7 +152,11 @@ export function AddStoreAdminDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="bg-green-700 hover:bg-black"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Creating..." : "Add Store Admin"}
             </Button>
           </DialogFooter>

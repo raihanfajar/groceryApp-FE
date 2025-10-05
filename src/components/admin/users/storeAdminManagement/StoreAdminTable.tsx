@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Mail, MapPin, Pencil, Trash2 } from "lucide-react";
-import { StoreAdmin } from "./typesAndInterfaces";
+import { StoreAdmin } from "../typesAndInterfaces";
 
 interface StoreAdminTableProps {
   admins: StoreAdmin[];

@@ -6,10 +6,10 @@ import PromoCarousel from "@/components/homePage/promoCarousel/PromoCarousel";
 
 // Import data dengan path yang sudah dikoreksi
 
-import { useUserAuthStore } from "@/store/useUserAuthStore";
-import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
-import { carouselItems } from "@/components/homePage/mapData";
 import CustomBorder from "@/components/homePage/CustomBorder";
+import { carouselItems } from "@/components/homePage/mapData";
+import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Image from "next/image";
 
 export default function HomePage() {

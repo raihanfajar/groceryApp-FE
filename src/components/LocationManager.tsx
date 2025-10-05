@@ -47,7 +47,7 @@ export default function LocationManager() {
     if (!isClient || typeof navigator === "undefined" || defaultLocation)
       return;
 
-    // nothing to do if we already have coords
+    // !nothing to do if we already have coords
     if (actualLat && actualLon) {
       setActualLocation(actualLat, actualLon);
       return;
@@ -55,7 +55,7 @@ export default function LocationManager() {
 
     let watchId: number | null = null;
 
-    // 1. ask permission first
+    // 1. ask permission
     navigator.permissions.query({ name: "geolocation" }).then((res) => {
       setPermission(res.state as PermissionState);
       if (res.state === "denied") {
@@ -102,7 +102,7 @@ export default function LocationManager() {
       queryKey: ["geoInfo", dynamicLat, dynamicLon],
     });
     queryClient.invalidateQueries({
-      queryKey: ["nearesStore", dynamicLat, dynamicLon],
+      queryKey: ["nearestStore", dynamicLat, dynamicLon],
     });
   }, [dynamicLat, dynamicLon, queryClient]);
 
@@ -113,7 +113,7 @@ export default function LocationManager() {
       queryKey: ["geoInfo", actualLat, actualLon],
     });
     queryClient.invalidateQueries({
-      queryKey: ["nearesStore", actualLat, actualLon],
+      queryKey: ["nearestStore", actualLat, actualLon],
     });
   }, [actualLat, actualLon, queryClient]); // ✅ simple, exhaustive
 

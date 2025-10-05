@@ -11,9 +11,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, UserCog, Shield } from "lucide-react";
-import StoreAdminManagement from "@/components/admin/users/StoreAdminManagement";
+import { Users, UserCog, Shield, Store } from "lucide-react";
+import StoreAdminManagement from "@/components/admin/users/storeAdminManagement/StoreAdminManagement";
 import UserDataManagement from "@/components/admin/users/UserDataManagement";
+import StoreManagement from "@/components/admin/users/storeManagement/StoreManagement";
 
 export default function UsersPage() {
   const { admin, isAuthenticated } = useAdminAuthStore();
@@ -59,7 +60,11 @@ export default function UsersPage() {
 
         {/* Management Tabs */}
         <Tabs defaultValue="store-admins" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="stores" className="flex items-center space-x-2">
+              <Store className="h-4 w-4" />
+              <span>Stores</span>
+            </TabsTrigger>
             <TabsTrigger
               value="store-admins"
               className="flex items-center space-x-2"
@@ -72,6 +77,20 @@ export default function UsersPage() {
               <span>All Users</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="stores">
+            <Card>
+              <CardHeader>
+                <CardTitle>Store</CardTitle>
+                <CardDescription>
+                  Create, edit, and manage stores
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <StoreManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="store-admins">
             <Card>

@@ -1,5 +1,5 @@
 "use client";
-import MapLeaflet from "@/components/homePage/location/MapLeaflet";
+import MapLeafletNoSSR from "./MapLeafletNoSSR";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,6 +23,7 @@ interface Props {
   setFormData: (data: StoreFormData) => void;
   onSubmit: (e: React.FormEvent) => void;
   isAdding?: boolean;
+  onPin: (lat: number, lng: number) => void;
 }
 
 export function AddStoreDialog({
@@ -32,13 +33,12 @@ export function AddStoreDialog({
   setFormData,
   onSubmit,
   isAdding,
+  onPin,
 }: Props) {
-  /* map pin -> lat/lng */
-  const handleMapPin = (lat: number, lng: number) => {
-    setFormData({ ...formData, lat: String(lat), lng: String(lng) });
-  };
+  // !Map pin handler (ganti aja namanya biar enak)
+  const handleMapPin = onPin;
 
-  /* single helper that writes BOTH id & name */
+  // !Rajong cascade handler
   const handleRajongChange = (
     level: "province" | "city" | "district",
     id: string,
@@ -87,7 +87,7 @@ export function AddStoreDialog({
               />
             </div>
 
-            {/* Rajong Cascade (id + name) */}
+            {/* Rajong Cascade */}
             <RajongSelectGroupWithNames
               provinceId={formData.provinceId}
               cityId={formData.cityId}
@@ -122,7 +122,7 @@ export function AddStoreDialog({
             </div>
 
             {/* Map */}
-            <MapLeaflet onLocationChange={handleMapPin} />
+            <MapLeafletNoSSR onLocationChange={handleMapPin} />
           </div>
 
           <DialogFooter>

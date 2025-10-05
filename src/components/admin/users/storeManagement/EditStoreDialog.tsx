@@ -1,5 +1,5 @@
 "use client";
-import MapLeaflet from "@/components/homePage/location/MapLeaflet";
+import MapLeafletNoSSR from "./MapLeafletNoSSR";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,8 +18,10 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   formData: StoreFormData;
   setFormData: (data: StoreFormData) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent, storeId: string) => void;
   editingStore: DetailedStoreInfo | null;
+  isUpdating?: boolean;
+  onPin: (lat: number, lng: number) => void;
 }
 
 export function EditStoreDialog({
@@ -29,6 +31,8 @@ export function EditStoreDialog({
   setFormData,
   onSubmit,
   editingStore,
+  isUpdating,
+  onPin,
 }: Props) {
   if (!editingStore) return null;
 
@@ -42,10 +46,9 @@ export function EditStoreDialog({
     formData.lng !== String(editingStore.lng);
 
   // !Map pin handler
-  const handleMapPin = (lat: number, lng: number) => {
-    setFormData({ ...formData, lat: String(lat), lng: String(lng) });
-  };
+  const handleMapPin = onPin;
 
+  // !Rajong cascade handler
   const handleRajongChange = (
     level: "province" | "city" | "district",
     id: string,
@@ -68,7 +71,10 @@ export function EditStoreDialog({
           <DialogTitle>Edit Store</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form
+          onSubmit={(e) => onSubmit(e, editingStore!.id)}
+          className="space-y-4"
+        >
           {/* ---- store name ---- */}
           <div className="space-y-2">
             <Label className="text-sm font-extrabold text-green-700">
@@ -117,7 +123,7 @@ export function EditStoreDialog({
           </div>
 
           {/* ---- map ---- */}
-          <MapLeaflet onLocationChange={handleMapPin} />
+          <MapLeafletNoSSR onLocationChange={handleMapPin} />
 
           <DialogFooter>
             <Button
@@ -130,9 +136,9 @@ export function EditStoreDialog({
             <Button
               type="submit"
               className="bg-green-700 hover:bg-black"
-              disabled={!hasChanges}
+              disabled={!hasChanges || isUpdating}
             >
-              Update Store
+              {isUpdating ? "Updating..." : "Update Store"}
             </Button>
           </DialogFooter>
         </form>

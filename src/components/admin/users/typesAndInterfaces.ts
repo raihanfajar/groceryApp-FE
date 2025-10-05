@@ -17,7 +17,7 @@ export interface DetailedStoreInfo {
     deletedAt: string | null;
 }
 
-export interface addStoreRequest {
+export interface storeRequest {
     name: string;
     province: string;
     city: string;

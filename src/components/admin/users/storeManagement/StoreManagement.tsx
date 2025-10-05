@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAddStore } from "@/hooks/admin/store-admin-management/useAddStore";
+import { useDeleteStore } from "@/hooks/admin/store-admin-management/useDeleteStore";
 import { useGetAllStore } from "@/hooks/admin/store-admin-management/useGetAllStore";
+import { useUpdateStore } from "@/hooks/admin/store-admin-management/useUpdateStore";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { Search } from "lucide-react";
 import { useState } from "react";
@@ -37,6 +39,8 @@ export default function StoreManagement() {
   // !Hooks
   const { data: stores = [] } = useGetAllStore(admin?.accessToken);
   const { mutateAsync: addStore, isPending: isAddingStore } = useAddStore(admin?.accessToken); //prettier-ignore
+  const {mutateAsync: updateStore, isPending: isUpdatingStore} = useUpdateStore(admin?.accessToken); //prettier-ignore
+  const {mutateAsync: deleteStore} = useDeleteStore(admin?.accessToken); //prettier-ignore
 
   // !Filtration
   const filtered = stores.filter(
@@ -56,37 +60,37 @@ export default function StoreManagement() {
   // !Handlers
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("ADD store", addForm);
-    addStore(addForm);
-    setIsAddOpen(false);
-    setAddForm(formData);
-  };
-
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("EDIT store", editForm);
-    setIsEditOpen(false);
-    setEditingStore(null);
+    addStore(addForm, {
+      onSuccess: () => {
+        setIsAddOpen(false);
+        setAddForm(formData);
+      },
+    });
   };
 
   const handleEdit = (store: DetailedStoreInfo) => {
     setEditingStore(store);
-    setEditForm({
-      name: store.name,
-      province: store.province,
-      city: store.city,
-      district: store.district,
-      lat: store.lat,
-      lng: store.lng,
-      provinceId: String(store.provinceId),
-      cityId: String(store.cityId),
-      districtId: String(store.districtId),
-    });
+    setEditForm({name: store.name, province: store.province, city: store.city, district: store.district, lat: store.lat, lng: store.lng, provinceId: String(store.provinceId), cityId: String(store.cityId), districtId: String(store.districtId)}); //prettier-ignore
     setIsEditOpen(true);
   };
 
+  const handleEditSubmit = (e: React.FormEvent, storeId: string) => {
+    e.preventDefault();
+    console.log("EDIT store id:", storeId);
+    console.log("EDIT store", editForm);
+    updateStore(
+      { storeId, body: editForm },
+      {
+        onSuccess: () => {
+          setIsEditOpen(false);
+          setEditingStore(null);
+        },
+      },
+    );
+  };
+
   const handleDelete = (id: string) => {
-    if (confirm("Delete this store?")) console.log("DELETE store", id);
+    if (confirm("Delete this store?")) deleteStore(id);
   };
 
   return (
@@ -109,6 +113,13 @@ export default function StoreManagement() {
           setFormData={setAddForm}
           onSubmit={handleAddSubmit}
           isAdding={isAddingStore}
+          onPin={(lat: string | number, lng: string | number) =>
+            setAddForm((prev) => ({
+              ...prev,
+              lat: String(lat),
+              lng: String(lng),
+            }))
+          }
         />
       </div>
 
@@ -162,8 +173,16 @@ export default function StoreManagement() {
         onOpenChange={setIsEditOpen}
         formData={editForm}
         setFormData={setEditForm}
-        onSubmit={handleEditSubmit}
+        onSubmit={(e) => handleEditSubmit(e, editingStore!.id)}
         editingStore={editingStore}
+        isUpdating={isUpdatingStore}
+        onPin={(lat: string | number, lng: string | number) =>
+          setEditForm((prev) => ({
+            ...prev,
+            lat: String(lat),
+            lng: String(lng),
+          }))
+        }
       />
     </div>
   );

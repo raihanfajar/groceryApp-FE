@@ -1,7 +1,10 @@
 import { baseError } from "@/components/userAuth/typesAndInterfaces";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { ApiResponse } from "@/types/apiResponse";
-import { PaginatedTransactionsFinal, QueryParams } from "@/types/transaction/FinalTypes";
+import {
+  PaginatedTransactionsFinal,
+  QueryParams,
+} from "@/types/transaction/FinalTypes";
 import { Transaction } from "@/types/transaction/transactionTypes";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,11 +22,13 @@ interface UploadProofResponse {
   };
 }
 
+export const USER_TRANSACTION_KEY = ["userTransactions"];
+
 // Get Transaction Details
 export function useTransactionDetailsQuery(transactionId: string) {
   const { accessToken } = useUserAuthStore();
   return useQuery({
-    queryKey: ["transactionDetails", transactionId],
+    queryKey: [...USER_TRANSACTION_KEY, "detail", transactionId],
     queryFn: async () => {
       if (!transactionId) return null;
       const response = await axiosInstance.get<
@@ -145,7 +150,7 @@ export function useUploadProofOfPayment() {
     onSuccess: (response) => {
       toast.success("Proof of payment uploaded successfully!");
       queryClient.invalidateQueries({
-        queryKey: ["transactionDetails", response.data.paymentProof.id],
+        queryKey: [...USER_TRANSACTION_KEY,"transactionDetails", response.data.paymentProof.id],
       });
     },
     onError: (err: unknown) => {
@@ -168,15 +173,19 @@ export function useUserTransactionsQuery(params?: QueryParams) {
       if (!accessToken) return null;
 
       const validParams = Object.fromEntries(
-        Object.entries(params ?? {}).filter(([, value]) => value) 
+        Object.entries(params ?? {}).filter(([, value]) => value),
       );
-      const qs = new URLSearchParams(validParams as Record<string, string>).toString();
+      const qs = new URLSearchParams(
+        validParams as Record<string, string>,
+      ).toString();
       const url = `/transaction/user?${qs}`;
 
-      const response = await axiosInstance.get<ApiResponse<PaginatedTransactionsFinal>>(url, {
+      const response = await axiosInstance.get<
+        ApiResponse<PaginatedTransactionsFinal>
+      >(url, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      
+
       return response.data.data ?? null;
     },
   });

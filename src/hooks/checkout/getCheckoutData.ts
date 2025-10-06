@@ -11,12 +11,14 @@ import { axiosInstance } from "@/utils/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
+export const USER_ADDRESSES_QUERY_KEY = ["userAddresses"];
+
 // Get User Address
 export function useUserAddressesQuery() {
   const { accessToken } = useUserAuthStore();
 
   return useQuery<UserAddressInterface[]>({
-    queryKey: ["userAddresses", "userAddressList", accessToken],
+    queryKey: ["userAddresses", "userAddressList", accessToken, ...USER_ADDRESSES_QUERY_KEY],
     queryFn: async () => {
       if (!accessToken) return [];
 

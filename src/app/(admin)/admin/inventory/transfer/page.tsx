@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -55,6 +55,10 @@ export default function StockTransferPage() {
   const [quantity, setQuantity] = useState("");
   const [notes, setNotes] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Ref for dropdown click-outside detection
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Selected product details
   const [selectedProduct, setSelectedProduct] = useState<AdminProduct | null>(
@@ -99,7 +103,6 @@ export default function StockTransferPage() {
     try {
       setLoadingProducts(true);
       const response = await adminProductAPI.getProducts(admin.accessToken, {
-        search: searchQuery,
         page: 1,
         limit: 100,
       });
@@ -110,7 +113,7 @@ export default function StockTransferPage() {
     } finally {
       setLoadingProducts(false);
     }
-  }, [admin?.accessToken, searchQuery]);
+  }, [admin?.accessToken]);
 
   useEffect(() => {
     loadStores();
@@ -119,6 +122,23 @@ export default function StockTransferPage() {
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Update available stock when product or from store changes
   useEffect(() => {
@@ -187,6 +207,8 @@ export default function StockTransferPage() {
       setProductId("");
       setQuantity("");
       setNotes("");
+      setSearchQuery("");
+      setShowDropdown(false);
       setSelectedProduct(null);
       setAvailableStock(0);
 
@@ -264,7 +286,7 @@ export default function StockTransferPage() {
                         onValueChange={setFromStoreId}
                         disabled={loadingStores}
                       >
-                        <SelectTrigger id="fromStore">
+                        <SelectTrigger id="fromStore" className="w-full">
                           <SelectValue
                             placeholder={
                               loadingStores
@@ -273,14 +295,14 @@ export default function StockTransferPage() {
                             }
                           />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-w-[400px]">
                           {stores
                             .filter((store) => store.id !== toStoreId)
                             .map((store) => (
                               <SelectItem key={store.id} value={store.id}>
-                                <div className="flex items-center gap-2">
-                                  <Building2 className="h-4 w-4 text-gray-500" />
-                                  <span>
+                                <div className="flex items-center gap-2 overflow-hidden">
+                                  <Building2 className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                                  <span className="truncate">
                                     {store.name} - {store.city}
                                   </span>
                                 </div>
@@ -299,7 +321,7 @@ export default function StockTransferPage() {
                         onValueChange={setToStoreId}
                         disabled={loadingStores}
                       >
-                        <SelectTrigger id="toStore">
+                        <SelectTrigger id="toStore" className="w-full">
                           <SelectValue
                             placeholder={
                               loadingStores
@@ -308,14 +330,14 @@ export default function StockTransferPage() {
                             }
                           />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-w-[400px]">
                           {stores
                             .filter((store) => store.id !== fromStoreId)
                             .map((store) => (
                               <SelectItem key={store.id} value={store.id}>
-                                <div className="flex items-center gap-2">
-                                  <Building2 className="h-4 w-4 text-gray-500" />
-                                  <span>
+                                <div className="flex items-center gap-2 overflow-hidden">
+                                  <Building2 className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                                  <span className="truncate">
                                     {store.name} - {store.city}
                                   </span>
                                 </div>
@@ -331,75 +353,109 @@ export default function StockTransferPage() {
                     <Label htmlFor="product">
                       Product <span className="text-red-500">*</span>
                     </Label>
-                    <div className="space-y-2">
+                    <div className="relative" ref={dropdownRef}>
                       <Input
+                        id="product"
                         type="text"
-                        placeholder="Search products..."
+                        placeholder={
+                          !fromStoreId
+                            ? "Select source store first"
+                            : loadingProducts
+                              ? "Loading products..."
+                              : "Search and select product..."
+                        }
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setProductId(""); // Clear selection when typing
+                          setShowDropdown(true); // Show dropdown when typing
+                        }}
+                        onFocus={() => setShowDropdown(true)}
+                        disabled={!fromStoreId || loadingProducts}
                         className="w-full"
                       />
-                      <Select
-                        value={productId}
-                        onValueChange={setProductId}
-                        disabled={loadingProducts || !fromStoreId}
-                      >
-                        <SelectTrigger id="product">
-                          <SelectValue
-                            placeholder={
-                              !fromStoreId
-                                ? "Select source store first"
-                                : loadingProducts
-                                  ? "Loading products..."
-                                  : "Select product"
-                            }
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filteredProducts.map((product) => {
-                            const storeStock = product.storeStock?.find(
-                              (s) => s.storeId === fromStoreId,
-                            );
-                            const stock = storeStock?.stock || 0;
+                      {showDropdown && searchQuery && fromStoreId && (
+                        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-lg">
+                          {filteredProducts.length > 0 ? (
+                            filteredProducts.map((product) => {
+                              const storeStock = product.storeStock?.find(
+                                (s) => s.storeId === fromStoreId,
+                              );
+                              const stock = storeStock?.stock || 0;
+                              const isOutOfStock = stock <= 0;
 
-                            return (
-                              <SelectItem
-                                key={product.id}
-                                value={product.id}
-                                disabled={stock <= 0}
-                              >
-                                <div className="flex items-center justify-between gap-4">
-                                  <div className="flex items-center gap-2">
-                                    {product.picture1 ? (
-                                      <Image
-                                        src={product.picture1}
-                                        alt={product.name}
-                                        width={24}
-                                        height={24}
-                                        className="rounded object-cover"
-                                      />
-                                    ) : (
-                                      <Package className="h-4 w-4 text-gray-400" />
-                                    )}
-                                    <span>{product.name}</span>
+                              return (
+                                <button
+                                  key={product.id}
+                                  type="button"
+                                  disabled={isOutOfStock}
+                                  onClick={() => {
+                                    if (!isOutOfStock) {
+                                      setProductId(product.id);
+                                      setSearchQuery(product.name);
+                                      setShowDropdown(false); // Hide dropdown after selection
+                                    }
+                                  }}
+                                  className={`w-full border-b border-gray-100 px-4 py-3 text-left transition-colors last:border-b-0 ${
+                                    isOutOfStock
+                                      ? "cursor-not-allowed bg-gray-50 opacity-60"
+                                      : "hover:bg-gray-50"
+                                  } ${productId === product.id ? "bg-blue-50" : ""}`}
+                                >
+                                  <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-2">
+                                      {product.picture1 ? (
+                                        <Image
+                                          src={product.picture1}
+                                          alt={product.name}
+                                          width={32}
+                                          height={32}
+                                          className="rounded object-cover"
+                                        />
+                                      ) : (
+                                        <div className="flex h-8 w-8 items-center justify-center rounded bg-gray-100">
+                                          <Package className="h-4 w-4 text-gray-400" />
+                                        </div>
+                                      )}
+                                      <div>
+                                        <p className="text-sm font-medium text-gray-900">
+                                          {product.name}
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                          {product.category.name}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <span
+                                      className={`text-xs font-medium ${
+                                        stock <= 0
+                                          ? "text-red-600"
+                                          : stock < (storeStock?.minStock || 0)
+                                            ? "text-orange-600"
+                                            : "text-green-600"
+                                      }`}
+                                    >
+                                      {isOutOfStock
+                                        ? "Out of Stock"
+                                        : `Stock: ${stock}`}
+                                    </span>
                                   </div>
-                                  <span
-                                    className={`text-xs ${
-                                      stock <= 0
-                                        ? "text-red-600"
-                                        : stock < (storeStock?.minStock || 0)
-                                          ? "text-orange-600"
-                                          : "text-green-600"
-                                    }`}
-                                  >
-                                    Stock: {stock}
-                                  </span>
-                                </div>
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
+                                </button>
+                              );
+                            })
+                          ) : (
+                            <div className="px-4 py-8 text-center">
+                              <Package className="mx-auto h-12 w-12 text-gray-300" />
+                              <p className="mt-2 text-sm font-medium text-gray-900">
+                                No Product Found
+                              </p>
+                              <p className="mt-1 text-xs text-gray-500">
+                                Try adjusting your search query
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 

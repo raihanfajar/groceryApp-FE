@@ -54,11 +54,18 @@ export interface StockJournalEntry {
       id: string;
       name: string;
       picture1?: string;
+      category?: {
+        id: string;
+        name: string;
+      };
     };
     store: {
       id: string;
       name: string;
+      city?: string;
+      province?: string;
     };
+    minStock?: number | null;
   };
   admin: {
     id: string;
@@ -183,6 +190,11 @@ export interface LowStockAlert {
       id: string;
       name: string;
     };
+  };
+  store?: {
+    id: string;
+    name: string;
+    city: string;
   };
   createdAt: string;
   updatedAt: string;

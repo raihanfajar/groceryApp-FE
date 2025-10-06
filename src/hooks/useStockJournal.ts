@@ -39,15 +39,21 @@ export const useStockJournal = () => {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<StockJournalFilters>({
     page: 1,
-    limit: 20,
+    limit: 10,
     search: "",
     storeId: admin?.isSuper ? undefined : admin?.store?.id,
   });
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
-    limit: 20,
+    limit: 10,
     totalPages: 0,
+  });
+  const [stats, setStats] = useState({
+    movementsToday: 0,
+    stockAdditions: 0,
+    stockReductions: 0,
+    transfers: 0,
   });
 
   const loadStockJournal = useCallback(async () => {
@@ -80,6 +86,59 @@ export const useStockJournal = () => {
     }
   }, [admin?.accessToken, filters]);
 
+  const loadStats = useCallback(async () => {
+    try {
+      if (!admin?.accessToken) return;
+
+      // Get today's date range
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      // Fetch today's movements
+      const todayFilters: JournalFilters = {
+        storeId: filters.storeId,
+        dateFrom: today.toISOString(),
+        dateTo: tomorrow.toISOString(),
+        limit: 1000, // Get all movements for today
+      };
+
+      const response = await adminInventoryAPI.getStockJournal(
+        admin.accessToken,
+        todayFilters,
+      );
+
+      const todayEntries = response.data.data;
+
+      // Calculate stats based on actual stock changes
+      const movementsToday = todayEntries.length;
+      const stockAdditions = todayEntries.filter(
+        (entry) =>
+          entry.type === "IN" ||
+          entry.type === "INITIAL" ||
+          (entry.type === "ADJUSTMENT" && entry.afterStock > entry.beforeStock),
+      ).length;
+      const stockReductions = todayEntries.filter(
+        (entry) =>
+          entry.type === "OUT" ||
+          (entry.type === "ADJUSTMENT" && entry.afterStock < entry.beforeStock),
+      ).length;
+      const transfers = todayEntries.filter(
+        (entry) => entry.type === "TRANSFER",
+      ).length;
+
+      setStats({
+        movementsToday,
+        stockAdditions,
+        stockReductions,
+        transfers,
+      });
+    } catch (error) {
+      console.error("Error loading stats:", error);
+    }
+  }, [admin?.accessToken, filters.storeId]);
+
   const loadProducts = useCallback(async () => {
     try {
       if (!admin?.accessToken) return;
@@ -108,9 +167,8 @@ export const useStockJournal = () => {
     try {
       if (!admin?.accessToken || !admin?.isSuper) return;
 
-      // TODO: Create a stores API endpoint if needed
-      // For now, we'll use an empty array since Super Admin would see all stores
-      setStores([]);
+      const response = await adminInventoryAPI.getStores(admin.accessToken);
+      setStores(response.data);
     } catch (error) {
       console.error("Error loading stores:", error);
     }
@@ -125,6 +183,7 @@ export const useStockJournal = () => {
     loadProducts();
     loadCategories();
     loadStores();
+    loadStats();
   }, [
     isAuthenticated,
     router,
@@ -132,6 +191,7 @@ export const useStockJournal = () => {
     loadProducts,
     loadCategories,
     loadStores,
+    loadStats,
   ]);
 
   const handleSearch = useCallback((searchTerm: string) => {
@@ -201,6 +261,7 @@ export const useStockJournal = () => {
     loading,
     filters,
     pagination,
+    stats,
     admin,
     isAuthenticated,
     handleSearch,

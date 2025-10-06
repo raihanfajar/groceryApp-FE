@@ -2,17 +2,22 @@
 
 // ! ERROR ketika npm run build, disuruh wrap suspense, jadi beginiin (ghazi)
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import StockManagementHeader from "@/components/admin/inventory/StockManagementHeader";
 import StockFiltersComponent from "@/components/admin/inventory/StockFiltersComponent";
 import StockProductCard from "@/components/admin/inventory/StockProductCard";
+import StockProductListItem from "@/components/admin/inventory/StockProductListItem";
 import StockEmptyState from "@/components/admin/inventory/StockEmptyState";
 import StockPagination from "@/components/admin/inventory/StockPagination";
 import { useStockManagement } from "@/hooks/useStockManagement";
 import { AdminProduct } from "@/types/admin/product";
+import { Button } from "@/components/ui/button";
+import { Grid3x3, List } from "lucide-react";
 
 function StockManagementPage() {
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
   const {
     products,
     categories,
@@ -20,11 +25,13 @@ function StockManagementPage() {
     loading,
     filters,
     pagination,
+    stats,
     admin,
     handleUpdateStock,
     handleSearch,
     handleCategoryFilter,
     handleStoreFilter,
+    handleSortChange,
     handlePageChange,
   } = useStockManagement();
 
@@ -45,6 +52,7 @@ function StockManagementPage() {
         <StockManagementHeader
           isSuper={admin.isSuper || false}
           storeName={admin.store?.name}
+          stats={stats}
         />
 
         <StockFiltersComponent
@@ -55,7 +63,32 @@ function StockManagementPage() {
           onSearch={handleSearch}
           onCategoryFilter={handleCategoryFilter}
           onStoreFilter={handleStoreFilter}
+          onSortChange={handleSortChange}
         />
+
+        {/* View Mode Toggle */}
+        <div className="flex justify-end">
+          <div className="flex items-center space-x-1 rounded-md border bg-white p-1">
+            <Button
+              variant={viewMode === "grid" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+              className="h-8 px-3"
+            >
+              <Grid3x3 className="mr-2 h-4 w-4" />
+              Grid
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+              className="h-8 px-3"
+            >
+              <List className="mr-2 h-4 w-4" />
+              List
+            </Button>
+          </div>
+        </div>
 
         {loading ? (
           <div className="flex justify-center py-8">
@@ -63,10 +96,21 @@ function StockManagementPage() {
           </div>
         ) : products.length === 0 ? (
           <StockEmptyState />
-        ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        ) : viewMode === "grid" ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {products.map((product: AdminProduct) => (
               <StockProductCard
+                key={product.id}
+                product={product}
+                selectedStoreId={filters.storeId || admin.store?.id}
+                onUpdateStock={handleUpdateStock}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {products.map((product: AdminProduct) => (
+              <StockProductListItem
                 key={product.id}
                 product={product}
                 selectedStoreId={filters.storeId || admin.store?.id}

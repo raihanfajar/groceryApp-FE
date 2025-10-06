@@ -22,9 +22,9 @@ export default function CategoryCard({
     : getDefaultIcon();
 
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-6">
-        <div className="space-y-4">
+    <Card className="flex h-full flex-col overflow-hidden">
+      <CardContent className="flex flex-1 flex-col p-6">
+        <div className="flex-1 space-y-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
               <div
@@ -60,7 +60,7 @@ export default function CategoryCard({
           </div>
         </div>
 
-        <div className="mt-4 flex space-x-2">
+        <div className="mt-4 flex space-x-2 pt-2">
           <Link href={`/admin/categories/${category.slug}`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full">
               <Eye className="mr-1 h-4 w-4" />

@@ -25,7 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden transition-shadow hover:shadow-md">
       <div className="relative aspect-square">
         {product.picture1 ? (
           <Image
@@ -36,46 +36,49 @@ const ProductCard: React.FC<ProductCardProps> = ({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gray-100">
-            <Package className="h-12 w-12 text-gray-400" />
+            <Package className="h-8 w-8 text-gray-400" />
           </div>
         )}
-        <div className="absolute top-2 right-2">
-          <Badge variant={product.isActive ? "default" : "secondary"}>
+        <div className="absolute top-1 right-1">
+          <Badge
+            variant={product.isActive ? "default" : "secondary"}
+            className="px-1.5 py-0.5 text-[10px]"
+          >
             {product.isActive ? "Active" : "Inactive"}
           </Badge>
         </div>
       </div>
 
-      <CardContent className="p-4">
-        <div className="space-y-2">
-          <h3 className="truncate font-medium text-gray-900">{product.name}</h3>
-          {product.description.includes("<") &&
-          product.description.includes(">") ? (
-            <div
-              className="line-clamp-2 text-sm text-gray-600 [&_em]:italic [&_ol]:list-decimal [&_strong]:font-bold [&_ul]:list-disc"
-              dangerouslySetInnerHTML={{ __html: product.description }}
-            />
-          ) : (
-            <p className="line-clamp-2 text-sm text-gray-600">
-              {product.description}
-            </p>
-          )}
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-bold text-green-600">
-              {formatPrice(product.price)}
-            </span>
-            <span className="text-sm text-gray-500">{product.weight}g</span>
-          </div>
-          <div className="text-sm text-gray-500">
-            Category: {product.category.name}
-          </div>
+      <CardContent className="space-y-1.5 p-2">
+        <h3
+          className="truncate text-sm font-medium text-gray-900"
+          title={product.name}
+        >
+          {product.name}
+        </h3>
+
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-bold text-green-600">
+            {formatPrice(product.price)}
+          </span>
+          <span className="text-xs text-gray-500">{product.weight}g</span>
         </div>
 
-        <div className="mt-4 flex space-x-2">
+        <p
+          className="truncate text-xs text-gray-500"
+          title={product.category.name}
+        >
+          {product.category.name}
+        </p>
+
+        <div className="flex gap-1 pt-1">
           <Link href={`/admin/products/${product.slug}`} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full">
-              <Eye className="mr-1 h-4 w-4" />
-              View
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 w-full px-1 text-xs"
+            >
+              <Eye className="h-3 w-3" />
             </Button>
           </Link>
 
@@ -85,18 +88,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 href={`/admin/products/${product.slug}/edit`}
                 className="flex-1"
               >
-                <Button size="sm" className="w-full">
-                  <Edit className="mr-1 h-4 w-4" />
-                  Edit
+                <Button size="sm" className="h-7 w-full px-1 text-xs">
+                  <Edit className="h-3 w-3" />
                 </Button>
               </Link>
 
               <Button
                 variant="destructive"
                 size="sm"
+                className="h-7 px-2"
                 onClick={() => onDelete(product.id)}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3 w-3" />
               </Button>
             </>
           )}

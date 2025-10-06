@@ -47,6 +47,7 @@ import {
   Store,
 } from "@/types/discount";
 import EditDiscountForm from "./EditDiscountForm";
+import LoadingLogo from "@/components/ui/LoadingLogo";
 
 export default function DiscountManagement() {
   const router = useRouter();
@@ -235,10 +236,7 @@ export default function DiscountManagement() {
   if (isLoadingDiscounts) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-          <p className="mt-2 text-sm text-gray-600">Loading discounts...</p>
-        </div>
+        <LoadingLogo size="lg" message="Loading discounts..." />
       </div>
     );
   }
@@ -373,49 +371,57 @@ export default function DiscountManagement() {
             <span>All Discounts ({filteredDiscounts?.length || 0})</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           {filteredDiscounts && filteredDiscounts.length > 0 ? (
-            <Table>
+            <Table className="min-w-[1200px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  {admin?.isSuper && <TableHead>Store</TableHead>}
-                  <TableHead>Value</TableHead>
-                  <TableHead>Usage</TableHead>
-                  <TableHead>Period</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="min-w-[200px]">Name</TableHead>
+                  <TableHead className="min-w-[120px]">Type</TableHead>
+                  {admin?.isSuper && (
+                    <TableHead className="min-w-[150px]">Store</TableHead>
+                  )}
+                  <TableHead className="min-w-[180px]">Products</TableHead>
+                  <TableHead className="min-w-[100px]">Value</TableHead>
+                  <TableHead className="min-w-[100px]">Usage</TableHead>
+                  <TableHead className="min-w-[140px]">Period</TableHead>
+                  <TableHead className="min-w-[100px]">Status</TableHead>
+                  <TableHead className="min-w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredDiscounts.map((discount) => (
                   <TableRow key={discount.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{discount.name}</div>
+                    <TableCell className="py-4">
+                      <div className="space-y-1">
+                        <div className="font-medium text-gray-900">
+                          {discount.name}
+                        </div>
                         {discount.description && (
-                          <div className="text-sm text-gray-500">
+                          <div className="line-clamp-2 text-sm text-gray-500">
                             {discount.description}
                           </div>
                         )}
                         {discount.minTransactionValue && (
-                          <div className="text-xs text-blue-600">
+                          <Badge
+                            variant="outline"
+                            className="mt-1 text-xs text-blue-600"
+                          >
                             Min: Rp{" "}
                             {discount.minTransactionValue.toLocaleString()}
-                          </div>
+                          </Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-4">
                       <Badge className={getDiscountTypeColor(discount.type)}>
                         {getDiscountTypeLabel(discount.type)}
                       </Badge>
                     </TableCell>
                     {admin?.isSuper && (
-                      <TableCell>
-                        <div>
-                          <div className="text-sm font-medium">
+                      <TableCell className="py-4">
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium text-gray-900">
                             {discount.store?.name || "Global"}
                           </div>
                           <div className="text-xs text-gray-500">
@@ -426,44 +432,76 @@ export default function DiscountManagement() {
                         </div>
                       </TableCell>
                     )}
-                    <TableCell>
-                      <div className="flex items-center space-x-1">
-                        <span className="font-medium">
-                          {formatDiscountValue(discount)}
-                        </span>
-                      </div>
-                      {discount.maxDiscountAmount &&
-                        discount.valueType === DiscountValueType.PERCENTAGE && (
-                          <div className="text-xs text-gray-500">
-                            Max: Rp{" "}
-                            {discount.maxDiscountAmount.toLocaleString()}
+                    <TableCell className="py-4">
+                      <div className="space-y-1">
+                        {discount.products && discount.products.length > 0 ? (
+                          <>
+                            <Badge variant="secondary" className="text-xs">
+                              {discount.products.length} product
+                              {discount.products.length !== 1 ? "s" : ""}
+                            </Badge>
+                            <div className="line-clamp-2 text-xs text-gray-500">
+                              {discount.products
+                                .slice(0, 2)
+                                .map((p) => p.product.name)
+                                .join(", ")}
+                              {discount.products.length > 2 &&
+                                ` +${discount.products.length - 2} more`}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-sm text-gray-400">
+                            No products
                           </div>
                         )}
+                      </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{discount.currentUsageCount} used</div>
+                    <TableCell className="py-4">
+                      <div className="space-y-1">
+                        <div className="text-base font-semibold text-green-600">
+                          {formatDiscountValue(discount)}
+                        </div>
+                        {discount.maxDiscountAmount &&
+                          discount.valueType ===
+                            DiscountValueType.PERCENTAGE && (
+                            <div className="text-xs text-gray-500">
+                              Max: Rp{" "}
+                              {discount.maxDiscountAmount.toLocaleString()}
+                            </div>
+                          )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="space-y-1">
+                        <div className="text-sm font-medium text-gray-900">
+                          {discount.currentUsageCount} used
+                        </div>
                         {discount.totalUsageLimit && (
                           <div className="text-xs text-gray-500">
-                            / {discount.totalUsageLimit} limit
+                            of {discount.totalUsageLimit}
                           </div>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-1 text-sm">
-                        <Calendar className="h-3 w-3 text-gray-400" />
-                        <div>
-                          <div>
-                            {new Date(discount.startDate).toLocaleDateString()}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            to {new Date(discount.endDate).toLocaleDateString()}
-                          </div>
+                    <TableCell className="py-4">
+                      <div className="space-y-1 text-sm">
+                        <div className="flex items-center gap-1 text-gray-900">
+                          <Calendar className="h-3 w-3 text-gray-400" />
+                          {new Date(discount.startDate).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric" },
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          to{" "}
+                          {new Date(discount.endDate).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric" },
+                          )}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-4">
                       <Button
                         size="sm"
                         variant={discount.isActive ? "default" : "secondary"}
@@ -479,22 +517,23 @@ export default function DiscountManagement() {
                         {discount.isActive ? "Active" : "Inactive"}
                       </Button>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
+                    <TableCell className="py-4">
+                      <div className="flex items-center gap-2">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleEditDiscount(discount)}
+                          className="h-8 w-8 p-0"
                         >
-                          <Pencil className="h-3 w-3" />
+                          <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleDeleteDiscount(discount.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

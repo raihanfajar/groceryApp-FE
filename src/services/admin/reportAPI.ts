@@ -95,7 +95,6 @@ export const adminReportAPI = {
       discountedShipping: tx.discountedShipping || 0,
       status: tx.status,
       createdAt: tx.createdAt,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       products:
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tx.products?.map((p: any) => ({

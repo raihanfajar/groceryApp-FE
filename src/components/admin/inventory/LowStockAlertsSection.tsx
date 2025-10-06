@@ -42,13 +42,13 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="divide-y">
           {alerts.slice(0, maxDisplay).map((alert) => {
             const alertStore = stores.find((s) => s.id === alert.storeId);
             return (
               <div
                 key={`${alert.storeId}-${alert.productId}`}
-                className="flex items-center justify-between rounded-lg border p-4"
+                className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
               >
                 <div className="flex flex-1 items-center space-x-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
@@ -98,7 +98,7 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
             );
           })}
           {showViewAll && alerts.length > maxDisplay && (
-            <div className="text-center">
+            <div className="pt-4 text-center">
               <Link href="/admin/inventory/stock?storeId=all&sortBy=stock-asc">
                 <Button variant="outline" size="sm">
                   View All {alerts.length} Alerts

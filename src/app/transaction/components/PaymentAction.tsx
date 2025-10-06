@@ -24,29 +24,17 @@ export default function PaymentActions({
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [isCancelModalOpen, setCancelModalOpen] = useState(false);
 
-  const queryClient = useQueryClient();
   const router = useRouter();
-  const { mutate: uploadMutate, isPending: isUploading } =
-    useUploadProofOfPayment();
   const { mutate: cancelTransaction, isPending: isCanceling } =
     useCancelTransaction(transaction?.id);
 
+  const { mutate: uploadMutate, isPending: isUploading } =
+    useUploadProofOfPayment();
+
   const handleUploadSubmit = (file: File) => {
     if (!transaction?.id) return toast.error("Transaction ID missing");
-
-    uploadMutate(
-      { transactionId: transaction.id, file },
-      {
-        onSuccess: () => {
-          setUploadModalOpen(false);
-          toast.success("Upload successful!");
-          queryClient.invalidateQueries({
-            queryKey: ["transactionDetails", transaction.id],
-          });
-          router.push("/");
-        },
-      },
-    );
+    uploadMutate({ transactionId: transaction.id, file });
+    setUploadModalOpen(false);
   };
 
   const handleConfirmCancel = () => {

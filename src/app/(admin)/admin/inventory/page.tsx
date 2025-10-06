@@ -395,7 +395,6 @@ export default function InventoryDashboard() {
                   alerts={lowStockAlerts}
                   stores={stores}
                   isSuper={admin.isSuper}
-                  maxDisplay={5}
                   showViewAll={true}
                 />
               </div>

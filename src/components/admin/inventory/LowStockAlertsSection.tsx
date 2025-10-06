@@ -15,7 +15,6 @@ interface LowStockAlertsSectionProps {
   alerts: LowStockAlert[];
   stores?: Store[];
   isSuper?: boolean;
-  maxDisplay?: number;
   showViewAll?: boolean;
 }
 
@@ -23,7 +22,6 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
   alerts,
   stores = [],
   isSuper = false,
-  maxDisplay = 5,
   showViewAll = true,
 }) => {
   if (alerts.length === 0) {
@@ -42,8 +40,8 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="divide-y">
-          {alerts.slice(0, maxDisplay).map((alert) => {
+        <div className="max-h-[320px] divide-y overflow-y-auto">
+          {alerts.slice(0, 10).map((alert) => {
             const alertStore = stores.find((s) => s.id === alert.storeId);
             return (
               <div
@@ -65,7 +63,9 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
                     )}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-medium">{alert.product.name}</h4>
+                    <h4 className="text-sm font-medium">
+                      {alert.product.name}
+                    </h4>
                     <p className="text-sm text-gray-600">
                       {alert.product.category.name}
                     </p>
@@ -97,16 +97,19 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
               </div>
             );
           })}
-          {showViewAll && alerts.length > maxDisplay && (
-            <div className="pt-4 text-center">
-              <Link href="/admin/inventory/stock?storeId=all&sortBy=stock-asc">
-                <Button variant="outline" size="sm">
-                  View All {alerts.length} Alerts
-                </Button>
-              </Link>
-            </div>
-          )}
         </div>
+
+        {/* View All Button */}
+        {showViewAll && (
+          <div className="mt-4 pt-4">
+            <Link
+              href="/admin/inventory/stock?storeId=all&sortBy=stock-asc"
+              className="flex w-full items-center justify-center rounded-md border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50"
+            >
+              View All Low Stock Alerts
+            </Link>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

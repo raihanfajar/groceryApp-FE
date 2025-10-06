@@ -43,9 +43,12 @@ export interface RecentTransaction {
   userId: string;
   userName: string;
   userEmail: string;
+  userProfilePicture: string | null;
   storeId: string;
   storeName: string;
   totalPrice: number;
+  discountedProductPrice?: number;
+  discountedShipping?: number;
   status: TransactionStatus;
   createdAt: string;
   products: TransactionProductDetail[];
@@ -56,6 +59,8 @@ export interface TransactionProductDetail {
   productName: string;
   quantity: number;
   price: number;
+  discount?: number;
+  finalPrice?: number;
   picture?: string;
 }
 

@@ -185,7 +185,6 @@ export default function AdminDashboard() {
               alerts={lowStockAlerts}
               stores={stores}
               isSuper={admin.isSuper}
-              maxDisplay={3}
               showViewAll={true}
             />
           </div>

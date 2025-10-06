@@ -40,7 +40,7 @@ const LowStockAlertsSection: React.FC<LowStockAlertsSectionProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="max-h-[320px] divide-y overflow-y-auto">
+        <div className="max-h-[320px] min-h-[320px] divide-y overflow-y-auto">
           {alerts.slice(0, 10).map((alert) => {
             const alertStore = stores.find((s) => s.id === alert.storeId);
             return (

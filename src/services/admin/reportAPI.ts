@@ -63,14 +63,16 @@ export const adminReportAPI = {
     params.append("pageSize", limit.toString());
     params.append("page", "1");
 
-    if (storeId) params.append("storeId", storeId);
+    // Only append storeId if it's provided and not "all"
+    // When storeId is "all" or undefined, Super Admin will see all stores
+    // When storeId is provided, it filters to that specific store
+    if (storeId && storeId !== "all") {
+      params.append("storeId", storeId);
+    }
 
-    // Super Admin (no storeId or storeId="all") uses /admin/all endpoint
-    // Store Admin uses /admin endpoint
-    const endpoint =
-      !storeId || storeId === "all"
-        ? "/transaction/admin/all"
-        : "/transaction/admin";
+    // Use the same endpoint for both Super Admin and Store Admin
+    // The backend handles the logic based on admin role and storeId parameter
+    const endpoint = "/transaction/admin";
 
     const response = await api.get(`${endpoint}?${params.toString()}`);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

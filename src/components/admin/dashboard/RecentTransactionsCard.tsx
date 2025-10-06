@@ -60,7 +60,7 @@ export default function RecentTransactionsCard({
           </div>
         ) : (
           <>
-            <div className="max-h-[320px] divide-y overflow-y-auto">
+            <div className="max-h-[320px] min-h-[320px] divide-y overflow-y-auto">
               {transactions.slice(0, 10).map((transaction) => (
                 <div key={transaction.id} className="py-4 first:pt-0 last:pb-0">
                   {/* Header: Transaction Number & Status */}

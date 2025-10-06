@@ -80,7 +80,8 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
   };
 
   const handleApplyChanges = async () => {
-    if (!selectedStoreId || pendingStock === null) return;
+    if (!selectedStoreId || selectedStoreId === "all" || pendingStock === null)
+      return;
 
     setIsUpdating(true);
     try {
@@ -107,7 +108,7 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden transition-shadow hover:shadow-lg">
       <div className="relative aspect-square">
         {product.picture1 ? (
           <Image
@@ -118,106 +119,107 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gray-100">
-            <Package className="h-12 w-12 text-gray-400" />
+            <Package className="h-8 w-8 text-gray-400" />
           </div>
         )}
-        <div className="absolute top-2 right-2 space-y-1">
-          <Badge variant={product.isActive ? "default" : "secondary"}>
+        <div className="absolute top-1 right-1 flex flex-col gap-1">
+          <Badge
+            variant={product.isActive ? "default" : "secondary"}
+            className="text-xs"
+          >
             {product.isActive ? "Active" : "Inactive"}
           </Badge>
           {isLowStock && (
-            <Badge variant="destructive" className="flex items-center">
+            <Badge variant="destructive" className="flex items-center text-xs">
               <AlertTriangle className="mr-1 h-3 w-3" />
-              Low Stock
+              Low
             </Badge>
           )}
         </div>
       </div>
 
-      <CardContent className="p-4">
-        <div className="space-y-3">
+      <CardContent className="p-3">
+        <div className="space-y-2">
           <div>
-            <h3 className="truncate font-medium text-gray-900">
+            <h3 className="truncate text-sm font-medium text-gray-900">
               {product.name}
             </h3>
-            <p className="text-sm text-gray-600">
-              Category: {product.category.name}
+            <p className="truncate text-xs text-gray-600">
+              {product.category.name}
             </p>
-            <p className="text-sm font-medium text-green-600">
+            <p className="text-xs font-medium text-green-600">
               {formatPrice(product.price)}
             </p>
           </div>
 
           {/* Stock Information */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
-                Current Stock:
-              </span>
+              <span className="text-xs font-medium text-gray-700">Stock:</span>
               <div className="text-right">
                 <span
-                  className={`text-lg font-bold ${isLowStock ? "text-red-600" : "text-green-600"}`}
+                  className={`text-base font-bold ${isLowStock ? "text-red-600" : "text-green-600"}`}
                 >
                   {currentStock}
                 </span>
                 {pendingStock !== null && pendingStock !== currentStock && (
-                  <div className="text-sm font-medium text-blue-600">
-                    → {pendingStock} (pending)
+                  <div className="text-xs font-medium text-blue-600">
+                    → {pendingStock}
                   </div>
                 )}
               </div>
             </div>
             {minStock > 0 && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Min Stock:</span>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-600">Min:</span>
                 <span className="text-gray-900">{minStock}</span>
               </div>
             )}
           </div>
 
           {/* Stock Actions */}
-          {selectedStoreId ? (
-            <div className="space-y-2">
+          {selectedStoreId && selectedStoreId !== "all" ? (
+            <div className="space-y-1.5">
               {!showStockInput ? (
                 <>
-                  <div className="flex space-x-2">
+                  <div className="grid grid-cols-3 gap-1">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleQuickSubtract}
                       disabled={isUpdating}
-                      className="flex-1"
+                      className="h-8 px-2"
                     >
-                      <Minus className="h-4 w-4" />
+                      <Minus className="h-3 w-3" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setShowStockInput(true)}
-                      className="flex-1"
+                      className="h-8 px-1 text-xs"
                     >
-                      Set Stock
+                      Set
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleQuickAdd}
                       disabled={isUpdating}
-                      className="flex-1"
+                      className="h-8 px-2"
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="h-3 w-3" />
                     </Button>
                   </div>
 
                   {/* Apply/Cancel buttons when there are pending changes */}
                   {pendingStock !== null && pendingStock !== currentStock && (
-                    <div className="flex space-x-2">
+                    <div className="grid grid-cols-2 gap-1">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={handleCancelChanges}
                         disabled={isUpdating}
-                        className="flex-1"
+                        className="h-8 text-xs"
                       >
                         Cancel
                       </Button>
@@ -225,23 +227,24 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
                         size="sm"
                         onClick={handleApplyChanges}
                         disabled={isUpdating}
-                        className="flex-1"
+                        className="h-8 text-xs"
                       >
-                        {isUpdating ? "Applying..." : "Apply Changes"}
+                        {isUpdating ? "..." : "Apply"}
                       </Button>
                     </div>
                   )}
                 </>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Input
                     type="number"
-                    placeholder="Enter new stock amount"
+                    placeholder="Stock amount"
                     value={stockValue}
                     onChange={(e) => setStockValue(e.target.value)}
                     min="0"
+                    className="h-8 text-sm"
                   />
-                  <div className="flex space-x-2">
+                  <div className="grid grid-cols-2 gap-1">
                     <Button
                       variant="outline"
                       size="sm"
@@ -249,7 +252,7 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
                         setShowStockInput(false);
                         setStockValue("");
                       }}
-                      className="flex-1"
+                      className="h-8 text-xs"
                     >
                       Cancel
                     </Button>
@@ -257,18 +260,18 @@ const StockProductCard: React.FC<StockProductCardProps> = ({
                       size="sm"
                       onClick={handleSetStock}
                       disabled={!stockValue || isNaN(parseInt(stockValue))}
-                      className="flex-1"
+                      className="h-8 text-xs"
                     >
-                      Set Pending
+                      Set
                     </Button>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-center">
-              <p className="text-sm font-medium text-yellow-700">
-                Select a store to manage stock
+            <div className="rounded border border-yellow-200 bg-yellow-50 p-2 text-center">
+              <p className="text-xs font-medium text-yellow-700">
+                Select a store
               </p>
             </div>
           )}

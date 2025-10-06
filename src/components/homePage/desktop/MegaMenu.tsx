@@ -3,6 +3,7 @@ import { useCategories } from "@/hooks/product/useProducts";
 import { MegaMenuProps } from "../typesAndInterfaces";
 import { getCategorySlug } from "@/utils/slug";
 import CategoryIcon from "@/components/ui/CategoryIcon";
+import { useEffect } from "react";
 
 export default function MegaMenu({
   isOpen,
@@ -10,9 +11,19 @@ export default function MegaMenu({
   handleMouseLeave,
 }: Pick<MegaMenuProps, "isOpen" | "handleMouseEnter" | "handleMouseLeave">) {
   // Fetch real product categories from API
-  const { data: categoriesData, isLoading: categoriesLoading } =
-    useCategories();
+  const {
+    data: categoriesData,
+    isLoading: categoriesLoading,
+    refetch,
+  } = useCategories();
   const realCategories = categoriesData?.data?.categories || [];
+
+  // Refetch categories when menu opens to ensure fresh data
+  useEffect(() => {
+    if (isOpen) {
+      refetch();
+    }
+  }, [isOpen, refetch]);
 
   if (!isOpen) return null;
 

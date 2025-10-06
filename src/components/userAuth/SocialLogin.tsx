@@ -8,11 +8,13 @@ const SocialLogin = () => {
       {/* Social Logins */}
       <div className="mt-4 flex items-center justify-center gap-4">
         <Button
-          onClick={() =>
-            (window.location.href = "http://localhost:8000/user/google-auth")
-          }
+          onClick={() => {
+            const baseUrl =
+              process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+            window.location.href = `${baseUrl}/user/google-auth`;
+          }}
           variant="ghost"
-          className="hover:bg-gray-100 cursor-pointer"
+          className="cursor-pointer hover:bg-gray-100"
         >
           <FaGoogle /> Login with google
         </Button>

@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
   Card,
@@ -38,6 +37,7 @@ import {
   Store,
 } from "@/types/admin/inventory";
 import { toast } from "react-toastify";
+import LowStockAlertsSection from "@/components/admin/inventory/LowStockAlertsSection";
 
 export default function InventoryDashboard() {
   const { admin, isAuthenticated } = useAdminAuthStore();
@@ -73,12 +73,12 @@ export default function InventoryDashboard() {
       return;
     }
 
-    // Load stores for Super Admin
+    // Load stores for Super Admin and set default to "All Stores"
     if (admin?.isSuper) {
       loadStores();
+      setSelectedStoreId("all");
     } else {
-      // For store admins, we need to handle the case where store is null
-      // This might be a backend issue where store assignment is not properly set
+      // For store admins, use their assigned store
       if (admin?.store?.id) {
         setSelectedStoreId(admin.store.id);
       } else {
@@ -92,15 +92,18 @@ export default function InventoryDashboard() {
   const loadInventoryData = useCallback(async () => {
     if (!admin?.accessToken) return;
 
-    // For Super Admins, we need a selected store ID
-    // For Store Admins, the backend should auto-assign their store
-    if (admin.isSuper && !selectedStoreId) return;
+    // Convert "all" to undefined for backend to aggregate all stores
+    const storeIdForQuery =
+      selectedStoreId === "all" ? undefined : selectedStoreId;
 
     try {
       setLoading(true);
 
-      // Only send storeId for Super Admins, let backend auto-assign for Store Admins
-      const filters = admin.isSuper ? { storeId: selectedStoreId } : undefined;
+      // Send storeId filter only if specific store is selected
+      const filters =
+        admin.isSuper && storeIdForQuery
+          ? { storeId: storeIdForQuery }
+          : undefined;
 
       const [summaryResponse, alertsResponse] = await Promise.all([
         adminInventoryAPI.getInventorySummary(admin.accessToken, filters),
@@ -153,16 +156,10 @@ export default function InventoryDashboard() {
   }, [admin?.accessToken, admin?.isSuper, selectedStoreId]);
 
   useEffect(() => {
-    if (admin?.accessToken) {
-      // For Super Admins, wait for store selection
-      // For Store Admins, load immediately
-      if (admin.isSuper && selectedStoreId) {
-        loadInventoryData();
-      } else if (!admin.isSuper) {
-        loadInventoryData();
-      }
+    if (admin?.accessToken && selectedStoreId) {
+      loadInventoryData();
     }
-  }, [admin?.accessToken, admin?.isSuper, selectedStoreId, loadInventoryData]);
+  }, [admin?.accessToken, selectedStoreId, loadInventoryData]);
 
   if (!admin) {
     return (
@@ -206,6 +203,7 @@ export default function InventoryDashboard() {
                   />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">All Stores</SelectItem>
                   {stores.map((store) => (
                     <SelectItem key={store.id} value={store.id}>
                       {store.name} - {store.city}
@@ -217,23 +215,7 @@ export default function InventoryDashboard() {
           </div>
         </div>
 
-        {admin.isSuper && (!selectedStoreId || loadingStores) ? (
-          <Card>
-            <CardContent className="flex h-64 items-center justify-center">
-              <div className="text-center">
-                <Archive className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-4 text-lg font-medium text-gray-900">
-                  {loadingStores ? "Loading Stores" : "Select a Store"}
-                </h3>
-                <p className="mt-2 text-gray-600">
-                  {loadingStores
-                    ? "Fetching available stores..."
-                    : "Choose a store from the dropdown above to view inventory data"}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : !admin.isSuper && !admin.store?.id ? (
+        {!admin.isSuper && !admin.store?.id ? (
           <Card>
             <CardContent className="flex h-64 items-center justify-center">
               <div className="text-center">
@@ -260,16 +242,22 @@ export default function InventoryDashboard() {
         ) : (
           <>
             {/* Store Info Banner */}
-            {selectedStore && (
+            {admin.isSuper && (
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900">
-                        {selectedStore.name}
+                        {selectedStoreId === "all"
+                          ? "All Stores - Aggregated View"
+                          : selectedStore?.name || "Store"}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        {selectedStore.city}, {selectedStore.province}
+                        {selectedStoreId === "all"
+                          ? "Viewing inventory data across all stores"
+                          : selectedStore
+                            ? `${selectedStore.city}, ${selectedStore.province}`
+                            : ""}
                       </p>
                     </div>
                     <div className="text-right">
@@ -399,111 +387,58 @@ export default function InventoryDashboard() {
               </CardContent>
             </Card>
 
-            {/* Low Stock Alerts */}
-            {lowStockAlerts.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                    <span>Low Stock Alerts</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Products that need immediate attention
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {lowStockAlerts.slice(0, 5).map((alert) => (
-                      <div
-                        key={`${alert.storeId}-${alert.productId}`}
-                        className="flex items-center justify-between rounded-lg border p-4"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
-                            {alert.product.picture1 ? (
-                              <Image
-                                src={alert.product.picture1}
-                                alt={alert.product.name}
-                                width={32}
-                                height={32}
-                                className="rounded object-cover"
-                              />
-                            ) : (
-                              <Package className="h-6 w-6 text-gray-400" />
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="font-medium">
-                              {alert.product.name}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {alert.product.category.name}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium">
-                            Stock:{" "}
-                            <span className="text-red-600">{alert.stock}</span>{" "}
-                            / {alert.minStock}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {alert.isOutOfStock ? "Out of Stock" : "Low Stock"}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    {lowStockAlerts.length > 5 && (
-                      <div className="text-center">
-                        <Link href="/admin/inventory/reports">
-                          <Button variant="outline" size="sm">
-                            View All {lowStockAlerts.length} Alerts
-                          </Button>
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            {/* Low Stock Alerts & Stock by Category */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+              {/* Low Stock Alerts */}
+              <div className="lg:col-span-2">
+                <LowStockAlertsSection
+                  alerts={lowStockAlerts}
+                  stores={stores}
+                  isSuper={admin.isSuper}
+                  showViewAll={true}
+                />
+              </div>
 
-            {/* Category Breakdown */}
-            {inventorySummary?.stockByCategory &&
-              inventorySummary.stockByCategory.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Stock by Category</CardTitle>
-                    <CardDescription>
-                      Inventory distribution across product categories
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {inventorySummary.stockByCategory.map((category) => (
-                        <div
-                          key={category.categoryId}
-                          className="flex items-center justify-between"
-                        >
-                          <div>
-                            <h4 className="font-medium">
-                              {category.categoryName}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {category.productCount} products
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-lg font-bold">
-                              {category.totalStock}
-                            </p>
-                            <p className="text-xs text-gray-500">units</p>
-                          </div>
+              {/* Category Breakdown */}
+              {inventorySummary?.stockByCategory &&
+                inventorySummary.stockByCategory.length > 0 && (
+                  <div className="lg:col-span-2">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Stock by Category</CardTitle>
+                        <CardDescription>
+                          Inventory distribution across product categories
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          {inventorySummary.stockByCategory.map((category) => (
+                            <div
+                              key={category.categoryId}
+                              className="flex items-center justify-between"
+                            >
+                              <div>
+                                <h4 className="font-medium">
+                                  {category.categoryName}
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  {category.productCount} products
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-lg font-bold">
+                                  {category.totalStock}
+                                </p>
+                                <p className="text-xs text-gray-500">units</p>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+            </div>
           </>
         )}
       </div>

@@ -17,6 +17,7 @@ export default function StockJournalPage() {
     loading,
     filters,
     pagination,
+    stats,
     admin,
     handleSearch,
     handleProductFilter,
@@ -44,6 +45,7 @@ export default function StockJournalPage() {
         <StockJournalHeader
           isSuper={admin.isSuper || false}
           storeName={admin.store?.name}
+          stats={stats}
         />
 
         <StockJournalFilters

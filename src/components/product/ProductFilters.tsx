@@ -107,18 +107,18 @@ export const ProductFiltersComponent: React.FC<
   }, [filters]);
 
   const FilterContent = () => (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Sort By */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <ArrowUpDown className="h-4 w-4" />
-          <Label className="text-sm font-medium">Sort By</Label>
+          <ArrowUpDown className="h-3.5 w-3.5" />
+          <Label className="text-xs font-medium">Sort By</Label>
         </div>
         <Select
           value={filters.sortBy || "default"}
           onValueChange={handleSortChange}
         >
-          <SelectTrigger>
+          <SelectTrigger className="h-8 text-xs">
             <SelectValue placeholder="Select sorting" />
           </SelectTrigger>
           <SelectContent>
@@ -141,28 +141,29 @@ export const ProductFiltersComponent: React.FC<
             variant="ghost"
             className="flex h-auto w-full justify-between p-0"
           >
-            <Label className="text-sm font-medium">Categories</Label>
-            <ChevronDown className="h-4 w-4" />
+            <Label className="text-xs font-medium">Categories</Label>
+            <ChevronDown className="h-3.5 w-3.5" />
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="mt-3 space-y-3">
+        <CollapsibleContent className="mt-2 space-y-2">
           {categories.map((category) => (
             <div key={category.id} className="flex items-center space-x-2">
               <Checkbox
                 id={`category-${category.id}`}
                 checked={filters.categoryId === category.id}
                 onCheckedChange={() => handleCategoryToggle(category.id)}
+                className="h-3.5 w-3.5"
               />
               <Label
                 htmlFor={`category-${category.id}`}
-                className="cursor-pointer text-sm font-normal"
+                className="cursor-pointer text-xs font-normal"
               >
                 {category.name}
               </Label>
             </div>
           ))}
           {categories.length === 0 && (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-xs">
               No categories available
             </p>
           )}
@@ -178,12 +179,12 @@ export const ProductFiltersComponent: React.FC<
             variant="ghost"
             className="flex h-auto w-full justify-between p-0"
           >
-            <Label className="text-sm font-medium">Price Range</Label>
-            <ChevronDown className="h-4 w-4" />
+            <Label className="text-xs font-medium">Price Range</Label>
+            <ChevronDown className="h-3.5 w-3.5" />
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent className="mt-3 space-y-4">
-          <div className="space-y-3">
+        <CollapsibleContent className="mt-2 space-y-3">
+          <div className="space-y-2">
             <Slider
               value={priceRange}
               onValueChange={handlePriceRangeChange}
@@ -192,7 +193,7 @@ export const ProductFiltersComponent: React.FC<
               step={10000}
               className="w-full"
             />
-            <div className="text-muted-foreground flex items-center justify-between text-sm">
+            <div className="text-muted-foreground flex items-center justify-between text-[10px]">
               <span>{formatCurrency(priceRange[0])}</span>
               <span>{formatCurrency(priceRange[1])}</span>
             </div>
@@ -201,8 +202,8 @@ export const ProductFiltersComponent: React.FC<
           {/* Manual Price Input */}
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
-              <Label htmlFor="min-price" className="text-xs">
-                Min Price
+              <Label htmlFor="min-price" className="text-[10px]">
+                Min
               </Label>
               <Input
                 id="min-price"
@@ -215,12 +216,12 @@ export const ProductFiltersComponent: React.FC<
                     e.target.value ? Number(e.target.value) : undefined,
                   )
                 }
-                className="h-8"
+                className="h-7 text-xs"
               />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="max-price" className="text-xs">
-                Max Price
+              <Label htmlFor="max-price" className="text-[10px]">
+                Max
               </Label>
               <Input
                 id="max-price"
@@ -233,7 +234,7 @@ export const ProductFiltersComponent: React.FC<
                     e.target.value ? Number(e.target.value) : undefined,
                   )
                 }
-                className="h-8"
+                className="h-7 text-xs"
               />
             </div>
           </div>
@@ -247,11 +248,11 @@ export const ProductFiltersComponent: React.FC<
           <Button
             variant="outline"
             onClick={onClearFilters}
-            className="w-full"
+            className="h-8 w-full text-xs"
             size="sm"
           >
-            <X className="mr-2 h-4 w-4" />
-            Clear All Filters ({activeFiltersCount})
+            <X className="mr-1 h-3 w-3" />
+            Clear ({activeFiltersCount})
           </Button>
         </>
       )}
@@ -297,18 +298,20 @@ export const ProductFiltersComponent: React.FC<
   // Desktop version
   return (
     <Card className={cn("w-full", className)}>
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Filter className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-1.5 text-sm">
+            <Filter className="h-4 w-4" />
             Filters
           </CardTitle>
           {activeFiltersCount > 0 && (
-            <Badge variant="secondary">{activeFiltersCount}</Badge>
+            <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+              {activeFiltersCount}
+            </Badge>
           )}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4">
         <FilterContent />
       </CardContent>
     </Card>

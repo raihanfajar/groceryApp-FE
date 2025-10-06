@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import Link from "next/link";
 import CategoryCreatePreview from "./CategoryCreatePreview";
 import CategoryIconSelector from "./CategoryIconSelector";
 import { getDefaultIcon } from "@/constants/categoryIcons";
+import { PRODUCT_QUERY_KEYS } from "@/hooks/product/useProducts";
 
 interface CategoryCreateFormProps {
   accessToken: string;
@@ -22,6 +24,7 @@ export default function CategoryCreateForm({
   accessToken,
 }: CategoryCreateFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CreateCategoryFormData>({
     name: "",
@@ -60,8 +63,13 @@ export default function CategoryCreateForm({
       return;
     }
 
-    if (formData.name.trim().length > 50) {
-      toast.error("Category name must not exceed 50 characters");
+    if (formData.name.trim().length > 30) {
+      toast.error("Category name must not exceed 30 characters");
+      return;
+    }
+
+    if (formData.description && formData.description.trim().length > 50) {
+      toast.error("Category description must not exceed 50 characters");
       return;
     }
 
@@ -75,8 +83,14 @@ export default function CategoryCreateForm({
       };
 
       await adminCategoryAPI.createCategory(accessToken, categoryData);
+
+      // Invalidate categories cache to refresh navbar and homepage
+      await queryClient.invalidateQueries({
+        queryKey: PRODUCT_QUERY_KEYS.categories,
+      });
+
       toast.success("Category created successfully!");
-      router.push("/admin/categories");
+      router.push("/admin/products?tab=categories");
     } catch (error) {
       console.error("Error creating category:", error);
       let errorMessage = "Failed to create category";
@@ -119,11 +133,11 @@ export default function CategoryCreateForm({
               onChange={handleInputChange}
               placeholder="Enter category name"
               required
-              maxLength={50}
+              maxLength={30}
               className="w-full"
             />
             <p className="text-sm text-gray-500">
-              {formData.name.length}/50 characters
+              {formData.name.length}/30 characters
             </p>
           </div>
 
@@ -137,11 +151,11 @@ export default function CategoryCreateForm({
               onChange={handleInputChange}
               placeholder="Enter category description"
               rows={4}
-              maxLength={200}
+              maxLength={50}
               className="w-full"
             />
             <p className="text-sm text-gray-500">
-              {(formData.description || "").length}/200 characters
+              {(formData.description || "").length}/50 characters
             </p>
           </div>
 
@@ -150,7 +164,7 @@ export default function CategoryCreateForm({
 
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">
-            <Link href="/admin/categories">
+            <Link href="/admin/products?tab=categories">
               <Button type="button" variant="outline">
                 Cancel
               </Button>

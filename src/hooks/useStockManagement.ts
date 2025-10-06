@@ -17,6 +17,7 @@ interface Store {
 
 interface StockFilters extends ProductFilters {
   lowStockOnly?: boolean;
+  sortBy?: "stock-asc" | "stock-desc";
 }
 
 export const useStockManagement = () => {
@@ -24,38 +25,59 @@ export const useStockManagement = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Get storeId from URL params (when coming from inventory dashboard)
+  // Get storeId and sortBy from URL params (when coming from inventory dashboard)
   const urlStoreId = searchParams.get("storeId");
+  const urlSortBy = searchParams.get("sortBy") as
+    | "stock-asc"
+    | "stock-desc"
+    | null;
 
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [categories, setCategories] = useState<AdminProductCategory[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
+  const [storeIdInitialized, setStoreIdInitialized] = useState(false);
   const [filters, setFilters] = useState<StockFilters>({
     page: 1,
     limit: 12,
     search: "",
     storeId: admin?.isSuper
-      ? urlStoreId || undefined // Use URL param if available for Super Admin
+      ? urlStoreId || undefined // Default to undefined (All Stores) for Super Admin
       : admin?.store?.id || "store-1", // Use assigned store for Store Admin
+    sortBy: urlSortBy || undefined, // Pre-set sort from URL if available
   });
 
   useEffect(() => {
-    // Update storeId filter when admin data changes
-    if (!admin?.isSuper) {
-      const storeId = admin?.store?.id || "store-1"; // Default store if none assigned
-      setFilters((prev) => ({ ...prev, storeId }));
-    } else if (urlStoreId && !filters.storeId) {
-      // Set URL store ID for Super Admin if not already set
-      setFilters((prev) => ({ ...prev, storeId: urlStoreId }));
+    // Update storeId and sortBy filters when admin data or URL params change
+    if (admin?.isSuper) {
+      // For Super Admin: use URL params if available
+      setFilters((prev) => ({
+        ...prev,
+        storeId: urlStoreId || undefined,
+        sortBy: urlSortBy || prev.sortBy, // Keep existing sortBy if no URL param
+      }));
+      setStoreIdInitialized(true);
+    } else if (admin?.store?.id) {
+      // For Store Admin: use their assigned store
+      setFilters((prev) => ({
+        ...prev,
+        storeId: admin?.store?.id || "store-1",
+        sortBy: urlSortBy || prev.sortBy, // Keep existing sortBy if no URL param
+      }));
+      setStoreIdInitialized(true);
     }
-  }, [admin, urlStoreId, filters.storeId]);
+  }, [admin?.isSuper, admin?.store?.id, urlStoreId, urlSortBy]);
 
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
     limit: 12,
     totalPages: 0,
+  });
+  const [stats, setStats] = useState({
+    productsUpdatedToday: 0,
+    lowStockAlerts: 0,
+    stockMovementsToday: 0,
   });
 
   const loadProducts = useCallback(async () => {
@@ -67,7 +89,38 @@ export const useStockManagement = () => {
         admin.accessToken,
         filters,
       );
-      setProducts(response.data.products);
+
+      let productsToDisplay = response.data.products;
+
+      // Apply client-side sorting based on stock count
+      if (filters.sortBy) {
+        productsToDisplay = [...productsToDisplay].sort((a, b) => {
+          // Get stock for the selected store or total stock
+          const getStock = (product: AdminProduct) => {
+            if (filters.storeId && filters.storeId !== "all") {
+              // Find stock for specific store
+              const storeStock = product.storeStock?.find(
+                (s) => s.storeId === filters.storeId,
+              );
+              return storeStock?.stock || 0;
+            }
+            // Use total stock for "All Stores"
+            return product.totalStock || 0;
+          };
+
+          const stockA = getStock(a);
+          const stockB = getStock(b);
+
+          if (filters.sortBy === "stock-asc") {
+            return stockA - stockB; // Ascending: low to high
+          } else if (filters.sortBy === "stock-desc") {
+            return stockB - stockA; // Descending: high to low
+          }
+          return 0;
+        });
+      }
+
+      setProducts(productsToDisplay);
       setPagination(response.data.pagination);
     } catch (error) {
       console.error("Error loading products:", error);
@@ -100,6 +153,68 @@ export const useStockManagement = () => {
     }
   }, [admin?.accessToken, admin?.isSuper]);
 
+  const loadStats = useCallback(async () => {
+    try {
+      if (!admin?.accessToken) return;
+
+      // Get today's date range
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      // Build filters object, only including storeId if it's defined and not 'all'
+      const journalFilters: {
+        dateFrom: string;
+        dateTo: string;
+        limit: number;
+        storeId?: string;
+      } = {
+        dateFrom: today.toISOString(),
+        dateTo: tomorrow.toISOString(),
+        limit: 1000,
+      };
+      if (filters.storeId && filters.storeId !== "all") {
+        journalFilters.storeId = filters.storeId;
+      }
+
+      const alertFilters: { storeId?: string } = {};
+      if (filters.storeId && filters.storeId !== "all") {
+        alertFilters.storeId = filters.storeId;
+      }
+
+      // Fetch today's stock movements and low stock alerts
+      const [journalResponse, alertsResponse] = await Promise.all([
+        adminInventoryAPI.getStockJournal(admin.accessToken, journalFilters),
+        adminInventoryAPI.getLowStockAlerts(admin.accessToken, alertFilters),
+      ]);
+
+      const todayMovements = journalResponse.data.data;
+
+      // Count unique products updated today (excluding TRANSFER)
+      const uniqueProducts = new Set(
+        todayMovements
+          .filter((entry) => entry.type !== "TRANSFER")
+          .map((entry) => entry.productId),
+      );
+      const productsUpdatedToday = uniqueProducts.size;
+
+      // Get low stock alerts count
+      const lowStockAlerts = alertsResponse.data.length;
+
+      // Count total movements today
+      const stockMovementsToday = todayMovements.length;
+
+      setStats({
+        productsUpdatedToday,
+        lowStockAlerts,
+        stockMovementsToday,
+      });
+    } catch (error) {
+      console.error("Error loading stats:", error);
+    }
+  }, [admin?.accessToken, filters.storeId]);
+
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push("/admin-login");
@@ -109,6 +224,14 @@ export const useStockManagement = () => {
     loadCategories();
     loadStores();
   }, [isAuthenticated, router, loadProducts, loadCategories, loadStores]);
+
+  // Reload stats when store filter changes or when it's first initialized
+  useEffect(() => {
+    // Only load stats if we have admin access token and storeId has been initialized
+    if (admin?.accessToken && storeIdInitialized) {
+      loadStats();
+    }
+  }, [filters.storeId, admin?.accessToken, storeIdInitialized, loadStats]);
 
   const handleUpdateStock = useCallback(
     async (
@@ -165,6 +288,17 @@ export const useStockManagement = () => {
     }));
   }, []);
 
+  const handleSortChange = useCallback(
+    (sortBy: "stock-asc" | "stock-desc" | undefined) => {
+      setFilters((prev) => ({
+        ...prev,
+        sortBy,
+        page: 1,
+      }));
+    },
+    [],
+  );
+
   const handlePageChange = useCallback((page: number) => {
     setFilters((prev) => ({ ...prev, page }));
   }, []);
@@ -176,12 +310,14 @@ export const useStockManagement = () => {
     loading,
     filters,
     pagination,
+    stats,
     admin,
     isAuthenticated,
     handleUpdateStock,
     handleSearch,
     handleCategoryFilter,
     handleStoreFilter,
+    handleSortChange,
     handlePageChange,
   };
 };

@@ -9,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Mail, MapPin, Pencil, Trash2 } from "lucide-react";
+import { Mail, MapPin, Pencil } from "lucide-react";
+import ConfirmDialog from "../ConfirmDialog";
 import { StoreAdmin } from "../typesAndInterfaces";
 
 interface StoreAdminTableProps {
@@ -74,14 +75,19 @@ export function StoreAdminTable({
                 >
                   <Pencil className="h-3 w-3" />
                 </Button>
-                <Button
+                {/* <Button
                   size="sm"
                   variant="outline"
                   onClick={() => onDelete(storeAdmin.id)}
                   className="text-red-600 hover:text-red-700"
                 >
                   <Trash2 className="h-3 w-3" />
-                </Button>
+                </Button> */}
+                <ConfirmDialog
+                  dialogTitle="Are you sure you want to delete this store admin?"
+                  dialogDescription="Once deleted, you will not be able to recover this store admin."
+                  onConfirm={() => onDelete(storeAdmin.id)}
+                />
               </div>
             </TableCell>
           </TableRow>

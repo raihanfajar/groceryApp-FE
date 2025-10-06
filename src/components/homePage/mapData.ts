@@ -111,7 +111,7 @@ export const categories: Category[] = [
 
 export const carouselItems: CarouselItem[] = [
   {
-    image: "/promoCarousel/gate.jpg",
+    image: "/promoCarousel/doometernal.jpg",
     alt: "Superwings Payday",
     link: `/promo/${slugify("Superwings Payday Sale")}`,
     title: "Superwings Payday Sale",

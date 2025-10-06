@@ -8,7 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
+import ConfirmDialog from "../ConfirmDialog";
 import { DetailedStoreInfo } from "../typesAndInterfaces";
 
 interface StoreTableProps {
@@ -47,14 +48,11 @@ export function StoreTable({ stores, onEdit, onDelete }: StoreTableProps) {
                 >
                   <Pencil className="h-3 w-3" />
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onDelete(store.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+                <ConfirmDialog
+                  dialogTitle="Are you sure you want to delete this store?"
+                  dialogDescription="Make sure no store admin assigned to this store. Once deleted, store can't be restored."
+                  onConfirm={() => onDelete(store.id)}
+                />
               </div>
             </TableCell>
           </TableRow>

@@ -3,7 +3,8 @@ import BenefitBanner from "@/components/homePage/benefitBanner/BenefitBanner";
 import CategoryCarousel from "@/components/homePage/categoryCarousel/CategoryCarousel";
 import { ProductList } from "@/components/homePage/productDisplay/ProductList";
 import PromoCarousel from "@/components/homePage/promoCarousel/PromoCarousel";
-
+import { StorePickerDialog } from "@/components/homePage/StorePickerDialog";
+import { ChevronDown } from "lucide-react";
 // Import data dengan path yang sudah dikoreksi
 
 import CustomBorder from "@/components/homePage/CustomBorder";
@@ -43,15 +44,27 @@ export default function HomePage() {
       <CustomBorder />
       {/* optional store title */}
       {targetStore && (
-        <div className="mx-auto max-w-[1280px] px-4 pt-4">
-          <h1 className="text-xl font-bold text-gray-800">
-            {targetStore.name}
-          </h1>
-          <p className="text-sm text-gray-500">
-            All products available at this store
-          </p>
+        <div className="mx-auto flex max-w-[1280px] items-center justify-between px-4 pt-4">
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">
+              {targetStore.name}
+            </h1>
+            <p className="text-sm text-gray-500">
+              All products available at this store
+            </p>
+          </div>
+
+          <StorePickerDialog
+            trigger={
+              <button className="hover:bg-accent flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm">
+                <span>Change</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            }
+          />
         </div>
       )}
+      {/* product list rendering */}
       {!cardList || cardList.length === 0 ? (
         <section className="mx-auto flex h-[calc(100vh-105px)] max-w-[1280px] flex-col items-center justify-center px-4 py-8">
           <Image
@@ -65,7 +78,7 @@ export default function HomePage() {
       ) : (
         <>
           <ProductList items={cardList || []} name="Recommended Product" />
-          <ProductList items={cardList || []} name="Latest Product" />
+          {/* <ProductList items={cardList || []} name="Latest Product" /> */}
         </>
       )}
       <CustomBorder />

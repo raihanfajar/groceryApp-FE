@@ -74,9 +74,9 @@ export default function PromoCarousel({ items }: CarouselProps) {
                     src={item.image}
                     alt={item.alt}
                     fill // makes the image span the whole box
-                    sizes="1000px"
+                    // sizes="1000px"
                     priority={index === 0} // optional: faster first paint
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </Link>
               </div>

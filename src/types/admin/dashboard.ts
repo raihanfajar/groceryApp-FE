@@ -65,26 +65,26 @@ export interface TransactionProductDetail {
 }
 
 export type TransactionStatus =
-  | "pending"
   | "waiting_payment"
-  | "processing"
+  | "waiting_confirmation"
+  | "on_process"
   | "shipped"
   | "completed"
   | "cancelled";
 
 export const TRANSACTION_STATUS_LABELS: Record<TransactionStatus, string> = {
-  pending: "Pending",
   waiting_payment: "Waiting Payment",
-  processing: "Processing",
+  waiting_confirmation: "Waiting Confirmation",
+  on_process: "On Process",
   shipped: "Shipped",
   completed: "Completed",
   cancelled: "Cancelled",
 };
 
 export const TRANSACTION_STATUS_COLORS: Record<TransactionStatus, string> = {
-  pending: "bg-gray-100 text-gray-800",
   waiting_payment: "bg-yellow-100 text-yellow-800",
-  processing: "bg-blue-100 text-blue-800",
+  waiting_confirmation: "bg-orange-100 text-orange-800",
+  on_process: "bg-blue-100 text-blue-800",
   shipped: "bg-purple-100 text-purple-800",
   completed: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",

@@ -5,31 +5,12 @@ import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Archive,
-  Package,
-  AlertTriangle,
-  TrendingUp,
-  BarChart3,
-  Plus,
-  ArrowLeftRight,
-  Clock,
-} from "lucide-react";
-import Link from "next/link";
 import { adminInventoryAPI } from "@/services/admin/inventoryAPI";
 import {
   InventorySummary,
@@ -38,6 +19,12 @@ import {
 } from "@/types/admin/inventory";
 import { toast } from "react-toastify";
 import LowStockAlertsSection from "@/components/admin/inventory/LowStockAlertsSection";
+import InventoryStatsCards from "@/components/admin/inventory/InventoryStatsCards";
+import InventoryQuickActions from "@/components/admin/inventory/InventoryQuickActions";
+import StockByCategoryCard from "@/components/admin/inventory/StockByCategoryCard";
+import StoreInfoBanner from "@/components/admin/inventory/StoreInfoBanner";
+import NoStoreAssignedError from "@/components/admin/inventory/NoStoreAssignedError";
+import { useInventoryData } from "@/hooks/admin/useInventoryData";
 
 export default function InventoryDashboard() {
   const { admin, isAuthenticated } = useAdminAuthStore();
@@ -67,9 +54,19 @@ export default function InventoryDashboard() {
     }
   }, [admin?.accessToken, admin?.isSuper]);
 
+  // Custom hook for loading inventory data
+  const loadInventoryData = useInventoryData({
+    adminToken: admin?.accessToken,
+    isSuper: admin?.isSuper,
+    selectedStoreId,
+    setLoading,
+    setInventorySummary,
+    setLowStockAlerts,
+  });
+
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
 
@@ -82,78 +79,11 @@ export default function InventoryDashboard() {
       if (admin?.store?.id) {
         setSelectedStoreId(admin.store.id);
       } else {
-        // Store admin without assigned store - show error message
         console.warn("Store admin without assigned store");
       }
       setLoadingStores(false);
     }
   }, [isAuthenticated, router, admin, loadStores]);
-
-  const loadInventoryData = useCallback(async () => {
-    if (!admin?.accessToken) return;
-
-    // Convert "all" to undefined for backend to aggregate all stores
-    const storeIdForQuery =
-      selectedStoreId === "all" ? undefined : selectedStoreId;
-
-    try {
-      setLoading(true);
-
-      // Send storeId filter only if specific store is selected
-      const filters =
-        admin.isSuper && storeIdForQuery
-          ? { storeId: storeIdForQuery }
-          : undefined;
-
-      const [summaryResponse, alertsResponse] = await Promise.all([
-        adminInventoryAPI.getInventorySummary(admin.accessToken, filters),
-        adminInventoryAPI.getLowStockAlerts(admin.accessToken, filters),
-      ]);
-
-      setInventorySummary(summaryResponse.data);
-      setLowStockAlerts(alertsResponse.data);
-    } catch (error) {
-      console.error("Error loading inventory data:", error);
-
-      // Check if it's an Axios error with response
-      if (error && typeof error === "object" && "response" in error) {
-        const response = (
-          error as { response: { data?: unknown; status?: number } }
-        ).response;
-        console.error("Error response:", response.data);
-        console.error("Error status:", response.status);
-
-        if (response.status === 403) {
-          if (
-            response.data &&
-            typeof response.data === "object" &&
-            "message" in response.data
-          ) {
-            const message = (response.data as { message: string }).message;
-            if (message.includes("Store admin must be assigned to a store")) {
-              toast.error(
-                "Store admin account is not properly configured. Please contact your administrator to assign a store to your account.",
-              );
-            } else {
-              toast.error(
-                "Access denied. You may not have permission to view inventory data.",
-              );
-            }
-          } else {
-            toast.error(
-              "Access denied. You may not have permission to view inventory data.",
-            );
-          }
-        } else {
-          toast.error("Failed to load inventory data");
-        }
-      } else {
-        toast.error("Failed to load inventory data");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [admin?.accessToken, admin?.isSuper, selectedStoreId]);
 
   useEffect(() => {
     if (admin?.accessToken && selectedStoreId) {
@@ -171,8 +101,6 @@ export default function InventoryDashboard() {
       </div>
     );
   }
-
-  const selectedStore = stores.find((store) => store.id === selectedStoreId);
 
   return (
     <AdminLayout>
@@ -216,176 +144,25 @@ export default function InventoryDashboard() {
         </div>
 
         {!admin.isSuper && !admin.store?.id ? (
-          <Card>
-            <CardContent className="flex h-64 items-center justify-center">
-              <div className="text-center">
-                <AlertTriangle className="mx-auto h-12 w-12 text-yellow-500" />
-                <h3 className="mt-4 text-lg font-medium text-gray-900">
-                  Account Configuration Required
-                </h3>
-                <p className="mt-2 text-gray-600">
-                  Your store admin account is not assigned to any store. Please
-                  contact your administrator to complete your account setup.
-                </p>
-                <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-                  <p className="text-sm text-yellow-800">
-                    <strong>Technical Details:</strong>
-                    <br />
-                    Store admin accounts require a store assignment in the
-                    backend database. Your administrator needs to update your
-                    user record with a valid storeId.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <NoStoreAssignedError />
         ) : (
           <>
             {/* Store Info Banner */}
             {admin.isSuper && (
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {selectedStoreId === "all"
-                          ? "All Stores - Aggregated View"
-                          : selectedStore?.name || "Store"}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {selectedStoreId === "all"
-                          ? "Viewing inventory data across all stores"
-                          : selectedStore
-                            ? `${selectedStore.city}, ${selectedStore.province}`
-                            : ""}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500">Last Updated</p>
-                      <p className="text-sm font-medium">
-                        {new Date().toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <StoreInfoBanner
+                selectedStoreId={selectedStoreId}
+                selectedStore={stores.find((s) => s.id === selectedStoreId)}
+              />
             )}
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Products
-                  </CardTitle>
-                  <Package className="text-muted-foreground h-4 w-4" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {loading ? "..." : inventorySummary?.totalProducts || 0}
-                  </div>
-                  <p className="text-muted-foreground text-xs">
-                    Active products in store
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Stock
-                  </CardTitle>
-                  <Archive className="text-muted-foreground h-4 w-4" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {loading ? "..." : inventorySummary?.totalStock || 0}
-                  </div>
-                  <p className="text-muted-foreground text-xs">
-                    Units available
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Low Stock Alerts
-                  </CardTitle>
-                  <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {loading ? "..." : inventorySummary?.lowStockProducts || 0}
-                  </div>
-                  <p className="text-muted-foreground text-xs">
-                    Products below minimum
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Recent Movements
-                  </CardTitle>
-                  <TrendingUp className="text-muted-foreground h-4 w-4" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {loading ? "..." : inventorySummary?.recentMovements || 0}
-                  </div>
-                  <p className="text-muted-foreground text-xs">
-                    In the last 24 hours
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            <InventoryStatsCards summary={inventorySummary} loading={loading} />
 
             {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>
-                  Common inventory management tasks
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                  <Link
-                    href={`/admin/inventory/stock${selectedStoreId ? `?storeId=${selectedStoreId}` : ""}`}
-                  >
-                    <Button className="w-full" variant="outline">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Update Stock
-                    </Button>
-                  </Link>
-
-                  <Link href="/admin/inventory/journal">
-                    <Button className="w-full" variant="outline">
-                      <Clock className="mr-2 h-4 w-4" />
-                      View History
-                    </Button>
-                  </Link>
-
-                  {admin.isSuper && (
-                    <Link href="/admin/inventory/transfer">
-                      <Button className="w-full" variant="outline">
-                        <ArrowLeftRight className="mr-2 h-4 w-4" />
-                        Transfer Stock
-                      </Button>
-                    </Link>
-                  )}
-
-                  <Link href="/admin/inventory/reports">
-                    <Button className="w-full" variant="outline">
-                      <BarChart3 className="mr-2 h-4 w-4" />
-                      View Reports
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+            <InventoryQuickActions
+              selectedStoreId={selectedStoreId}
+              isSuper={admin.isSuper}
+            />
 
             {/* Low Stock Alerts & Stock by Category */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
@@ -400,44 +177,9 @@ export default function InventoryDashboard() {
               </div>
 
               {/* Category Breakdown */}
-              {inventorySummary?.stockByCategory &&
-                inventorySummary.stockByCategory.length > 0 && (
-                  <div className="lg:col-span-2">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Stock by Category</CardTitle>
-                        <CardDescription>
-                          Inventory distribution across product categories
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {inventorySummary.stockByCategory.map((category) => (
-                            <div
-                              key={category.categoryId}
-                              className="flex items-center justify-between"
-                            >
-                              <div>
-                                <h4 className="font-medium">
-                                  {category.categoryName}
-                                </h4>
-                                <p className="text-sm text-gray-600">
-                                  {category.productCount} products
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-lg font-bold">
-                                  {category.totalStock}
-                                </p>
-                                <p className="text-xs text-gray-500">units</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
+              <div className="lg:col-span-2">
+                <StockByCategoryCard summary={inventorySummary} />
+              </div>
             </div>
           </>
         )}

@@ -217,7 +217,7 @@ export const useStockManagement = () => {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
     loadProducts();

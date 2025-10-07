@@ -1,38 +1,23 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import ProductListingHeader from "@/components/admin/product/ProductListingHeader";
-import ProductFiltersComponent from "@/components/admin/product/ProductFiltersComponent";
-import ProductCard from "@/components/admin/product/ProductCard";
-import ProductListRow from "@/components/admin/product/ProductListRow";
-import ProductEmptyState from "@/components/admin/product/ProductEmptyState";
-import ProductPagination from "@/components/admin/product/ProductPagination";
-import ViewToggle from "@/components/admin/product/ViewToggle";
-import { useProductListing } from "@/hooks/useProductListing";
+import ProductsTabContent from "@/components/admin/product/ProductsTabContent";
+import CategoriesTabContent from "@/components/admin/product/CategoriesTabContent";
+import { useProductsManagement } from "@/hooks/admin/useProductsManagement";
+import { useCategoriesManagement } from "@/hooks/admin/useCategoriesManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Package, FolderTree } from "lucide-react";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useRouter, useSearchParams } from "next/navigation";
-import { adminCategoryAPI } from "@/services/admin/productAPI";
-import { AdminProductCategory, CategoryFilters } from "@/types/admin/product";
-import { toast } from "react-toastify";
-import CategoryListHeader from "@/components/admin/category/CategoryListHeader";
-import CategoryFiltersCard from "@/components/admin/category/CategoryFiltersCard";
-import CategoryGrid from "@/components/admin/category/CategoryGrid";
-import { useQueryClient } from "@tanstack/react-query";
-import { PRODUCT_QUERY_KEYS } from "@/hooks/product/useProducts";
 import LoadingLogo from "@/components/ui/LoadingLogo";
 
 export default function AdminProductsPage() {
   const searchParams = useSearchParams();
   const defaultTab = searchParams.get("tab") || "products";
-  const [productView, setProductView] = useState<"grid" | "list">("grid");
-  const [categoryView, setCategoryView] = useState<"grid" | "list">("grid");
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   // Products state
   const {
@@ -43,82 +28,34 @@ export default function AdminProductsPage() {
     filters: productFilters,
     pagination,
     admin: productAdmin,
+    productView,
+    setProductView,
     handleDeleteProduct,
     handleSearch,
     handleCategoryFilter,
     handleStoreFilter,
     handlePageChange,
-  } = useProductListing();
+  } = useProductsManagement();
 
   // Categories state
-  const [categories, setCategories] = useState<AdminProductCategory[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
-  const [categoryFilters, setCategoryFilters] = useState<CategoryFilters>({
-    search: "",
-  });
+  const {
+    categories,
+    categoriesLoading,
+    categoryView,
+    categoryFilters,
+    setCategoryView,
+    handleDeleteCategory,
+    handleCategorySearch,
+    handleActiveFilter,
+  } = useCategoriesManagement(admin?.accessToken, isAuthenticated);
 
-  const loadCategories = useCallback(async () => {
-    try {
-      setCategoriesLoading(true);
-      if (!admin?.accessToken) return;
-
-      const response = await adminCategoryAPI.getCategories(
-        admin.accessToken,
-        categoryFilters,
-      );
-      setCategories(response.data.categories);
-    } catch (error) {
-      console.error("Error loading categories:", error);
-      toast.error("Failed to load categories");
-    } finally {
-      setCategoriesLoading(false);
-    }
-  }, [admin?.accessToken, categoryFilters]);
-
+  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
-    loadCategories();
-  }, [isAuthenticated, router, loadCategories]);
-
-  const handleDeleteCategory = async (id: string) => {
-    if (!admin?.accessToken) return;
-
-    if (
-      !confirm(
-        "Are you sure you want to delete this category? This action will affect all products in this category.",
-      )
-    )
-      return;
-
-    try {
-      await adminCategoryAPI.deleteCategory(admin.accessToken, id);
-      await queryClient.invalidateQueries({
-        queryKey: PRODUCT_QUERY_KEYS.categories,
-      });
-      toast.success("Category deleted successfully");
-      loadCategories();
-    } catch (error) {
-      console.error("Error deleting category:", error);
-      toast.error("Failed to delete category");
-    }
-  };
-
-  const handleCategorySearch = (searchTerm: string) => {
-    setCategoryFilters((prev) => ({
-      ...prev,
-      search: searchTerm,
-    }));
-  };
-
-  const handleActiveFilter = (isActive: string) => {
-    setCategoryFilters((prev) => ({
-      ...prev,
-      isActive: isActive === "all" ? undefined : isActive === "true",
-    }));
-  };
+  }, [isAuthenticated, router]);
 
   if (!admin || !productAdmin) {
     return (
@@ -168,89 +105,37 @@ export default function AdminProductsPage() {
 
               {/* Products Tab */}
               <TabsContent value="products" className="space-y-6">
-                <ProductListingHeader
-                  isSuper={admin.isSuper || false}
-                  storeName={admin.store?.name}
-                />
-
-                <ProductFiltersComponent
-                  filters={productFilters}
+                <ProductsTabContent
+                  products={products}
                   categories={productCategories}
                   stores={stores}
+                  loading={productsLoading}
+                  filters={productFilters}
+                  pagination={pagination}
+                  productView={productView}
                   isSuper={admin.isSuper || false}
+                  storeName={admin.store?.name}
+                  onViewChange={setProductView}
                   onSearch={handleSearch}
                   onCategoryFilter={handleCategoryFilter}
                   onStoreFilter={handleStoreFilter}
-                />
-
-                <div className="flex justify-end">
-                  <ViewToggle
-                    view={productView}
-                    onViewChange={setProductView}
-                  />
-                </div>
-
-                {productsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <LoadingLogo size="md" message="Loading products..." />
-                  </div>
-                ) : products.length === 0 ? (
-                  <ProductEmptyState isSuper={admin.isSuper || false} />
-                ) : productView === "grid" ? (
-                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                    {products.map((product) => (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        isSuper={admin.isSuper || false}
-                        onDelete={handleDeleteProduct}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {products.map((product) => (
-                      <ProductListRow
-                        key={product.id}
-                        product={product}
-                        isSuper={admin.isSuper || false}
-                        onDelete={handleDeleteProduct}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                <ProductPagination
-                  pagination={pagination}
                   onPageChange={handlePageChange}
+                  onDeleteProduct={handleDeleteProduct}
                 />
               </TabsContent>
 
               {/* Categories Tab */}
               <TabsContent value="categories" className="space-y-6">
-                <CategoryListHeader
-                  isSuper={admin.isSuper}
+                <CategoriesTabContent
+                  categories={categories}
+                  categoriesLoading={categoriesLoading}
+                  categoryView={categoryView}
+                  categoryFilters={categoryFilters}
+                  isSuper={admin.isSuper || false}
                   storeName={admin.store?.name}
-                />
-
-                <CategoryFiltersCard
-                  filters={categoryFilters}
+                  onViewChange={setCategoryView}
                   onSearch={handleCategorySearch}
                   onActiveFilter={handleActiveFilter}
-                />
-
-                <div className="flex justify-end">
-                  <ViewToggle
-                    view={categoryView}
-                    onViewChange={setCategoryView}
-                  />
-                </div>
-
-                <CategoryGrid
-                  categories={categories}
-                  loading={categoriesLoading}
-                  isSuper={admin.isSuper}
-                  view={categoryView}
                   onDelete={handleDeleteCategory}
                 />
               </TabsContent>

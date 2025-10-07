@@ -49,7 +49,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
+      return;
     }
   }, [isAuthenticated, router]);
 

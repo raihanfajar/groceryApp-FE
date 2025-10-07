@@ -45,8 +45,8 @@ const ProductFiltersComponent: React.FC<ProductFiltersComponentProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-4">
-          <div className="relative flex-1 md:max-w-[300px]">
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="relative">
             <Search className="absolute top-3 left-3 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search products..."
@@ -56,47 +56,45 @@ const ProductFiltersComponent: React.FC<ProductFiltersComponentProps> = ({
             />
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row md:gap-4">
+          <Select
+            value={filters.categoryId || "all"}
+            onValueChange={onCategoryFilter}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories &&
+                Array.isArray(categories) &&
+                categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+
+          {isSuper && onStoreFilter && (
             <Select
-              value={filters.categoryId || "all"}
-              onValueChange={onCategoryFilter}
+              value={filters.storeId || "all"}
+              onValueChange={onStoreFilter}
             >
-              <SelectTrigger className="w-full md:w-[220px]">
-                <SelectValue placeholder="Select category" />
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select store" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories &&
-                  Array.isArray(categories) &&
-                  categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
+                <SelectItem value="all">All Stores</SelectItem>
+                {stores &&
+                  Array.isArray(stores) &&
+                  stores.map((store) => (
+                    <SelectItem key={store.id} value={store.id}>
+                      {store.name} - {store.city}
                     </SelectItem>
                   ))}
               </SelectContent>
             </Select>
-
-            {isSuper && onStoreFilter && (
-              <Select
-                value={filters.storeId || "all"}
-                onValueChange={onStoreFilter}
-              >
-                <SelectTrigger className="w-full md:w-[220px]">
-                  <SelectValue placeholder="Select store" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Stores</SelectItem>
-                  {stores &&
-                    Array.isArray(stores) &&
-                    stores.map((store) => (
-                      <SelectItem key={store.id} value={store.id}>
-                        {store.name} - {store.city}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
+          )}
         </div>
       </CardContent>
     </Card>

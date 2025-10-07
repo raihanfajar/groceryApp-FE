@@ -41,7 +41,7 @@ export default function EditProductPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
 

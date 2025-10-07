@@ -28,7 +28,7 @@ const Navbar = () => {
     router.push(`/user-login?returnUrl=${encodeURIComponent(returnUrl)}`);
   };
   const { targetStore } = useUserAuthStore();
-  const storeId = targetStore?.id;
+  const storeId = targetStore?.id ?? "c2c71ef0-0f43-4b58-b222-22d465bb88c2";
 
   const { data: cartData } = useQuery<CartCountResponse | null>({
     queryKey: [...CART_QUERY_KEY, "count"],

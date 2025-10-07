@@ -89,22 +89,17 @@ export function useUpdateCartQuantity() {
       return { previousCart };
     },
 
-    // Rollback kalau gagal
     onError: (err: baseError, _vars, context) => {
-      // Kembalikan UI ke kondisi semula (rollback)
       if (context?.previousCart) {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
 
-      // Ambil pesan error dari respons backend
       const errorMessage =
         err?.response?.data?.message || "Something went wrong";
 
-      // Tampilkan notifikasi toast error
       toast.error(errorMessage);
     },
 
-    // Sync ulang data dengan server
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },

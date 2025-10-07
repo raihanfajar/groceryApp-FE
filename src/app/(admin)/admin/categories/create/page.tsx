@@ -14,7 +14,7 @@ export default function CreateCategoryPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
 

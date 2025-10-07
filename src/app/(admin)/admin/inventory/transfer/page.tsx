@@ -56,7 +56,7 @@ export default function StockTransferPage() {
   // Redirect if not Super Admin
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
 

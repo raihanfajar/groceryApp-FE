@@ -25,8 +25,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  if (!isAuthenticated() || !admin) {
-    router.push("/admin-login");
+  if (!isAuthenticated()) {
+    router.push("/");
+    return null;
+  }
+
+  if (!admin) {
     return null;
   }
 
@@ -72,7 +76,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   ];
 
   // Add Users tab only for Super Admin
-  const navigation = admin?.isSuper
+  const navigation = admin.isSuper
     ? [
         ...baseNavigation,
         {

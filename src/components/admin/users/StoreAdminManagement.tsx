@@ -10,9 +10,9 @@ import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import { AddStoreAdminDialog } from "./AddStoreAdminDialog";
-import { EditStoreAdminDialog } from "./EditStoreAdminDialog";
-import { StoreAdminTable } from "./StoreAdminTable";
+import { AddStoreAdminDialog } from "./storeAdminManagement/AddStoreAdminDialog";
+import { EditStoreAdminDialog } from "./storeAdminManagement/EditStoreAdminDialog";
+import { StoreAdminTable } from "./storeAdminManagement/StoreAdminTable";
 import { CreateStoreAdminData, StoreAdmin } from "./typesAndInterfaces";
 
 export default function StoreAdminManagement() {

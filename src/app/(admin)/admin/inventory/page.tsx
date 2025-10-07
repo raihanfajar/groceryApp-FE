@@ -66,7 +66,7 @@ export default function InventoryDashboard() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
 

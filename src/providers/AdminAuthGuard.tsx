@@ -13,7 +13,7 @@ export default function AdminAuthGuard({
   children,
   requireSuperAdmin = false,
 }: AdminAuthGuardProps) {
-  const { admin, isAuthenticated, isSuperAdmin } = useAdminAuthStore();
+  const { isAuthenticated, isSuperAdmin } = useAdminAuthStore();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,7 +21,7 @@ export default function AdminAuthGuard({
     // Wait for hydration
     const timer = setTimeout(() => {
       if (!isAuthenticated()) {
-        router.push("/admin-login");
+        router.push("/");
         return;
       }
 
@@ -45,10 +45,6 @@ export default function AdminAuthGuard({
         </div>
       </div>
     );
-  }
-
-  if (!admin) {
-    return null;
   }
 
   return <>{children}</>;

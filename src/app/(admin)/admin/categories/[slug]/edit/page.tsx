@@ -49,7 +49,7 @@ export default function EditCategoryPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
 

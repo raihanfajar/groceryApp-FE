@@ -27,7 +27,7 @@ function Page() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
   }, [isAuthenticated, router]);

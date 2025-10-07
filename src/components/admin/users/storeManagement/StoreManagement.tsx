@@ -90,7 +90,8 @@ export default function StoreManagement() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Delete this store?")) deleteStore(id);
+    console.log("DELETE store id from StoreManagement:", id);
+    deleteStore(id);
   };
 
   return (

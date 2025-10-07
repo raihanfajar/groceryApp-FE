@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LeftNavUserProfile from "@/components/userProfile/LeftNavUserProfile";
+import { AvatarSection } from "@/components/userProfile/myAccount/AvatarSection";
 import ChangePasswordDialog from "@/components/userProfile/myAccount/ChangePasswordDialog";
 import SettingsPersonalInfo from "@/components/userProfile/myAccount/SettingsPersonalInfo";
-import Image from "next/image";
 
 const UserProfilePage = () => {
   return (
@@ -25,15 +25,7 @@ const UserProfilePage = () => {
             <CardContent className="grid !h-full grid-cols-1 gap-6 md:grid-cols-3">
               {/* Avatar + Change password */}
               <div className="flex flex-col items-center">
-                <div className="mb-4 h-24 w-24 rounded-full bg-gray-300">
-                  <Image
-                    src="/profile.jpg"
-                    alt="profile"
-                    width={100}
-                    height={100}
-                    className="rounded-full border-2 border-gray-300 object-contain"
-                  />
-                </div>
+                <AvatarSection />
                 <ChangePasswordDialog />
               </div>
 

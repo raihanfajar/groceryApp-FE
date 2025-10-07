@@ -7,6 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useGetUserProfileInfo } from "@/hooks/userProfile/useGetUserProfileInfo";
+import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -67,16 +69,18 @@ export const DiscoverDropDown = () => {
 };
 
 export const ProfileDropDown = () => {
+  const { accessToken } = useUserAuthStore();
+  const { data: userProfileInfo } = useGetUserProfileInfo(accessToken);
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         {/* a circle icon for profile picture */}
         <Image
-          src="/profile.jpg"
+          src={userProfileInfo?.profilePicture || "/profile.jpg"}
           alt="profile"
           width={40}
           height={40}
-          className="cursor-pointer rounded-full border-2 border-gray-300 object-contain"
+          className="cursor-pointer border-2 border-white object-contain"
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="z-[99] w-fit border-black p-0 shadow-md shadow-gray-400">

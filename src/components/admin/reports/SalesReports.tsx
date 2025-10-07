@@ -11,11 +11,14 @@ import {
   TrendingUp,
   DollarSign,
   ShoppingCart,
+  ArrowUpDown,
 } from "lucide-react";
 import ReportFilters from "./ReportFilters";
-import SalesLineChart from "./charts/SalesLineChart";
 import CategoryBarChart from "./charts/CategoryBarChart";
 import ProductPieChart from "./charts/ProductPieChart";
+import TopSellingProductsCard from "../dashboard/TopSellingProductsCard";
+import SalesGraphCard from "../dashboard/SalesGraphCard";
+import { useState } from "react";
 
 interface SalesReportsProps {
   storeId?: string;
@@ -34,6 +37,15 @@ export default function SalesReports({
   onMonthChange,
   onYearChange,
 }: SalesReportsProps) {
+  const [sortColumn, setSortColumn] = useState<
+    | "categoryName"
+    | "totalRevenue"
+    | "totalQuantity"
+    | "orderCount"
+    | "avgOrderValue"
+  >("totalRevenue");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
   const {
     data: monthlySales,
     isLoading: isLoadingMonthlySales,
@@ -45,6 +57,58 @@ export default function SalesReports({
     isLoading: isLoadingCategorySales,
     error: categorySalesError,
   } = useCategorySalesReport({ storeId, month, year });
+
+  const handleSort = (column: typeof sortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("desc");
+    }
+  };
+
+  const sortedCategories = categorySales
+    ? [...categorySales].sort((a, b) => {
+        let aValue: number | string;
+        let bValue: number | string;
+
+        switch (sortColumn) {
+          case "categoryName":
+            aValue = a.categoryName;
+            bValue = b.categoryName;
+            break;
+          case "totalRevenue":
+            aValue = a.totalRevenue;
+            bValue = b.totalRevenue;
+            break;
+          case "totalQuantity":
+            aValue = a.totalQuantity;
+            bValue = b.totalQuantity;
+            break;
+          case "orderCount":
+            aValue = a.orderCount;
+            bValue = b.orderCount;
+            break;
+          case "avgOrderValue":
+            aValue = a.orderCount > 0 ? a.totalRevenue / a.orderCount : 0;
+            bValue = b.orderCount > 0 ? b.totalRevenue / b.orderCount : 0;
+            break;
+          default:
+            aValue = 0;
+            bValue = 0;
+        }
+
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return sortDirection === "asc"
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+        }
+
+        return sortDirection === "asc"
+          ? (aValue as number) - (bValue as number)
+          : (bValue as number) - (aValue as number);
+      })
+    : [];
 
   return (
     <div className="space-y-6">
@@ -99,7 +163,9 @@ export default function SalesReports({
                   <CardContent>
                     <div className="text-2xl font-bold">
                       Rp{" "}
-                      {(monthlySales.totalRevenue || 0).toLocaleString("id-ID")}
+                      {(monthlySales.summary.totalSales || 0).toLocaleString(
+                        "id-ID",
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -113,7 +179,9 @@ export default function SalesReports({
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      {(monthlySales.totalOrders || 0).toLocaleString("id-ID")}
+                      {(
+                        monthlySales.summary.totalTransactions || 0
+                      ).toLocaleString("id-ID")}
                     </div>
                   </CardContent>
                 </Card>
@@ -128,88 +196,71 @@ export default function SalesReports({
                   <CardContent>
                     <div className="text-2xl font-bold">
                       Rp{" "}
-                      {(monthlySales.averageOrderValue || 0).toLocaleString(
-                        "id-ID",
-                      )}
+                      {(
+                        monthlySales.summary.averageOrderValue || 0
+                      ).toLocaleString("id-ID")}
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Top Selling Products */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Top Selling Products</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {monthlySales.topSellingProducts &&
-                  monthlySales.topSellingProducts.length > 0 ? (
-                    <div className="space-y-4">
-                      {monthlySales.topSellingProducts.map((product, index) => (
-                        <div
-                          key={product.productId}
-                          className="flex items-center"
-                        >
-                          <div className="bg-primary/10 text-primary mr-4 flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold">
-                            {index + 1}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium">{product.productName}</p>
-                            <p className="text-muted-foreground text-sm">
-                              {product.quantity || 0} units sold
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold">
-                              Rp{" "}
-                              {(product.revenue || 0).toLocaleString("id-ID")}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground py-4 text-center">
-                      No product sales data available
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-
               {/* Daily Sales Chart */}
               {monthlySales.dailySales &&
                 monthlySales.dailySales.length > 0 && (
-                  <SalesLineChart
-                    data={monthlySales.dailySales.map((day) => ({
-                      name: new Date(day.date).getDate().toString(),
-                      value: day.revenue,
-                      orders: day.orders,
-                    }))}
-                    title="Daily Sales Trend"
-                    dataKey="value"
-                    xAxisKey="name"
-                    yAxisLabel="Revenue (Rp)"
-                    color="#2563eb"
-                    height={300}
+                  <SalesGraphCard
+                    labels={monthlySales.dailySales.map((day) =>
+                      new Date(day.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      }),
+                    )}
+                    data={monthlySales.dailySales.map((day) => day.totalSales)}
+                    isLoading={isLoadingMonthlySales}
                   />
                 )}
 
-              {/* Top Products Pie Chart */}
-              {monthlySales.topSellingProducts &&
-                monthlySales.topSellingProducts.length > 0 && (
+              {/* Top Selling Products and Revenue Distribution - Side by Side */}
+              <div className="grid gap-4 md:grid-cols-2">
+                {/* Top Selling Products */}
+                <TopSellingProductsCard
+                  products={
+                    monthlySales.topProducts?.map((product) => ({
+                      productId: product.productId,
+                      productName: product.productName,
+                      categoryName: product.categoryName,
+                      picture: product.picture,
+                      quantitySold: product.quantitySold,
+                      totalRevenue: product.totalRevenue,
+                    })) || []
+                  }
+                  isLoading={isLoadingMonthlySales}
+                />
+
+                {/* Revenue Distribution Pie Chart */}
+                {monthlySales.topProducts &&
+                monthlySales.topProducts.length > 0 ? (
                   <ProductPieChart
-                    data={monthlySales.topSellingProducts
+                    data={monthlySales.topProducts
                       .slice(0, 8)
                       .map((product) => ({
                         name: product.productName,
-                        value: product.revenue,
+                        value: product.totalRevenue,
                       }))}
                     title="Revenue Distribution by Top Products"
                     dataKey="value"
                     nameKey="name"
-                    height={350}
+                    height={280}
+                    fontSize={10}
+                    legendFontSize={11}
                   />
+                ) : (
+                  <div className="flex h-full items-center justify-center rounded-lg border bg-white p-6">
+                    <p className="text-muted-foreground text-sm">
+                      No revenue distribution data available
+                    </p>
+                  </div>
                 )}
+              </div>
             </>
           ) : null}
         </TabsContent>
@@ -249,69 +300,107 @@ export default function SalesReports({
                 height={300}
               />
 
-              {/* Category Details Grid */}
-              <div className="grid gap-4 md:grid-cols-2">
-                {categorySales.map((category) => (
-                  <Card key={category.categoryId}>
-                    <CardHeader>
-                      <CardTitle className="text-lg">
-                        {category.categoryName}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-muted-foreground text-sm">
-                            Revenue
-                          </p>
-                          <p className="text-xl font-bold">
-                            Rp{" "}
-                            {(category.totalRevenue || 0).toLocaleString(
-                              "id-ID",
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground text-sm">
-                            Units Sold
-                          </p>
-                          <p className="text-xl font-bold">
-                            {(category.totalQuantity || 0).toLocaleString(
-                              "id-ID",
-                            )}
-                          </p>
-                        </div>
-                      </div>
+              {/* Category Details Table */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Category Performance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b">
+                          <th
+                            className="cursor-pointer px-4 py-3 text-left text-sm font-medium hover:bg-gray-50"
+                            onClick={() => handleSort("categoryName")}
+                          >
+                            <div className="flex items-center gap-2">
+                              Category
+                              <ArrowUpDown className="h-4 w-4" />
+                            </div>
+                          </th>
+                          <th
+                            className="cursor-pointer px-4 py-3 text-right text-sm font-medium hover:bg-gray-50"
+                            onClick={() => handleSort("totalRevenue")}
+                          >
+                            <div className="flex items-center justify-end gap-2">
+                              Revenue
+                              <ArrowUpDown className="h-4 w-4" />
+                            </div>
+                          </th>
+                          <th
+                            className="cursor-pointer px-4 py-3 text-right text-sm font-medium hover:bg-gray-50"
+                            onClick={() => handleSort("totalQuantity")}
+                          >
+                            <div className="flex items-center justify-end gap-2">
+                              Units Sold
+                              <ArrowUpDown className="h-4 w-4" />
+                            </div>
+                          </th>
+                          <th
+                            className="cursor-pointer px-4 py-3 text-right text-sm font-medium hover:bg-gray-50"
+                            onClick={() => handleSort("orderCount")}
+                          >
+                            <div className="flex items-center justify-end gap-2">
+                              Total Orders
+                              <ArrowUpDown className="h-4 w-4" />
+                            </div>
+                          </th>
+                          <th
+                            className="cursor-pointer px-4 py-3 text-right text-sm font-medium hover:bg-gray-50"
+                            onClick={() => handleSort("avgOrderValue")}
+                          >
+                            <div className="flex items-center justify-end gap-2">
+                              Avg. Order Value
+                              <ArrowUpDown className="h-4 w-4" />
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortedCategories.map((category) => {
+                          const avgOrderValue =
+                            category.orderCount > 0
+                              ? Math.round(
+                                  category.totalRevenue / category.orderCount,
+                                )
+                              : 0;
 
-                      {/* Top Products in Category */}
-                      <div>
-                        <p className="mb-2 text-sm font-medium">Top Products</p>
-                        <div className="space-y-2">
-                          {category.products && category.products.length > 0 ? (
-                            category.products.slice(0, 3).map((product) => (
-                              <div
-                                key={product.productId}
-                                className="flex justify-between text-sm"
-                              >
-                                <span className="text-muted-foreground">
-                                  {product.productName}
-                                </span>
-                                <span className="font-medium">
-                                  {product.quantity || 0} units
-                                </span>
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-muted-foreground text-sm">
-                              No products
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                          return (
+                            <tr
+                              key={category.categoryId}
+                              className="border-b hover:bg-gray-50"
+                            >
+                              <td className="px-4 py-3 text-sm font-medium">
+                                {category.categoryName}
+                              </td>
+                              <td className="px-4 py-3 text-right text-sm">
+                                Rp{" "}
+                                {(category.totalRevenue || 0).toLocaleString(
+                                  "id-ID",
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-right text-sm">
+                                {(category.totalQuantity || 0).toLocaleString(
+                                  "id-ID",
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-right text-sm">
+                                {(category.orderCount || 0).toLocaleString(
+                                  "id-ID",
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-right text-sm">
+                                Rp {avgOrderValue.toLocaleString("id-ID")}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <Card>

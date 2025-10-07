@@ -10,25 +10,30 @@ export interface ReportFilters {
 
 // Monthly Sales Report
 export interface MonthlySalesReport {
-  month: number;
-  year: number;
-  storeId?: string;
-  storeName?: string;
-  totalRevenue: number;
-  totalOrders: number;
-  totalItems: number;
-  averageOrderValue: number;
-  topSellingProducts: Array<{
+  period: {
+    startDate: string;
+    endDate: string;
+    period: string;
+  };
+  summary: {
+    totalSales: number;
+    totalTransactions: number;
+    averageOrderValue: number;
+  };
+  topProducts: Array<{
     productId: string;
     productName: string;
-    quantity: number;
-    revenue: number;
+    categoryName: string;
+    picture?: string;
+    quantitySold: number;
+    totalRevenue: number;
   }>;
   dailySales: Array<{
     date: string;
-    revenue: number;
-    orders: number;
+    transactionCount: number;
+    totalSales: number;
   }>;
+  storeFilter?: string;
 }
 
 // Sales by Category
@@ -74,7 +79,7 @@ export interface MonthlyStockReport {
   outOfStockProducts: number;
   stockValue: number;
   stockMovements: Array<{
-    type: "IN" | "OUT" | "ADJUSTMENT";
+    type: "IN" | "OUT" | "ADJUSTMENT" | "TRANSFER" | "INITIAL";
     quantity: number;
     count: number;
   }>;
@@ -94,7 +99,7 @@ export interface ProductStockReport {
   storeName?: string;
   stockJournal: Array<{
     id: string;
-    type: "IN" | "OUT" | "ADJUSTMENT";
+    type: "IN" | "OUT" | "ADJUSTMENT" | "TRANSFER" | "INITIAL";
     quantity: number;
     notes?: string;
     createdAt: string;
@@ -140,7 +145,8 @@ export interface DashboardReport {
       productId: string;
       productName: string;
       categoryName: string;
-      totalQuantitySold: number;
+      picture?: string;
+      quantitySold: number;
       totalRevenue: number;
     }>;
   };

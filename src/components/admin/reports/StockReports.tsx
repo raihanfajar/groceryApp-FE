@@ -146,52 +146,118 @@ export default function StockReports({
           {/* Stock Movements */}
           <Card>
             <CardHeader>
-              <CardTitle>Stock Movements</CardTitle>
+              <CardTitle>Stock Movements Summary</CardTitle>
+              <p className="text-muted-foreground text-sm">
+                Track all inventory changes during this period
+              </p>
             </CardHeader>
             <CardContent>
               {data.stockMovements && data.stockMovements.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
                   {data.stockMovements.map(
                     (movement: {
-                      type: "IN" | "OUT" | "ADJUSTMENT";
+                      type:
+                        | "IN"
+                        | "OUT"
+                        | "ADJUSTMENT"
+                        | "TRANSFER"
+                        | "INITIAL";
                       quantity: number;
                       count: number;
-                    }) => (
-                      <div
-                        key={movement.type}
-                        className="flex flex-col space-y-2 rounded-lg border p-4"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span
-                            className={`text-sm font-medium ${
-                              movement.type === "IN"
-                                ? "text-green-600"
-                                : movement.type === "OUT"
-                                  ? "text-red-600"
-                                  : "text-blue-600"
-                            }`}
-                          >
-                            {movement.type === "IN"
-                              ? "Stock In"
-                              : movement.type === "OUT"
-                                ? "Stock Out"
-                                : "Adjustments"}
-                          </span>
-                          <span className="text-muted-foreground text-xs">
-                            {movement.count || 0} transactions
-                          </span>
+                    }) => {
+                      const movementInfoMap = {
+                        IN: {
+                          label: "Stock Received",
+                          description: "New inventory added",
+                          color: "text-green-600",
+                          bgColor: "bg-green-50",
+                          icon: "📦",
+                        },
+                        OUT: {
+                          label: "Stock Sold",
+                          description: "Products sold to customers",
+                          color: "text-red-600",
+                          bgColor: "bg-red-50",
+                          icon: "📤",
+                        },
+                        ADJUSTMENT: {
+                          label: "Stock Adjustments",
+                          description: "Manual corrections",
+                          color: "text-blue-600",
+                          bgColor: "bg-blue-50",
+                          icon: "⚖️",
+                        },
+                        TRANSFER: {
+                          label: "Stock Transfers",
+                          description: "Moved between stores",
+                          color: "text-purple-600",
+                          bgColor: "bg-purple-50",
+                          icon: "🔄",
+                        },
+                        INITIAL: {
+                          label: "Initial Stock",
+                          description: "First inventory setup",
+                          color: "text-orange-600",
+                          bgColor: "bg-orange-50",
+                          icon: "🏁",
+                        },
+                      };
+
+                      const movementInfo = movementInfoMap[movement.type] || {
+                        label: "Unknown",
+                        description: "Unknown movement type",
+                        color: "text-gray-600",
+                        bgColor: "bg-gray-50",
+                        icon: "❓",
+                      };
+
+                      return (
+                        <div
+                          key={movement.type}
+                          className={`flex flex-col space-y-3 rounded-lg border p-4 ${movementInfo.bgColor}`}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">
+                                  {movementInfo.icon}
+                                </span>
+                                <span
+                                  className={`text-sm font-semibold ${movementInfo.color}`}
+                                >
+                                  {movementInfo.label}
+                                </span>
+                              </div>
+                              <p className="text-muted-foreground mt-1 text-xs">
+                                {movementInfo.description}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <div
+                              className={`text-2xl font-bold ${movementInfo.color}`}
+                            >
+                              {movement.type === "OUT" ? "-" : "+"}
+                              {(movement.quantity || 0).toLocaleString(
+                                "id-ID",
+                              )}{" "}
+                              units
+                            </div>
+                            <p className="text-muted-foreground text-xs">
+                              {(movement.count || 0).toLocaleString("id-ID")}{" "}
+                              {movement.count === 1
+                                ? "transaction"
+                                : "transactions"}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-2xl font-bold">
-                          {movement.type === "OUT" ? "-" : "+"}
-                          {movement.quantity || 0} units
-                        </div>
-                      </div>
-                    ),
+                      );
+                    },
                   )}
                 </div>
               ) : (
                 <p className="text-muted-foreground py-4 text-center">
-                  No stock movement data available
+                  No stock movement data available for this period
                 </p>
               )}
             </CardContent>
@@ -201,6 +267,15 @@ export default function StockReports({
           <Card>
             <CardHeader>
               <CardTitle>Top Restocked Products</CardTitle>
+              <p className="text-muted-foreground text-sm">
+                Products with the highest positive stock movements in{" "}
+                <span className="font-semibold">
+                  {new Date(year, month - 1).toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              </p>
             </CardHeader>
             <CardContent>
               {data.topRestockedProducts &&
@@ -217,30 +292,50 @@ export default function StockReports({
                     ) => (
                       <div
                         key={product.productId}
-                        className="flex items-center"
+                        className="flex items-center rounded-lg border p-3 hover:bg-gray-50"
                       >
-                        <div className="mr-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-semibold text-green-700">
-                          {index + 1}
+                        <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-700">
+                          #{index + 1}
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium">{product.productName}</p>
+                          <p className="font-semibold">{product.productName}</p>
                           <p className="text-muted-foreground text-sm">
-                            Restocked quantity
+                            Total quantity received
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-green-600">
-                            +{product.quantity || 0} units
+                          <p className="text-xl font-bold text-green-600">
+                            +{(product.quantity || 0).toLocaleString("id-ID")}
                           </p>
+                          <p className="text-muted-foreground text-xs">units</p>
                         </div>
                       </div>
                     ),
                   )}
                 </div>
               ) : (
-                <p className="text-muted-foreground py-4 text-center">
-                  No restock data available for this period.
-                </p>
+                <div className="text-muted-foreground space-y-3 py-8 text-center">
+                  <Package className="mx-auto h-12 w-12 opacity-20" />
+                  <p className="font-medium">No Positive Stock Movements</p>
+                  <p className="text-sm">
+                    No products had positive stock movements in{" "}
+                    <span className="font-semibold">
+                      {new Date(year, month - 1).toLocaleDateString("en-US", {
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                    .
+                  </p>
+                  <p className="text-xs">
+                    This includes Stock Received, positive Adjustments,
+                    Transfers received, and Initial stock setup.
+                  </p>
+                  <p className="text-xs italic">
+                    💡 Tip: Check if you&apos;ve selected the correct month/year
+                    filter above.
+                  </p>
+                </div>
               )}
             </CardContent>
           </Card>

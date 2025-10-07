@@ -387,7 +387,7 @@ export const menuSections: MenuSection[] = [
     title: "Main",
     items: [
       { label: "Products", href: "/products", icon: "MdOutlineShoppingBag" },
-      { label: "Promo (dev)", href: "#", icon: "MdOutlineDiscount" },
+      { label: "Promo", href: "/promo", icon: "MdOutlineDiscount" },
       { label: "All Category", href: "/categories", icon: "MdOutlineGridView" },
     ],
   },

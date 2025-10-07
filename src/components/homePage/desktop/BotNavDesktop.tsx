@@ -99,7 +99,9 @@ export default function BotNavDesktop({ cartCount, onClick }: cartCountProps) {
         >
           Products
         </Link>
-        <h1>Promo (Dev)</h1>
+        <Link href="/promo" className="transition-colors hover:text-green-600">
+          Promo
+        </Link>
         {name && (
           <Link href={"/cart"} className="relative">
             <MdShoppingCart size={24} />

@@ -16,6 +16,7 @@ export interface baseUserResponse {
         updatedAt: string;
         deletedAt: string | null;
         accessToken: string;
+        profilePicture?: string;
     };
 };
 

@@ -41,9 +41,10 @@ export default function AdminCategoriesPage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
+
     loadCategories();
   }, [isAuthenticated, router, loadCategories]);
 
@@ -82,14 +83,7 @@ export default function AdminCategoriesPage() {
   };
 
   if (!admin) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-32 w-32 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (

@@ -24,6 +24,8 @@ interface ProductPieChartProps {
   colors?: string[];
   height?: number;
   showPercentage?: boolean;
+  fontSize?: number;
+  legendFontSize?: number;
 }
 
 const DEFAULT_COLORS = [
@@ -47,6 +49,8 @@ export default function ProductPieChart({
   colors = DEFAULT_COLORS,
   height = 300,
   showPercentage = true,
+  fontSize = 12,
+  legendFontSize = 12,
 }: ProductPieChartProps) {
   const formatTooltip = (value: number) => {
     return `Rp ${value.toLocaleString("id-ID")}`;
@@ -81,6 +85,7 @@ export default function ProductPieChart({
               outerRadius={100}
               fill="#8884d8"
               dataKey={dataKey}
+              style={{ fontSize: `${fontSize}px` }}
             >
               {data.map((entry, index) => (
                 <Cell
@@ -100,6 +105,7 @@ export default function ProductPieChart({
             <Legend
               verticalAlign="bottom"
               height={36}
+              wrapperStyle={{ fontSize: `${legendFontSize}px` }}
               formatter={(value) => {
                 const item = data.find((d) => d[nameKey] === value);
                 if (item) {

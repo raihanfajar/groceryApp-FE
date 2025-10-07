@@ -70,6 +70,8 @@ export const useStockJournal = () => {
         type: filters.type,
         dateFrom: filters.startDate,
         dateTo: filters.endDate,
+        search: filters.search?.trim() || undefined,
+        categoryId: filters.categoryId || undefined,
       };
 
       const response = await adminInventoryAPI.getStockJournal(
@@ -176,7 +178,7 @@ export const useStockJournal = () => {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/admin-login");
+      router.push("/");
       return;
     }
     loadStockJournal();

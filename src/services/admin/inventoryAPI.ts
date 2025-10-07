@@ -89,6 +89,8 @@ export const adminInventoryAPI = {
     if (filters?.type) params.append("type", filters.type);
     if (filters?.dateFrom) params.append("dateFrom", filters.dateFrom);
     if (filters?.dateTo) params.append("dateTo", filters.dateTo);
+    if (filters?.search) params.append("search", filters.search);
+    if (filters?.categoryId) params.append("categoryId", filters.categoryId);
     if (filters?.page) params.append("page", filters.page.toString());
     if (filters?.limit) params.append("limit", filters.limit.toString());
 

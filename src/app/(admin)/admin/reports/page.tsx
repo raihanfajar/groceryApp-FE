@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Package, DollarSign } from "lucide-react";
+import { Package, DollarSign } from "lucide-react";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import AdminLayout from "@/components/admin/AdminLayout";
-import DashboardOverview from "@/components/admin/reports/DashboardOverview";
 import SalesReports from "@/components/admin/reports/SalesReports";
 import StockReports from "@/components/admin/reports/StockReports";
 
@@ -38,12 +37,8 @@ export default function ReportsPage() {
         </div>
 
         {/* Tabs Navigation */}
-        <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Dashboard
-            </TabsTrigger>
+        <Tabs defaultValue="sales" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
             <TabsTrigger value="sales" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
               Sales Reports
@@ -53,18 +48,6 @@ export default function ReportsPage() {
               Stock Reports
             </TabsTrigger>
           </TabsList>
-
-          {/* Dashboard Tab */}
-          <TabsContent value="dashboard" className="space-y-6">
-            <DashboardOverview
-              storeId={getStoreIdForApi(selectedStoreId)}
-              month={selectedMonth}
-              year={selectedYear}
-              onStoreChange={setSelectedStoreId}
-              onMonthChange={setSelectedMonth}
-              onYearChange={setSelectedYear}
-            />
-          </TabsContent>
 
           {/* Sales Reports Tab */}
           <TabsContent value="sales" className="space-y-6">

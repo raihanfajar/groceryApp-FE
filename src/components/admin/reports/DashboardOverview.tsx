@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ReportFilters from "./ReportFilters";
+import TopSellingProductsCard from "../dashboard/TopSellingProductsCard";
 
 interface DashboardOverviewProps {
   storeId?: string;
@@ -145,40 +146,20 @@ export default function DashboardOverview({
         </Card>
       </div>
 
-      {/* Top Products */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Selling Products</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {data?.sales?.topProducts && data.sales.topProducts.length > 0 ? (
-            <div className="space-y-4">
-              {data.sales.topProducts.map((product, index) => (
-                <div key={product.productId} className="flex items-center">
-                  <div className="bg-primary/10 text-primary mr-4 flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">{product.productName}</p>
-                    <p className="text-muted-foreground text-sm">
-                      {product.totalQuantitySold} units sold
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold">
-                      Rp {product.totalRevenue.toLocaleString("id-ID")}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground py-4 text-center">
-              No sales data available for this period.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      {/* Top Products - Full Width */}
+      <TopSellingProductsCard
+        products={
+          data?.sales?.topProducts?.map((product) => ({
+            productId: product.productId,
+            productName: product.productName,
+            categoryName: product.categoryName,
+            picture: product.picture,
+            quantitySold: product.quantitySold,
+            totalRevenue: product.totalRevenue,
+          })) || []
+        }
+        isLoading={isLoading}
+      />
 
       {/* Low Stock Items */}
       {data?.stock?.lowStockAlerts && data.stock.lowStockAlerts.length > 0 && (

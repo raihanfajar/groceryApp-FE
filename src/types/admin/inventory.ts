@@ -145,6 +145,8 @@ export interface StockJournalFilters {
   type?: StockMovementType;
   dateFrom?: string; // YYYY-MM-DD format
   dateTo?: string; // YYYY-MM-DD format
+  search?: string;
+  categoryId?: string;
   page?: number;
   limit?: number;
 }

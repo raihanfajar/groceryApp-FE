@@ -377,15 +377,20 @@ export const benefitBannerBenefits: Benefits[] = [
 // !MenuDrawer MOBILE
 export const menuSections: MenuSection[] = [
   {
-    title: "Profile",
+    title: "Transactions",
     items: [
-      { label: "Transactions", href: "/user-profile/done", icon: "MdOutlineReceiptLong" },
-      { label: "Settings", href: "/user-profile/settings", icon: "MdSettings" },
+      { label: "Waiting for payment", href: "/user-profile/waiting-for-payment", icon: "MdOutlineReceiptLong" },
+      { label: "Waiting for confirmation", href: "/user-profile/waiting-for-confirmation", icon: "MdOutlineReceiptLong" },
+      { label: "Processed", href: "/user-profile/processed", icon: "MdOutlineReceiptLong" },
+      { label: "Sent", href: "/user-profile/sent", icon: "MdOutlineReceiptLong" },
+      { label: "Done", href: "/user-profile/done", icon: "MdOutlineReceiptLong" },
+      { label: "Cancelled", href: "/user-profile/cancelled", icon: "MdOutlineReceiptLong" },
     ],
   },
   {
     title: "Main",
     items: [
+      { label: "Settings", href: "/user-profile/settings", icon: "MdSettings" },
       { label: "Products", href: "/products", icon: "MdOutlineShoppingBag" },
       { label: "Promo", href: "/promo", icon: "MdOutlineDiscount" },
       { label: "All Category", href: "/categories", icon: "MdOutlineGridView" },

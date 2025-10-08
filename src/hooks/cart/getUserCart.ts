@@ -111,17 +111,15 @@ export function useAddCartProduct() {
   const queryClient = useQueryClient();
   const { accessToken, targetStore } = useUserAuthStore();
 
-  return useMutation<
+  const mutation = useMutation<
     ApiResponse<{ cart: Cart }>,
     baseError,
     { productId: string }
   >({
     mutationFn: async (input) => {
-      if (!accessToken) throw new Error("Access token is missing");
       if (!input?.productId) throw new Error("productId is required");
 
       const storeId = targetStore?.id ?? "c2c71ef0-0f43-4b58-b222-22d465bb88c2";
-
       const payload = {
         storeId: storeId,
         productId: String(input.productId),
@@ -135,7 +133,6 @@ export function useAddCartProduct() {
           headers: { Authorization: `Bearer ${accessToken}` },
         },
       );
-
       return response.data;
     },
     onSuccess: () => {
@@ -149,4 +146,14 @@ export function useAddCartProduct() {
       toast.error(errorMessage);
     },
   });
+
+  const guardedMutate = (variables: { productId: string }) => {
+    if (!accessToken) {
+      toast.error("Please login first");
+      return;
+    }
+    mutation.mutate(variables);
+  };
+
+  return { ...mutation, mutate: guardedMutate };
 }

@@ -1,8 +1,4 @@
 // Admin Authentication Types
-export interface AdminLoginFormValues {
-  email: string;
-  password: string;
-}
 
 export interface AdminStore {
   id: string;

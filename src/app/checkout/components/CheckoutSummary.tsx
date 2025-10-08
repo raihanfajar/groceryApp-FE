@@ -35,18 +35,17 @@ function CheckoutSummary({
     storeId ?? null,
   );
 
-  let productDiscount = 0;
-  let deliveryDiscount = 0;
+  const shippingPriceOrDefault = shippingprice ?? 0;
 
-  let grandTotal = subTotal + shippingprice!;
-  if (productVoucher) {
-    grandTotal -= productVoucher.discount;
-    productDiscount = productVoucher.discount;
-  }
-  if (deliveryVoucher) {
-    grandTotal -= deliveryVoucher.discount;
-    deliveryDiscount = deliveryVoucher.discount;
-  }
+  const productDiscount = productVoucher
+    ? Math.min(subTotal, productVoucher.discount)
+    : 0;
+  const deliveryDiscount = deliveryVoucher
+    ? Math.min(shippingPriceOrDefault, deliveryVoucher.discount)
+    : 0;
+
+  const grandTotal =
+    subTotal + shippingPriceOrDefault - productDiscount - deliveryDiscount;
 
   const { mutateAsync, isPending } = useCreateTransactionMutation();
 
@@ -55,30 +54,32 @@ function CheckoutSummary({
       toast.error("Store is not available.");
       return;
     }
+    if (!userAddress?.id) {
+      toast.error("Please select a shipping address.");
+      return;
+    }
     try {
       const input = {
-        userAddressId: userAddress?.id ?? "",
-        storeId: targetStore!.id,
-        shippingPrice: shippingprice ?? 0,
+        userAddressId: userAddress.id,
+        storeId: targetStore.id,
+        shippingPrice: shippingPriceOrDefault,
         paymentMethod,
-        voucherProductCode: productVoucher?.code ?? null,
-        voucherDeliveryCode: deliveryVoucher?.code ?? null,
+        voucherProductCode: productVoucher?.code,
+        voucherDeliveryCode: deliveryVoucher?.code,
       };
 
       const response = await mutateAsync(input);
-
       const transactionId = response.data.transaction.id;
 
       if (transactionId) {
+        toast.success("Transaction created successfully!");
         router.push(`/transaction/${transactionId}`);
       }
     } catch (error: unknown) {
       const customError = error as baseError;
-
-      if (customError?.response?.data?.message) {
-        toast.error(customError.response.data.message);
-        return;
-      }
+      const message =
+        customError?.response?.data?.message || "Failed to create transaction.";
+      toast.error(message);
     }
   }, [
     mutateAsync,
@@ -86,15 +87,16 @@ function CheckoutSummary({
     router,
     userAddress?.id,
     targetStore,
-    shippingprice,
+    shippingPriceOrDefault,
     productVoucher,
     deliveryVoucher,
+    subTotal,
   ]);
 
   return (
     <div className="mt-2 w-full gap-y-10 md:flex-row md:gap-x-10 md:[&>*+*]:ml-0">
       <h2 className="mb-5 text-xl font-bold">Checkout Summary</h2>
-      {/* Subtotal */}
+
       <div className="flex justify-between border-b-2 pb-2">
         <div className="text-primary">Subtotal:</div>
         <div className="text-primary font-medium">
@@ -102,25 +104,22 @@ function CheckoutSummary({
         </div>
       </div>
 
-      {/* Product Discount */}
       {productDiscount > 0 && (
         <div className="mt-4 flex justify-between border-b-2 pb-2">
-          <div className="text-primary">Discount:</div>
+          <div className="text-primary">Product Discount:</div>
           <div className="font-medium text-red-500">
             - {formatCurrency(productDiscount)}
           </div>
         </div>
       )}
 
-      {/* Shipping Price */}
       <div className="mt-4 flex justify-between border-b-2 pb-2">
         <div className="text-primary">Shipping Price:</div>
         <div className="text-primary font-medium">
-          {formatCurrency(shippingprice!)}
+          {formatCurrency(shippingPriceOrDefault)}
         </div>
       </div>
 
-      {/* Shipping Discount */}
       {deliveryDiscount > 0 && (
         <div className="mt-4 flex justify-between border-b-2 pb-2">
           <div className="text-primary">Shipping Discount:</div>
@@ -130,15 +129,13 @@ function CheckoutSummary({
         </div>
       )}
 
-      {/* Grand Total */}
       <div className="mt-4 flex justify-between border-b-2 pb-2">
-        <div className="text-primary">Grand Total:</div>
-        <div className="text-primary font-medium">
+        <div className="text-primary font-semibold">Grand Total:</div>
+        <div className="text-primary font-semibold">
           {formatCurrency(grandTotal)}
         </div>
       </div>
 
-      {/* Payment Method */}
       <div className="mt-4 border-t-2 pt-2">
         <div className="text-primary mb-2 font-semibold">Payment Method:</div>
         <div className="space-y-2">
@@ -178,11 +175,11 @@ function CheckoutSummary({
         </div>
       </div>
 
-      {/* Button */}
       <button
         type="button"
-        className="mt-7 w-full cursor-pointer rounded-md bg-[#00a63e] p-2 font-medium text-white"
+        className="mt-7 w-full cursor-pointer rounded-md bg-[#00a63e] p-2 font-medium text-white disabled:opacity-50"
         onClick={createTransaction}
+        disabled={isPending || !userAddress}
       >
         {isPending ? "Processing..." : "Create Transaction"}
       </button>

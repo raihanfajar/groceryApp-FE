@@ -15,10 +15,14 @@ type VoucherStatusProps = {
 };
 
 type VoucherCheckoutProps = {
-  onVoucherApplied: (voucher: Voucher) => void;
+  onProductVoucherChange: (voucher: Voucher | null) => void;
+  onDeliveryVoucherChange: (voucher: Voucher | null) => void;
 };
 
-function VoucherCheckout({ onVoucherApplied }: VoucherCheckoutProps) {
+function VoucherCheckout({
+  onProductVoucherChange,
+  onDeliveryVoucherChange,
+}: VoucherCheckoutProps) {
   const [productVoucherCode, setProductVoucherCode] = useState("");
   const [deliveryVoucherCode, setDeliveryVoucherCode] = useState("");
 
@@ -34,6 +38,7 @@ function VoucherCheckout({ onVoucherApplied }: VoucherCheckoutProps) {
     queryKey: ["productVoucher", debouncedProductCode],
     queryFn: () => getProductVoucher(debouncedProductCode),
     enabled: !!debouncedProductCode,
+    retry: false,
   });
 
   const {
@@ -43,21 +48,44 @@ function VoucherCheckout({ onVoucherApplied }: VoucherCheckoutProps) {
     isSuccess: isDeliveryVoucherSuccess,
   } = useQuery({
     queryKey: ["deliveryVoucher", debouncedDeliveryCode],
-    queryFn: () => getProductVoucher(debouncedDeliveryCode), // Using the same function for this example
+    queryFn: () => getProductVoucher(debouncedDeliveryCode),
     enabled: !!debouncedDeliveryCode,
+    retry: false,
   });
 
   useEffect(() => {
     if (isProductVoucherSuccess && voucherProductData) {
-      onVoucherApplied(voucherProductData);
+      onProductVoucherChange(voucherProductData);
+    } else if (
+      !isProductVoucherFetching &&
+      (isProductVoucherError || !voucherProductData)
+    ) {
+      onProductVoucherChange(null);
     }
-  }, [isProductVoucherSuccess, voucherProductData, onVoucherApplied]);
+  }, [
+    isProductVoucherSuccess,
+    voucherProductData,
+    onProductVoucherChange,
+    isProductVoucherFetching,
+    isProductVoucherError,
+  ]);
 
   useEffect(() => {
     if (isDeliveryVoucherSuccess && voucherDeliveryData) {
-      onVoucherApplied(voucherDeliveryData);
+      onDeliveryVoucherChange(voucherDeliveryData);
+    } else if (
+      !isDeliveryVoucherFetching &&
+      (isDeliveryVoucherError || !voucherDeliveryData)
+    ) {
+      onDeliveryVoucherChange(null);
     }
-  }, [isDeliveryVoucherSuccess, voucherDeliveryData, onVoucherApplied]);
+  }, [
+    isDeliveryVoucherSuccess,
+    voucherDeliveryData,
+    onDeliveryVoucherChange,
+    isDeliveryVoucherFetching,
+    isDeliveryVoucherError,
+  ]);
 
   const VoucherStatus = ({
     isFetching,
@@ -77,7 +105,7 @@ function VoucherCheckout({ onVoucherApplied }: VoucherCheckoutProps) {
           Voucher applied successfully!
         </div>
       );
-    if (isError || !hasData)
+    if (isError || (isSuccess && !hasData))
       return (
         <div className="mt-2 text-sm text-red-500">
           Voucher is not valid or not found.
@@ -108,7 +136,6 @@ function VoucherCheckout({ onVoucherApplied }: VoucherCheckoutProps) {
           />
         </div>
 
-        {/* Delivery Voucher Section*/}
         <div className="flex-1">
           <div className="text-primary mb-2 font-medium">Delivery Voucher</div>
           <input

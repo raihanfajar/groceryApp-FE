@@ -91,8 +91,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 flex-shrink-0 bg-white shadow-sm">
+        {/* Desktop Sidebar - hidden on mobile */}
+        <aside className="hidden w-64 flex-shrink-0 bg-white shadow-sm lg:block">
           <nav className="mt-8 px-4">
             <ul className="space-y-2">
               {navigation.map((item) => {
@@ -142,12 +142,38 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </aside>
 
         {/* Main content */}
-        <main className="min-w-0 flex-1 overflow-x-hidden">
+        <main className="min-w-0 flex-1 overflow-x-hidden pb-20 lg:pb-8">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed right-0 bottom-0 left-0 z-50 border-t bg-white shadow-lg lg:hidden">
+        <ul className="flex justify-around">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            return (
+              <li key={item.name} className="flex-1">
+                <Link
+                  href={item.href}
+                  className={`flex items-center justify-center py-3 transition-colors ${
+                    item.current
+                      ? "text-blue-700"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                  title={item.name}
+                >
+                  <Icon
+                    className={`h-6 w-6 ${item.current ? "text-blue-700" : ""}`}
+                  />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
     </div>
   );
 }

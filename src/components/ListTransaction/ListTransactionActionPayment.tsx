@@ -1,17 +1,15 @@
 "use client";
-
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   useCancelTransaction,
   useUploadProofOfPayment,
 } from "@/hooks/transaction/useTransaction";
-import { TransactionFinal } from "@/types/transaction/FinalTypes";
+import { TransactionFinal as Transaction } from "@/types/transaction/FinalTypes";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  transaction: TransactionFinal;
+  transaction: Transaction;
   openMidtransPopup?: (url: string) => void;
 };
 
@@ -19,24 +17,16 @@ export default function PaymentActions({
   transaction,
   openMidtransPopup,
 }: Props) {
-  const queryClient = useQueryClient();
-  const router = useRouter(); // Tambahkan router untuk redirect
-  const { mutate: uploadMutate, isPending: isUploading } =
-    useUploadProofOfPayment();
-  const { mutate: cancelTransaction, isPending: isCanceling } =
-    useCancelTransaction(transaction?.id);
-
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [isCancelModalOpen, setCancelModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handlePaymentClick = () => {
-    if (transaction.paymentMethod === "manual_transfer") {
-      setUploadModalOpen(true);
-    } else if (openMidtransPopup && transaction.snapRedirectUrl) {
-      openMidtransPopup(transaction.snapRedirectUrl);
-    }
-  };
+  const { mutate: uploadMutate, isPending: isUploading } =
+    useUploadProofOfPayment();
+
+  const router = useRouter();
+  const { mutate: cancelTransaction, isPending: isCanceling } =
+    useCancelTransaction(transaction?.id);
 
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const f = e.target.files?.[0] ?? null;
@@ -47,20 +37,10 @@ export default function PaymentActions({
     if (!selectedFile || !transaction?.id) {
       return toast.error("Please choose a file first.");
     }
-    uploadMutate(
-      { transactionId: transaction.id, file: selectedFile },
-      {
-        onSuccess: () => {
-          setSelectedFile(null);
-          setUploadModalOpen(false);
-          toast.success("Upload successful! Redirecting...");
-          queryClient.invalidateQueries({
-            queryKey: ["transactionDetails", transaction.id],
-          });
-          router.push("/");
-        },
-      },
-    );
+    uploadMutate({ transactionId: transaction.id, file: selectedFile });
+
+    setUploadModalOpen(false);
+    setSelectedFile(null);
   };
 
   const handleConfirmCancel = () => {
@@ -76,6 +56,19 @@ export default function PaymentActions({
 
   if (transaction?.status !== "waiting_payment") return null;
 
+  const paymentButtonText =
+    transaction.paymentMethod === "manual_transfer"
+      ? "Upload Payment Proof"
+      : "Pay with Midtrans";
+
+  const handlePaymentClick = () => {
+    if (transaction.paymentMethod === "manual_transfer") {
+      setUploadModalOpen(true);
+    } else if (openMidtransPopup && transaction.snapRedirectUrl) {
+      openMidtransPopup(transaction.snapRedirectUrl);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
@@ -84,9 +77,7 @@ export default function PaymentActions({
             onClick={handlePaymentClick}
             className="btn btn-primary h-10 w-full text-sm"
           >
-            {transaction.paymentMethod === "manual_transfer"
-              ? "Upload Payment Proof"
-              : "Pay with Midtrans"}
+            {paymentButtonText}
           </button>
         </div>
         <div className="w-full">

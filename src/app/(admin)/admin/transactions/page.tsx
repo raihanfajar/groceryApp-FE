@@ -5,7 +5,7 @@ import TransactionListHeader from "@/components/admin/transaction/TransactionLis
 import TransactionListSearch, {
   TransactionFilters,
 } from "@/components/admin/transaction/TransactionListSearch";
-import { TransactionTable } from "@/components/admin/transaction/TransactionTable";
+import TransactionTable from "@/components/admin/transaction/TransactionTable";
 import { useStoreTransactionsQuery } from "@/hooks/admin/transaction/adminTransaction";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,9 @@ function Page() {
   const { admin, isAuthenticated } = useAdminAuthStore();
   const router = useRouter();
 
-  const [filters, setFilters] = useState<TransactionFilters>({
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [filters, setFilters] = useState<Omit<TransactionFilters, "page">>({
     search: "",
     startDate: "",
     endDate: "",
@@ -23,14 +25,22 @@ function Page() {
     storeId: "all",
   });
 
-  const { data, isLoading } = useStoreTransactionsQuery(filters);
+  const { data, isLoading } = useStoreTransactionsQuery({
+    ...filters,
+    page: currentPage,
+  });
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.push("/");
+      router.push("/admin-login");
       return;
     }
   }, [isAuthenticated, router]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo(0, 0);
+  };
 
   if (isLoading || !admin) {
     return (
@@ -45,28 +55,31 @@ function Page() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
         <TransactionListHeader />
 
-        {/* Filters */}
         <TransactionListSearch
           filters={filters}
           isSuper={admin.isSuper}
-          onSearch={(searchTerm) =>
-            setFilters((prev) => ({ ...prev, search: searchTerm }))
-          }
-          onStatusChange={(status) =>
-            setFilters((prev) => ({ ...prev, status }))
-          }
-          onStartDateChange={(startDate) =>
-            setFilters((prev) => ({ ...prev, startDate }))
-          }
-          onEndDateChange={(endDate) =>
-            setFilters((prev) => ({ ...prev, endDate }))
-          }
-          onStoreIdChange={(storeId) =>
-            setFilters((prev) => ({ ...prev, storeId }))
-          }
+          onSearch={(searchTerm) => {
+            setFilters((prev) => ({ ...prev, search: searchTerm }));
+            setCurrentPage(1);
+          }}
+          onStatusChange={(status) => {
+            setFilters((prev) => ({ ...prev, status }));
+            setCurrentPage(1);
+          }}
+          onStartDateChange={(startDate) => {
+            setFilters((prev) => ({ ...prev, startDate }));
+            setCurrentPage(1);
+          }}
+          onEndDateChange={(endDate) => {
+            setFilters((prev) => ({ ...prev, endDate }));
+            setCurrentPage(1);
+          }}
+          onStoreIdChange={(storeId) => {
+            setFilters((prev) => ({ ...prev, storeId }));
+            setCurrentPage(1);
+          }}
         />
 
         {/* Table */}
@@ -74,6 +87,8 @@ function Page() {
           <TransactionTable
             transactions={transactions}
             isSuper={admin.isSuper}
+            meta={data?.meta}
+            onPageChange={handlePageChange}
           />
         ) : (
           <EmptyTransactionList />

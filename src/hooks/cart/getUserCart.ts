@@ -89,22 +89,17 @@ export function useUpdateCartQuantity() {
       return { previousCart };
     },
 
-    // Rollback kalau gagal
     onError: (err: baseError, _vars, context) => {
-      // Kembalikan UI ke kondisi semula (rollback)
       if (context?.previousCart) {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
 
-      // Ambil pesan error dari respons backend
       const errorMessage =
         err?.response?.data?.message || "Something went wrong";
 
-      // Tampilkan notifikasi toast error
       toast.error(errorMessage);
     },
 
-    // Sync ulang data dengan server
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
@@ -125,8 +120,10 @@ export function useAddCartProduct() {
       if (!accessToken) throw new Error("Access token is missing");
       if (!input?.productId) throw new Error("productId is required");
 
+      const storeId = targetStore?.id ?? "c2c71ef0-0f43-4b58-b222-22d465bb88c2";
+
       const payload = {
-        storeId: String(targetStore?.id),
+        storeId: storeId,
         productId: String(input.productId),
       };
 
@@ -142,8 +139,8 @@ export function useAddCartProduct() {
       return response.data;
     },
     onSuccess: () => {
-      toast.success("Cart product added successfully");
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY, exact: false });
+      toast.success("Product added to cart!");
+      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
     onError: (err: unknown) => {
       const customError = err as baseError;

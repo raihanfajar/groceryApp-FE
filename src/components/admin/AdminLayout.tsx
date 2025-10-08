@@ -11,6 +11,7 @@ import {
   Archive,
   CreditCard,
   Percent,
+  Megaphone,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -79,6 +80,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navigation = admin.isSuper
     ? [
         ...baseNavigation,
+        {
+          name: "Marketing",
+          href: "/admin/marketing",
+          icon: Megaphone,
+          current: pathname.startsWith("/admin/marketing"),
+        },
         {
           name: "Users",
           href: "/admin/users",

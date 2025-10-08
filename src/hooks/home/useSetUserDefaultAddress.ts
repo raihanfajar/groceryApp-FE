@@ -2,6 +2,7 @@ import { baseError } from "@/components/userAuth/typesAndInterfaces"
 import { axiosInstance } from "@/utils/axiosInstance"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-toastify"
+import { CART_QUERY_KEY } from "@/hooks/cart/getUserCart";
 
 export const useSetUserDefaultAddress = (accessToken: string) => {
     const queryClient = useQueryClient();
@@ -18,6 +19,7 @@ export const useSetUserDefaultAddress = (accessToken: string) => {
             queryClient.invalidateQueries({ queryKey: ["userAddressInfo"] });
             queryClient.invalidateQueries({ queryKey: ["nearestStore"] });
             queryClient.invalidateQueries({ queryKey: ["targetStoreProductsInfo"] });
+            queryClient.invalidateQueries({ queryKey: [...CART_QUERY_KEY] });
         },
         onError: (error: baseError) => {
             console.log(error); // !Delete on production

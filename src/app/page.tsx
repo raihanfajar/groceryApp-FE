@@ -12,12 +12,23 @@ import { carouselItems } from "@/components/homePage/mapData";
 import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import Image from "next/image";
+import { useUserCart } from "@/hooks/cart/getUserCart";
 
 export default function HomePage() {
-  const { targetStore } = useUserAuthStore();
+  const { targetStore, setTargetStore } = useUserAuthStore();
   const { data: targetStoreProducts } = useGetAllTargetStoreProducts(
     targetStore?.id || "c2c71ef0-0f43-4b58-b222-22d465bb88c2", // default store when there is no targetStore.id (which is Jakarta main store)
   );
+
+  if (!targetStore?.id)
+    setTargetStore({
+      id: "c2c71ef0-0f43-4b58-b222-22d465bb88c2",
+      name: "Jakarta Main Store",
+      distanceKm: 0,
+    });
+
+  const { data: userCart } = useUserCart();
+  console.log("userCart:", userCart);
 
   // map BE shape → what ProductCard already expects
   const cardList = targetStoreProducts?.map((p) => ({
@@ -54,14 +65,16 @@ export default function HomePage() {
             </p>
           </div>
 
-          <StorePickerDialog
-            trigger={
-              <button className="hover:bg-accent flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm">
-                <span>Change</span>
-                <ChevronDown className="h-4 w-4" />
-              </button>
-            }
-          />
+          <div className="hidden">
+            <StorePickerDialog
+              trigger={
+                <button className="hover:bg-accent flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm">
+                  <span>Change</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+              }
+            />
+          </div>
         </div>
       )}
       {/* product list rendering */}

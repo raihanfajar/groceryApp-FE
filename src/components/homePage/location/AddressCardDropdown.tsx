@@ -5,11 +5,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUserCart } from "@/hooks/cart/getUserCart";
 import { useDeleteUserAddress } from "@/hooks/home/useDeleteUserAddress";
 import { useSetUserDefaultAddress } from "@/hooks/home/useSetUserDefaultAddress";
 import { useActualLocationStore } from "@/store/useLocationStore";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
 import { MdArrowDropDown } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const AddressCardDropdown = ({
   id,
@@ -26,6 +28,7 @@ const AddressCardDropdown = ({
   const { setLocation: setActualLocation } = useActualLocationStore();
   const { mutateAsync: deleteAddress } = useDeleteUserAddress(accessToken, id);
   const {mutateAsync: setAddressAsDefault} = useSetUserDefaultAddress(accessToken); //prettier-ignore
+  const { data: userCart } = useUserCart();
 
   return (
     <DropdownMenu modal={false}>
@@ -38,6 +41,11 @@ const AddressCardDropdown = ({
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() => {
+              if (userCart?.items && userCart.items.length > 0) {
+                return toast.error(
+                  "Cannot change address when cart is not empty",
+                );
+              }
               setActualLocation(lat, lon);
               setAddressAsDefault(id);
             }}

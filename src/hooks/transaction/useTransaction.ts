@@ -63,7 +63,11 @@ export function useCompleteTransaction(transactionId: string) {
     onSuccess: (data) => {
       toast.success(data?.message ?? "Transaction completed");
       queryClient.invalidateQueries({
-        queryKey: ["transactionDetails", transactionId],
+        queryKey: [
+          ...USER_TRANSACTION_KEY,
+          "transactionDetails",
+          transactionId,
+        ],
         exact: true,
       });
       queryClient.invalidateQueries({
@@ -104,7 +108,11 @@ export function useCancelTransaction(transactionId?: string) {
     onSuccess: (data) => {
       toast.success(data?.message ?? "Transaction canceled");
       queryClient.invalidateQueries({
-        queryKey: ["transactionDetails", transactionId],
+        queryKey: [
+          ...USER_TRANSACTION_KEY,
+          "transactionDetails",
+          transactionId,
+        ],
         exact: true,
       });
     },
@@ -150,7 +158,11 @@ export function useUploadProofOfPayment() {
     onSuccess: (response) => {
       toast.success("Proof of payment uploaded successfully!");
       queryClient.invalidateQueries({
-        queryKey: [...USER_TRANSACTION_KEY,"transactionDetails", response.data.paymentProof.id],
+        queryKey: [
+          ...USER_TRANSACTION_KEY,
+          "transactionDetails",
+          response.data.paymentProof.id,
+        ],
       });
     },
     onError: (err: unknown) => {
@@ -165,7 +177,7 @@ export function useUploadProofOfPayment() {
 // Get User Transaction List
 export function useUserTransactionsQuery(params?: QueryParams) {
   const { accessToken } = useUserAuthStore();
-  const queryKey = ["userTransactions", params];
+  const queryKey = [...USER_TRANSACTION_KEY, "userTransactions", params];
 
   return useQuery<PaginatedTransactionsFinal | null>({
     queryKey,

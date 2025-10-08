@@ -23,18 +23,40 @@ export default function DiscountHistory() {
   const { admin } = useAdminAuthStore();
 
   // Fetch discount usage history
-  const { data: usageHistory, isLoading: isLoadingHistory } = useQuery({
+  const { data: historyData, isLoading: isLoadingHistory } = useQuery({
     queryKey: ["discountHistory", admin?.id, admin?.store?.id],
     queryFn: async () => {
       const response = await axiosInstance.get("/discounts/report/usage", {
         headers: { Authorization: `Bearer ${admin?.accessToken}` },
+        params: {
+          limit: 100, // Get more records for history view
+        },
       });
       console.log("Discount history response:", response.data);
-      const data = (response.data as { data: DiscountUsageHistory[] }).data;
-      return Array.isArray(data) ? data : [];
+      const result = response.data as {
+        status: string;
+        data: {
+          data: DiscountUsageHistory[];
+          pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+          };
+          summary: {
+            totalDiscountGiven: number;
+            totalOrderValue: number;
+            totalUsages: number;
+            averageDiscountPerOrder: number;
+          };
+        };
+      };
+      return result.data;
     },
     enabled: !!admin?.accessToken,
   });
+
+  const usageHistory = historyData?.data || [];
 
   const filteredHistory = (usageHistory || []).filter(
     (history) =>
@@ -77,7 +99,7 @@ export default function DiscountHistory() {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           <p className="mt-2 text-sm text-gray-600">
             Loading discount history...
           </p>
@@ -101,7 +123,12 @@ export default function DiscountHistory() {
         </div>
 
         <div className="text-sm text-gray-600">
-          Total Records: {usageHistory?.length || 0}
+          Total Records: {historyData?.pagination?.total || 0}
+          {historyData?.pagination && historyData.pagination.totalPages > 1 && (
+            <span className="ml-2 text-gray-400">
+              (Showing {usageHistory?.length || 0})
+            </span>
+          )}
         </div>
       </div>
 
@@ -114,9 +141,8 @@ export default function DiscountHistory() {
               <div>
                 <p className="text-2xl font-bold text-green-600">
                   Rp{" "}
-                  {usageHistory
-                    ?.reduce((sum, h) => sum + h.discountValue, 0)
-                    .toLocaleString() || 0}
+                  {historyData?.summary?.totalDiscountGiven?.toLocaleString() ||
+                    0}
                 </p>
                 <p className="text-sm text-gray-600">Total Discount Given</p>
               </div>
@@ -145,9 +171,9 @@ export default function DiscountHistory() {
               <Clock className="h-5 w-5 text-purple-600" />
               <div>
                 <p className="text-2xl font-bold text-purple-600">
-                  {usageHistory?.filter((h) => h.adminId).length || 0}
+                  {historyData?.summary?.totalUsages || 0}
                 </p>
-                <p className="text-sm text-gray-600">Manually Applied</p>
+                <p className="text-sm text-gray-600">Total Usage Count</p>
               </div>
             </div>
           </CardContent>
@@ -255,8 +281,20 @@ export default function DiscountHistory() {
               <p className="mt-1 text-sm text-gray-500">
                 {searchTerm
                   ? "Try adjusting your search criteria."
-                  : "Discount usage history will appear here."}
+                  : "Discount usage will appear here when customers use discounts or when admins apply them manually."}
               </p>
+              {!searchTerm && (
+                <div className="mt-4 rounded-md bg-blue-50 p-3 text-left">
+                  <p className="text-xs text-blue-700">
+                    <strong>💡 Tip:</strong> To see discount usage:
+                  </p>
+                  <ul className="mt-2 list-inside list-disc space-y-1 text-xs text-blue-600">
+                    <li>Create an active discount</li>
+                    <li>Have customers apply it during checkout</li>
+                    <li>Or manually apply discounts to orders</li>
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </CardContent>

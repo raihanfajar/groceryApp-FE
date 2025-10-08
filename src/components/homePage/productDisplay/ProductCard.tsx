@@ -65,12 +65,12 @@ export function ProductCard({
           {category}
         </Badge>
         <p className="line-clamp-2 text-xs md:text-sm">{name}</p>
-        <p className="mt-auto font-bold text-red-600">
+        <p className="mt-auto text-xs font-bold text-red-600">
           Rp {displayedPrice.toLocaleString("id-ID")}
           {discount && discount > 0 ? (
-            <Badge className="absolute top-2 right-2 bg-red-600 text-[10px] text-white">
-              -{Math.round(discount * 100)}%
-            </Badge>
+            <span className="ml-2 text-gray-500 line-through">
+              Rp {price.toLocaleString("id-ID")}
+            </span>
           ) : null}
         </p>
         <div className="flex h-5 items-center gap-1 text-[10px] text-gray-600">

@@ -1,19 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
-import { axiosInstance } from "@/utils/axiosInstance";
 import { useAdminAuthStore } from "@/store/useAdminAuthStore";
 import { toast } from "react-toastify";
-import { handleApiError } from "@/utils/errorHandler";
-import {
-  CreateDiscountData,
-  DiscountType,
-  DiscountValueType,
-} from "@/types/discount";
 import { useProducts, useStores } from "@/hooks/admin/useDiscountFormData";
+import { useCreateDiscount } from "@/hooks/admin/useCreateDiscount";
+import { useDiscountForm } from "@/hooks/admin/useDiscountForm";
 import BasicInfoFields from "./form/BasicInfoFields";
 import ConditionalFields from "./form/ConditionalFields";
 import StoreSelection, { DateAndLimitFields } from "./form/StoreAndDateFields";
@@ -26,19 +19,7 @@ interface CreateDiscountFormProps {
 export default function CreateDiscountForm({
   onClose,
 }: CreateDiscountFormProps) {
-  const [formData, setFormData] = useState<CreateDiscountData>({
-    name: "",
-    description: "",
-    type: DiscountType.MANUAL,
-    valueType: DiscountValueType.PERCENTAGE,
-    value: 0,
-    startDate: "",
-    endDate: "",
-    productIds: [],
-  });
-
   const { admin } = useAdminAuthStore();
-  const queryClient = useQueryClient();
 
   const {
     data: products,
@@ -47,25 +28,14 @@ export default function CreateDiscountForm({
   } = useProducts(admin?.accessToken);
   const { data: stores } = useStores(admin?.accessToken, admin?.isSuper);
 
-  const createDiscountMutation = useMutation({
-    mutationFn: async (data: CreateDiscountData) => {
-      const response = await axiosInstance.post("/discounts", data, {
-        headers: { Authorization: `Bearer ${admin?.accessToken}` },
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Discount created successfully");
-      queryClient.invalidateQueries({
-        queryKey: ["discounts", admin?.id, admin?.store?.id],
-      });
-      onClose();
-    },
-    onError: (error: unknown) => {
-      const errorMessage = handleApiError(error, "Failed to create discount");
-      toast.error(errorMessage);
-    },
-  });
+  const { formData, updateFormData, handleProductToggle, handleSelectAll } =
+    useDiscountForm();
+  const createDiscountMutation = useCreateDiscount(
+    admin?.id,
+    admin?.store?.id,
+    admin?.accessToken,
+    onClose,
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,25 +48,6 @@ export default function CreateDiscountForm({
       return;
     }
     createDiscountMutation.mutate(formData);
-  };
-
-  const updateFormData = (updates: Partial<CreateDiscountData>) => {
-    setFormData({ ...formData, ...updates });
-  };
-
-  const handleProductToggle = (productId: string, checked: boolean) => {
-    const currentIds = formData.productIds || [];
-    updateFormData({
-      productIds: checked
-        ? [...currentIds, productId]
-        : currentIds.filter((id) => id !== productId),
-    });
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    updateFormData({
-      productIds: checked ? (products || []).map((p) => p.id) : [],
-    });
   };
 
   return (
@@ -165,7 +116,7 @@ export default function CreateDiscountForm({
         hasError={!!productsError}
         hasAuthToken={!!admin?.accessToken}
         onProductToggle={handleProductToggle}
-        onSelectAll={handleSelectAll}
+        onSelectAll={(checked) => handleSelectAll(checked, products || [])}
       />
 
       <DialogFooter>

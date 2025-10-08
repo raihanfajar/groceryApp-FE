@@ -15,6 +15,20 @@ interface StockValueData {
   totalValue: number;
 }
 
+// Colors for category distribution chart
+const CATEGORY_COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#8884D8",
+  "#82CA9D",
+  "#FFC658",
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+];
+
 interface LowStockProduct {
   id: string;
   name: string;
@@ -45,13 +59,18 @@ export const useInventoryReports = (
   selectedStoreId?: string,
 ): UseInventoryReportsReturn => {
   const { admin } = useAdminAuthStore();
+
+  // Handle "all" stores option for Super Admin
   const storeId = admin?.isSuper
-    ? selectedStoreId
+    ? selectedStoreId === "all"
+      ? undefined
+      : selectedStoreId
     : admin?.store?.id || undefined;
   const token = admin?.accessToken || "";
 
-  // For Super Admin, require storeId to be selected
-  const isEnabled = !!token && (!admin?.isSuper || !!storeId);
+  // For Super Admin, always enable queries (can view all stores or specific store)
+  // For Store Admin, require their storeId to be set
+  const isEnabled = !!token && (!admin?.isSuper || selectedStoreId !== "");
 
   // Fetch inventory summary
   const {
@@ -75,17 +94,11 @@ export const useInventoryReports = (
   } = useQuery({
     queryKey: ["admin", "inventory", "category-distribution", storeId],
     queryFn: async () => {
-      // This would be a separate API call in a real implementation
-      // For now, we'll simulate category distribution data
-      const mockCategoryData: CategoryData[] = [
-        { name: "Beverages", value: 45, color: "#0088FE" },
-        { name: "Snacks", value: 32, color: "#00C49F" },
-        { name: "Dairy", value: 28, color: "#FFBB28" },
-        { name: "Fresh Produce", value: 25, color: "#FF8042" },
-        { name: "Frozen Foods", value: 18, color: "#8884D8" },
-        { name: "Bakery", value: 15, color: "#82CA9D" },
-      ];
-      return mockCategoryData;
+      const response = await adminInventoryAPI.getCategoryDistribution(
+        token,
+        storeId,
+      );
+      return response.data;
     },
     enabled: isEnabled,
     staleTime: 10 * 60 * 1000, // 10 minutes
@@ -100,17 +113,11 @@ export const useInventoryReports = (
   } = useQuery({
     queryKey: ["admin", "inventory", "stock-value", storeId],
     queryFn: async () => {
-      // This would be a separate API call in a real implementation
-      // For now, we'll simulate stock value data
-      const mockStockValueData: StockValueData[] = [
-        { category: "Beverages", totalStock: 450, totalValue: 15000000 },
-        { category: "Snacks", totalStock: 320, totalValue: 8500000 },
-        { category: "Dairy", totalStock: 280, totalValue: 12000000 },
-        { category: "Fresh Produce", totalStock: 250, totalValue: 6000000 },
-        { category: "Frozen Foods", totalStock: 180, totalValue: 9500000 },
-        { category: "Bakery", totalStock: 150, totalValue: 4500000 },
-      ];
-      return mockStockValueData;
+      const response = await adminInventoryAPI.getStockValueByCategory(
+        token,
+        storeId,
+      );
+      return response.data;
     },
     enabled: isEnabled,
     staleTime: 10 * 60 * 1000, // 10 minutes
@@ -125,47 +132,41 @@ export const useInventoryReports = (
   } = useQuery({
     queryKey: ["admin", "inventory", "stock-alerts", storeId],
     queryFn: async () => {
-      // This would be a separate API call in a real implementation
-      // For now, we'll simulate stock alerts data
-      const mockLowStockProducts: LowStockProduct[] = [
-        {
-          id: "1",
-          name: "Coca Cola 330ml",
-          category: "Beverages",
-          currentStock: 5,
-          minStock: 10,
-          price: 8000,
-          storeId: storeId || "store-1",
-          storeName: admin?.store?.name || "Main Store",
-        },
-        {
-          id: "2",
-          name: "White Bread",
-          category: "Bakery",
-          currentStock: 3,
-          minStock: 5,
-          price: 12000,
-          storeId: storeId || "store-1",
-          storeName: admin?.store?.name || "Main Store",
-        },
-      ];
+      const response = await adminInventoryAPI.getLowStockAlerts(token, {
+        storeId,
+      });
 
-      const mockOutOfStockProducts: LowStockProduct[] = [
-        {
-          id: "3",
-          name: "Milk 1L",
-          category: "Dairy",
-          currentStock: 0,
-          minStock: 15,
-          price: 18000,
-          storeId: storeId || "store-1",
-          storeName: admin?.store?.name || "Main Store",
-        },
-      ];
+      // Separate into low stock and out of stock
+      const allAlerts = response.data;
+      const lowStockProducts = allAlerts
+        .filter((alert) => alert.stock > 0)
+        .map((alert) => ({
+          id: alert.productId,
+          name: alert.product.name,
+          category: alert.product.category.name,
+          currentStock: alert.stock,
+          minStock: alert.minStock || 5,
+          price: alert.product.price,
+          storeId: alert.storeId,
+          storeName: alert.store?.name || "",
+        }));
+
+      const outOfStockProducts = allAlerts
+        .filter((alert) => alert.stock === 0)
+        .map((alert) => ({
+          id: alert.productId,
+          name: alert.product.name,
+          category: alert.product.category.name,
+          currentStock: alert.stock,
+          minStock: alert.minStock || 5,
+          price: alert.product.price,
+          storeId: alert.storeId,
+          storeName: alert.store?.name || "",
+        }));
 
       return {
-        lowStockProducts: mockLowStockProducts,
-        outOfStockProducts: mockOutOfStockProducts,
+        lowStockProducts,
+        outOfStockProducts,
       };
     },
     enabled: isEnabled,
@@ -190,7 +191,12 @@ export const useInventoryReports = (
 
   const data: UseInventoryReportsData = {
     summary: summaryResponse?.data || null,
-    categoryDistribution: categoryData || [],
+    categoryDistribution: categoryData
+      ? categoryData.map((item, index) => ({
+          ...item,
+          color: CATEGORY_COLORS[index % CATEGORY_COLORS.length],
+        }))
+      : [],
     stockValueByCategory: stockValueData || [],
     lowStockProducts: stockAlerts?.lowStockProducts || [],
     outOfStockProducts: stockAlerts?.outOfStockProducts || [],

@@ -17,8 +17,6 @@ export default function HomePage() {
     targetStore?.id || "c2c71ef0-0f43-4b58-b222-22d465bb88c2", // default store when there is no targetStore.id (which is Jakarta main store)
   );
 
-  console.log("TARGET STORE PRODUCTS", targetStoreProducts);
-
   if (!targetStore?.id)
     setTargetStore({
       id: "c2c71ef0-0f43-4b58-b222-22d465bb88c2",
@@ -40,8 +38,6 @@ export default function HomePage() {
         ? p.discount.value / 100
         : undefined,
   }));
-
-  console.log("CardList", cardList);
 
   return (
     <div className="mx-auto min-h-screen bg-white">

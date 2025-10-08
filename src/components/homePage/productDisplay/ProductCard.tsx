@@ -24,9 +24,6 @@ export function ProductCard({
   const displayedPrice = discount ? Math.round(price * (1 - discount)) : price;
   const addCart = useAddCartProduct();
 
-  console.log("DISCOUNT TOL", discount);
-  console.log("PRICE KONTOL", displayedPrice);
-
   return (
     <Card
       className={`group relative flex flex-col justify-between gap-3 rounded-xl p-2 shadow-md transition hover:shadow-lg md:w-[180px] ${isOut ? "opacity-60 saturate-50" : ""} `}

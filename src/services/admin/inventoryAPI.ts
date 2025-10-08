@@ -125,6 +125,46 @@ export const adminInventoryAPI = {
     const response = await api.get(`/inventory/low-stock?${params.toString()}`);
     return response.data as InventoryApiResponse<LowStockAlert[]>;
   },
+
+  // Get category distribution
+  getCategoryDistribution: async (
+    token: string,
+    storeId?: string,
+  ): Promise<InventoryApiResponse<Array<{ name: string; value: number }>>> => {
+    const api = createAuthAxios(token);
+    const params = new URLSearchParams();
+
+    if (storeId) params.append("storeId", storeId);
+
+    const response = await api.get(
+      `/inventory/category-distribution?${params.toString()}`,
+    );
+    return response.data as InventoryApiResponse<
+      Array<{ name: string; value: number }>
+    >;
+  },
+
+  // Get stock value by category
+  getStockValueByCategory: async (
+    token: string,
+    storeId?: string,
+  ): Promise<
+    InventoryApiResponse<
+      Array<{ category: string; totalStock: number; totalValue: number }>
+    >
+  > => {
+    const api = createAuthAxios(token);
+    const params = new URLSearchParams();
+
+    if (storeId) params.append("storeId", storeId);
+
+    const response = await api.get(
+      `/inventory/stock-value?${params.toString()}`,
+    );
+    return response.data as InventoryApiResponse<
+      Array<{ category: string; totalStock: number; totalValue: number }>
+    >;
+  },
 };
 
 export default adminInventoryAPI;

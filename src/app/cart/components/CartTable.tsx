@@ -15,7 +15,6 @@ const CartTable = () => {
     null,
   );
 
-  console.log("Cart: ", cart);
   const handlePromptDelete = (item: CartItemWithPromo) => {
     setItemToDelete(item);
   };

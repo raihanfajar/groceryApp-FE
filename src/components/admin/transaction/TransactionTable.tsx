@@ -1,8 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card";
 import {
+  PaginatedTransactionsFinal,
   TransactionFinal,
   TransactionProductFinal,
 } from "@/types/transaction/FinalTypes";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import {
   ApproveModal,
@@ -19,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import formatCurrency from "@/utils/FormatCurrency";
 import TransactionStatusBadge from "./BadgeTransactionList";
+import Pagination from "@/app/transaction/components/TransactionPagination";
 
 const TransactionItemsList = ({
   items,
@@ -27,9 +29,7 @@ const TransactionItemsList = ({
 }) => {
   const [showAll, setShowAll] = useState(false);
   if (!items || items.length === 0) return <span>-</span>;
-
   const displayedItems = showAll ? items : items.slice(0, 1);
-
   return (
     <div>
       {displayedItems.map((item) => (
@@ -85,11 +85,15 @@ const SuperAdminPriceInfo = ({ trx }: { trx: TransactionFinal }) => (
 interface TransactionTableProps {
   transactions: TransactionFinal[];
   isSuper: boolean;
+  meta?: PaginatedTransactionsFinal["meta"];
+  onPageChange: (page: number) => void;
 }
 
-export function TransactionTable({
+export default function TransactionTable({
   transactions,
   isSuper,
+  meta,
+  onPageChange,
 }: TransactionTableProps) {
   return (
     <Card>
@@ -112,14 +116,16 @@ export function TransactionTable({
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200">
             {transactions.map((trx) => (
-              <tr key={trx.id} className="border-b">
+              <tr key={trx.id}>
                 <td className="p-4 align-top">
                   <TransactionStatusBadge status={trx.status} />
                 </td>
                 <td className="p-4 align-top">
-                  <p className="line-clamp-1 font-mono break-words">{trx.id}</p>
+                  <p className="line-clamp-1 max-w-xs font-mono break-words">
+                    {trx.id}
+                  </p>
                 </td>
                 <td className="p-4 align-top">
                   <TransactionItemsList items={trx.products ?? []} />
@@ -137,14 +143,11 @@ export function TransactionTable({
         </table>
 
         {/* Mobile/Tablet List */}
-        <div className="lg:hidden">
+        <div className="divide-y divide-gray-200 lg:hidden">
           {transactions.map((trx) => (
-            <div
-              key={trx.id}
-              className="flex items-center justify-between border-b p-4"
-            >
+            <div key={trx.id} className="flex items-center justify-between p-4">
               <div>
-                <p className="line-clamp-1 font-mono text-xs break-words">
+                <p className="line-clamp-1 max-w-[200px] font-mono text-xs break-words">
                   {trx.id}
                 </p>
                 <TransactionStatusBadge status={trx.status} />
@@ -180,6 +183,16 @@ export function TransactionTable({
             </div>
           ))}
         </div>
+
+        {meta && meta.totalPages > 1 && (
+          <Pagination
+            currentPage={meta.page}
+            totalPages={meta.totalPages}
+            onPageChange={onPageChange}
+            totalItems={meta.total}
+            pageSize={meta.pageSize}
+          />
+        )}
       </CardContent>
     </Card>
   );

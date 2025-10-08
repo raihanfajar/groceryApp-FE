@@ -163,13 +163,22 @@ export default function LocationManager() {
   }
 
   useEffect(() => {
-    if (nearestStore) {
-      setTargetStore({
-        id: nearestStore.store.id,
-        name: nearestStore.store.name,
-        distanceKm: nearestStore.distance / 1000,
-      });
+    if (!nearestStore) return;
+
+    // !25km Guard
+    if (nearestStore.distance > 25_000) {
+      toast.error(
+        "There is no available store within 25 km of your location.",
+        { autoClose: false },
+      );
+      return;
     }
+
+    setTargetStore({
+      id: nearestStore.store.id,
+      name: nearestStore.store.name,
+      distanceKm: nearestStore.distance / 1000,
+    });
   }, [nearestStore, setTargetStore]);
 
   return null; // !NO UI BOSS

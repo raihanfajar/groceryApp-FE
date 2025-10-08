@@ -36,15 +36,12 @@ const Page = () => {
     setSelectedAddress(newAddress);
   };
 
-  const handleVoucherApply = (voucherData: Voucher) => {
-    if (
-      voucherData.code.toLowerCase().includes("ship") ||
-      voucherData.code.toLowerCase().includes("delivery")
-    ) {
-      setDeliveryVoucher(voucherData);
-    } else {
-      setProductVoucher(voucherData);
-    }
+  const handleProductVoucherChange = (voucher: Voucher | null) => {
+    setProductVoucher(voucher);
+  };
+
+  const handleDeliveryVoucherChange = (voucher: Voucher | null) => {
+    setDeliveryVoucher(voucher);
   };
 
   let addressList: UserAddressInterface[] = [];
@@ -86,7 +83,10 @@ const Page = () => {
         </div>
         <div className="mb-5 flex w-full flex-col gap-4 rounded-lg p-4 md:flex-row md:items-start md:justify-between">
           <div className="w-full rounded-lg border border-black p-5 md:w-[55%]">
-            <VoucherCheckout onVoucherApplied={handleVoucherApply} />
+            <VoucherCheckout
+              onProductVoucherChange={handleProductVoucherChange}
+              onDeliveryVoucherChange={handleDeliveryVoucherChange}
+            />
           </div>
 
           <div className="w-full md:flex md:w-[40%] md:justify-end">

@@ -1,18 +1,15 @@
 "use client";
 import BenefitBanner from "@/components/homePage/benefitBanner/BenefitBanner";
 import CategoryCarousel from "@/components/homePage/categoryCarousel/CategoryCarousel";
+import CustomBorder from "@/components/homePage/CustomBorder";
+import { carouselItems } from "@/components/homePage/mapData";
 import { ProductList } from "@/components/homePage/productDisplay/ProductList";
 import PromoCarousel from "@/components/homePage/promoCarousel/PromoCarousel";
 import { StorePickerDialog } from "@/components/homePage/StorePickerDialog";
-import { ChevronDown } from "lucide-react";
-// Import data dengan path yang sudah dikoreksi
-
-import CustomBorder from "@/components/homePage/CustomBorder";
-import { carouselItems } from "@/components/homePage/mapData";
 import { useGetAllTargetStoreProducts } from "@/hooks/home/useGetAllTargetStoreProducts";
 import { useUserAuthStore } from "@/store/useUserAuthStore";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
-import { useUserCart } from "@/hooks/cart/getUserCart";
 
 export default function HomePage() {
   const { targetStore, setTargetStore } = useUserAuthStore();
@@ -26,9 +23,6 @@ export default function HomePage() {
       name: "Jakarta Main Store",
       distanceKm: 0,
     });
-
-  const { data: userCart } = useUserCart();
-  console.log("userCart:", userCart);
 
   // map BE shape → what ProductCard already expects
   const cardList = targetStoreProducts?.map((p) => ({

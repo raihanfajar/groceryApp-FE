@@ -1,12 +1,12 @@
 "use client";
 
+import { axiosInstance } from "@/utils/axiosInstance";
+import { useQuery } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/utils/axiosInstance";
 import { CarouselProps } from "../typesAndInterfaces";
 import PromoFooter from "./CarouselFooter";
 import CarouselIndicators from "./CarouselIndicators";

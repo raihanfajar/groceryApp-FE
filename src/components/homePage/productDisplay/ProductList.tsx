@@ -9,6 +9,8 @@ export function ProductList({ items, name }: ProductProps) {
   const [visibleCount, setVisibleCount] = useState(12);
   const visible = items.slice(0, visibleCount);
 
+  console.log("items in ProductList", items);
+
   return (
     <section className="mx-auto max-w-[1280px] px-4 py-8">
       <h2 className="mb-4 text-lg font-semibold text-gray-800">{name}</h2>

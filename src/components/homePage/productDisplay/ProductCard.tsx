@@ -24,6 +24,9 @@ export function ProductCard({
   const displayedPrice = discount ? Math.round(price * (1 - discount)) : price;
   const addCart = useAddCartProduct();
 
+  console.log("DISCOUNT TOL", discount);
+  console.log("PRICE KONTOL", displayedPrice);
+
   return (
     <Card
       className={`group relative flex flex-col justify-between gap-3 rounded-xl p-2 shadow-md transition hover:shadow-lg md:w-[180px] ${isOut ? "opacity-60 saturate-50" : ""} `}
@@ -49,11 +52,11 @@ export function ProductCard({
           height={120}
           className="object-contain"
         />
-        {discount && discount > 0 && (
+        {discount && discount > 0 ? (
           <Badge className="absolute top-2 right-2 bg-red-600 text-[10px] text-white">
             -{Math.round(discount * 100)}%
           </Badge>
-        )}
+        ) : null}
       </div>
 
       {/* meta */}
@@ -64,11 +67,11 @@ export function ProductCard({
         <p className="line-clamp-2 text-xs md:text-sm">{name}</p>
         <p className="mt-auto font-bold text-red-600">
           Rp {displayedPrice.toLocaleString("id-ID")}
-          {discount && (
-            <span className="ml-2 text-xs text-gray-500 line-through">
-              Rp {price.toLocaleString("id-ID")}
-            </span>
-          )}
+          {discount && discount > 0 ? (
+            <Badge className="absolute top-2 right-2 bg-red-600 text-[10px] text-white">
+              -{Math.round(discount * 100)}%
+            </Badge>
+          ) : null}
         </p>
         <div className="flex h-5 items-center gap-1 text-[10px] text-gray-600">
           <Warehouse size={14} className="text-orange-500" />

@@ -3,7 +3,7 @@ import {
   TransactionFinal,
   TransactionProductFinal,
 } from "@/types/transaction/FinalTypes";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import {
   ApproveModal,
@@ -21,8 +21,6 @@ import { Button } from "@/components/ui/button";
 import formatCurrency from "@/utils/FormatCurrency";
 import TransactionStatusBadge from "./BadgeTransactionList";
 import Pagination from "@/app/transaction/components/TransactionPagination";
-
-// ----- Sub-komponen (sudah benar, tidak ada perubahan) -----
 
 const TransactionItemsList = ({
   items,
@@ -83,8 +81,6 @@ const SuperAdminPriceInfo = ({ trx }: { trx: TransactionFinal }) => (
     <p className="font-bold">Total: {formatCurrency(trx.totalPrice)}</p>
   </div>
 );
-
-// ----- Komponen Utama -----
 
 interface TransactionTableProps {
   transactions: TransactionFinal[];

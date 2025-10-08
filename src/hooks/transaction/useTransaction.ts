@@ -28,7 +28,7 @@ export const USER_TRANSACTION_KEY = ["userTransactions"];
 export function useTransactionDetailsQuery(transactionId: string) {
   const { accessToken } = useUserAuthStore();
   return useQuery({
-    queryKey: [...USER_TRANSACTION_KEY, "detail", transactionId],
+    queryKey: [...USER_TRANSACTION_KEY, "transactionDetails", transactionId],
     queryFn: async () => {
       if (!transactionId) return null;
       const response = await axiosInstance.get<

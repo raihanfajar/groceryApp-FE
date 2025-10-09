@@ -9,7 +9,6 @@ export const useDeleteStore = (accessToken: string | null | undefined) => {
     return useMutation({
         mutationFn: async (storeId: string) => {
             const { data } = await axiosInstance.delete<{ status: string; message: string }>(`/stores/delete/${storeId}`, { headers: { Authorization: `Bearer ${accessToken}` } });
-            console.log("Store Id dari hook delete", storeId);
             return data;
         },
         onSuccess: (data) => {

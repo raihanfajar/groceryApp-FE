@@ -19,7 +19,6 @@ export const useUserLogin = (options?: { onSuccess?: () => void }) => {
             queryClient.invalidateQueries({ queryKey: ["nearestStore"] });
             queryClient.invalidateQueries({ queryKey: ["targetStoreProductsInfo"] });
             queryClient.invalidateQueries({ queryKey: ["userProfileInfo"] });
-            console.log(data); //! Delete on production
             toast.success(data.message);
             // Set the token to global state
             setUserAuth({
@@ -32,7 +31,6 @@ export const useUserLogin = (options?: { onSuccess?: () => void }) => {
             options?.onSuccess?.();
         },
         onError: (error: baseError) => {
-            console.log(error); //! Delete on production
             toast.error(`${error.response.status} | ${error.response.data.message}`);
         }
     })

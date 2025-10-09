@@ -15,11 +15,9 @@ export const useChangeUserPassword = (accessToken: string) => {
             return data;
         },
         onSuccess: (data: { status: string; message: string }) => {
-            console.log(data); // !Delete on production
             toast.success(data.message);
         },
         onError: (error: baseError) => {
-            console.log(error); // !Delete on production
             toast.error(`${error.response.status} | ${error.response.data.message}`);
         }
     });

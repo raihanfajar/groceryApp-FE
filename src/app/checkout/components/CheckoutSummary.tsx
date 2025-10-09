@@ -1,5 +1,5 @@
 "use client";
-import { baseError } from "@/components/userAuth/typesAndInterfaces";
+// import { baseError } from "@/components/userAuth/typesAndInterfaces";
 import {
   useCreateTransactionMutation,
   useShippingPriceQuery,
@@ -58,28 +58,21 @@ function CheckoutSummary({
       toast.error("Please select a shipping address.");
       return;
     }
-    try {
-      const input = {
-        userAddressId: userAddress.id,
-        storeId: targetStore.id,
-        shippingPrice: shippingPriceOrDefault,
-        paymentMethod,
-        voucherProductCode: productVoucher?.code,
-        voucherDeliveryCode: deliveryVoucher?.code,
-      };
+    const input = {
+      userAddressId: userAddress.id,
+      storeId: targetStore.id,
+      shippingPrice: shippingPriceOrDefault,
+      paymentMethod,
+      voucherProductCode: productVoucher?.code,
+      voucherDeliveryCode: deliveryVoucher?.code,
+    };
 
-      const response = await mutateAsync(input);
-      const transactionId = response.data.transaction.id;
+    const response = await mutateAsync(input);
+    const transactionId = response.data.transaction.id;
 
-      if (transactionId) {
-        toast.success("Transaction created successfully!");
-        router.push(`/transaction/${transactionId}`);
-      }
-    } catch (error: unknown) {
-      const customError = error as baseError;
-      const message =
-        customError?.response?.data?.message || "Failed to create transaction.";
-      toast.error(message);
+    if (transactionId) {
+      toast.success("Transaction created successfully!");
+      router.push(`/transaction/${transactionId}`);
     }
   }, [
     mutateAsync,

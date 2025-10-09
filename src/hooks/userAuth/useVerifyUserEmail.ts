@@ -14,11 +14,9 @@ export const useVerifyUserEmail = () => {
             return data;
         },
         onSuccess: (data: baseUserResponse) => {
-            console.log(data); // !Delete on production
             toast.success(data.message);
         },
         onError: (error: baseError) => {
-            console.log(error); // !Delete on production
             toast.error(`${error.response.status}|${error.response.data.message}`);
         }
     })

@@ -90,7 +90,6 @@ const AddNewAddressDialog = () => {
     },
     validationSchema: addNewAddressSchema,
     onSubmit: (values) => {
-      console.log("Form submitted:", values);
       if (values.isDefault) {
         setActualLocation(values.latLon.lat, values.latLon.lon);
       }

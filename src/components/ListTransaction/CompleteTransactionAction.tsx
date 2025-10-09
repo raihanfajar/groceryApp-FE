@@ -9,7 +9,6 @@ type Props = {
 };
 
 export default function CompleteTransactionAction({ transaction }: Props) {
-  console.log("CompleteTransactionAction transaction:", transaction.id);
 
   const completeMutation = useCompleteTransaction(transaction?.id);
 

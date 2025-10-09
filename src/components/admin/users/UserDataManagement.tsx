@@ -51,7 +51,6 @@ export default function UserDataManagement() {
       const response = await axiosInstance.get("/admin/users", {
         headers: { Authorization: `Bearer ${admin?.accessToken}` },
       });
-      console.log("Users response:", response.data);
       const data = (response.data as { data: { users: User[]; count: number } })
         .data;
       return Array.isArray(data.users) ? data.users : [];

@@ -76,8 +76,6 @@ export default function StoreManagement() {
 
   const handleEditSubmit = (e: React.FormEvent, storeId: string) => {
     e.preventDefault();
-    console.log("EDIT store id:", storeId);
-    console.log("EDIT store", editForm);
     updateStore(
       { storeId, body: editForm },
       {
@@ -90,7 +88,6 @@ export default function StoreManagement() {
   };
 
   const handleDelete = (id: string) => {
-    console.log("DELETE store id from StoreManagement:", id);
     deleteStore(id);
   };
 

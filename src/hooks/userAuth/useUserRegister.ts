@@ -18,7 +18,6 @@ export const useUserRegister = () => {
             router.push("/user-login");
         },
         onError: (error: baseError) => {
-            console.log(error);
             toast.error(`${error.response.status} | ${error.response.data.message}`);
         }
     })

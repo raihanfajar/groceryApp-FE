@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 const fetchUserProfileInfo = async (accessToken: string) => {
     // call your backend route
     const { data } = await axiosInstance.get<baseUserResponse>(`/user/session-login`, { headers: { Authorization: `Bearer ${accessToken}` } });
-    console.log("data log from useGetUserProfileInfo", data);
     return data.data;
 }
 

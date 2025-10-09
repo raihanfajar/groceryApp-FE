@@ -8,7 +8,6 @@ export const useGetStoreAdmin = (accessToken: string | null | undefined) => useQ
         const response = await axiosInstance.get("/admin/store-admins", {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
-        console.log("Store admins response:", response.data);
         const data = (
             response.data as { data: { admins: StoreAdmin[]; count: number } }
         ).data;

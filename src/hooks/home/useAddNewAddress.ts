@@ -26,7 +26,6 @@ export const useAddNewAddress = (accessToken: string) => {
       return data;
     },
     onSuccess: (data: baseGeoResponse) => {
-      console.log(data); // !Delete on production
       toast.success(data.message);
 
       queryClient.invalidateQueries({ queryKey: ["userAddressInfo"] });
@@ -36,7 +35,6 @@ export const useAddNewAddress = (accessToken: string) => {
       queryClient.invalidateQueries({ queryKey: USER_ADDRESSES_QUERY_KEY});
     },
     onError: (error: baseError) => {
-      console.log(error); // !Delete on production
       toast.error(`${error.response.status} | ${error.response.data.message}`);
     },
   });

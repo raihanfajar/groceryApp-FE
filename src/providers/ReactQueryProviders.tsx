@@ -38,5 +38,3 @@ export default function ReactQueryProvider({
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }
-
-console.log(makeQueryClient());

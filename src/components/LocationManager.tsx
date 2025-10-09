@@ -158,9 +158,6 @@ export default function LocationManager() {
   ]);
 
   const { data: nearestStore } = useGetNearestStore(accessToken);
-  if (nearestStore) {
-    console.log(nearestStore);
-  }
 
   useEffect(() => {
     if (!nearestStore) return;

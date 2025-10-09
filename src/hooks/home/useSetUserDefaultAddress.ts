@@ -12,8 +12,7 @@ export const useSetUserDefaultAddress = (accessToken: string) => {
             const { data } = await axiosInstance.post<{ status: string, message: string }>("/geocoding/set-user-default-address", { addressId }, { headers: { Authorization: `Bearer ${accessToken}` } });
             return data;
         },
-        onSuccess: (data: { status: string, message: string }) => {
-            console.log(data); // !Delete on production
+        onSuccess: () => {
             toast.info("Address targeted");
 
             queryClient.invalidateQueries({ queryKey: ["userAddressInfo"] });
@@ -22,7 +21,6 @@ export const useSetUserDefaultAddress = (accessToken: string) => {
             queryClient.invalidateQueries({ queryKey: [...CART_QUERY_KEY] });
         },
         onError: (error: baseError) => {
-            console.log(error); // !Delete on production
             toast.error(`${error.response.status} | ${error.response.data.message}`);
         }
     })

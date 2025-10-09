@@ -85,12 +85,11 @@ export function useCreateTransactionMutation() {
   const queryClient = useQueryClient();
   const { accessToken } = useUserAuthStore();
 
-  return useMutation<TransactionResponse, baseError, CreateTransactionInput>({
+  return useMutation<TransactionResponse, baseError | Error, CreateTransactionInput>({
     mutationFn: async (input: CreateTransactionInput) => {
       if (!accessToken) {
         throw new Error("Access token is not available.");
       }
-      console.log("create masuk", input);
       try {
         const response = await axiosInstance.post<TransactionResponse>(
           "/transaction/create",
@@ -119,10 +118,10 @@ export function useCreateTransactionMutation() {
         window.snap?.pay(paymentDetails.token);
       }
     },
-    onError: (err: baseError) => {
-      const errorMessage =
-        err?.response?.data?.message || "Something went wrong";
-
+    onError: (err: baseError | Error) => {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : err.response?.data?.message || "Failed to create transaction";
       toast.error(errorMessage);
     },
   });

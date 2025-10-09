@@ -23,7 +23,6 @@ export const useGetStoresWithin25km = (accessToken: string) => {
                 "/geocoding/get-all-store", { headers: { Authorization: `Bearer ${accessToken}` } }
             );
 
-            // console.log("DATA FROM 25 KM HOOK", data)
             const filtered = data.data
                 .map((s) => ({
                     ...s,
@@ -36,7 +35,6 @@ export const useGetStoresWithin25km = (accessToken: string) => {
                 }))
                 .filter((s) => s.distance <= 25_000); // ≤ 25 km
 
-            // console.log("WITHIN 25 KM FROM THE HOOK (FILTERED):", filtered);
             return filtered;
         },
         enabled: !!actualLatitude && !!actualLongitude,

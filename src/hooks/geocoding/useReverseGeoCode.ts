@@ -5,7 +5,6 @@ import { baseGeoResponse } from "./typesAndInterfaces";
 const fetchGeoInfo = async (lat: number, lon: number) => {
     // call your backend route
     const { data } = await axiosInstance.get<baseGeoResponse>(`/geocoding/rgc?lat=${lat}&lon=${lon}`);
-    // console.log("data log from useReverseGeocode", data);
     return data.data;
 }
 

@@ -8,7 +8,6 @@ export const useGetStoreForDropdown = (accessToken: string | null | undefined) =
         const response = await axiosInstance.get("/admin/stores", {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
-        console.log("Stores response:", response.data);
         const data = (response.data as { data: Store[] }).data;
         return Array.isArray(data) ? data : [];
     },

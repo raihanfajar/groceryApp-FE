@@ -16,7 +16,6 @@ export function StorePickerDialog({ trigger }: { trigger: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const { accessToken, targetStore, setTargetStore } = useUserAuthStore();
   const { data: stores } = useGetStoresWithin25km(accessToken);
-  console.log("INI LOG LIST STORE JANGKAUAN 25 KM:  ", stores);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -34,6 +34,7 @@ export const adminProductAPI = {
     if (filters?.search) params.append("search", filters.search);
     if (filters?.categoryId) params.append("categoryId", filters.categoryId);
     if (filters?.storeId) params.append("storeId", filters.storeId);
+    if (filters?.sortBy) params.append("sortBy", filters.sortBy);
     if (filters?.isActive !== undefined)
       params.append("isActive", filters.isActive.toString());
 

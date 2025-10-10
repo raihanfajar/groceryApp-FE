@@ -90,37 +90,8 @@ export const useStockManagement = () => {
         filters,
       );
 
-      let productsToDisplay = response.data.products;
-
-      // Apply client-side sorting based on stock count
-      if (filters.sortBy) {
-        productsToDisplay = [...productsToDisplay].sort((a, b) => {
-          // Get stock for the selected store or total stock
-          const getStock = (product: AdminProduct) => {
-            if (filters.storeId && filters.storeId !== "all") {
-              // Find stock for specific store
-              const storeStock = product.storeStock?.find(
-                (s) => s.storeId === filters.storeId,
-              );
-              return storeStock?.stock || 0;
-            }
-            // Use total stock for "All Stores"
-            return product.totalStock || 0;
-          };
-
-          const stockA = getStock(a);
-          const stockB = getStock(b);
-
-          if (filters.sortBy === "stock-asc") {
-            return stockA - stockB; // Ascending: low to high
-          } else if (filters.sortBy === "stock-desc") {
-            return stockB - stockA; // Descending: high to low
-          }
-          return 0;
-        });
-      }
-
-      setProducts(productsToDisplay);
+      // Backend handles sorting, no need for client-side sorting
+      setProducts(response.data.products);
       setPagination(response.data.pagination);
     } catch (error) {
       console.error("Error loading products:", error);

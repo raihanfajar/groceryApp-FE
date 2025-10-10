@@ -123,6 +123,7 @@ export interface ProductFilters {
   categoryId?: string;
   storeId?: string;
   isActive?: boolean;
+  sortBy?: "stock-asc" | "stock-desc";
 }
 
 export interface CategoryFilters {
